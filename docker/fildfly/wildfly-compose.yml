@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  wildfly:
+    container_name: wildfly-mgmt
+    image: wildfly-mgmt
+    build:
+      context: .
+      dockerfile: WildFly-mgmt
+    volumes:
+      - wildfly-mgmt:/opt/jboss/wildfly
+    ports:
+      - 8082:8080
+      - 9990:9990
+    restart: unless-stopped
+volumes:
+    wildfly-mgmt:

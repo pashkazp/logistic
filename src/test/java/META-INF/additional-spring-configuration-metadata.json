@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "ua.com.sipsoft.default-locale",
+    "type": "java.lang.String",
+    "description": "Default locale. Format en-US, uk-UA, ru-Ru etc..."
+  },
+  {
+    "name": "logistic.theme.style",
+    "type": "java.lang.String",
+    "description": "A description for 'logistic.theme.style'"
+  },
+  {
+    "name": "vaadin.compatibilityMode",
+    "type": "java.lang.String",
+    "description": "A description for 'vaadin.compatibilityMode'"
+  },
+  {
+    "name": "application.theme.style",
+    "type": "java.lang.String",
+    "description": "A description for 'application.theme.style'"
+  }
+]}
