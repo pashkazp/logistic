@@ -19,16 +19,16 @@ import ua.com.sipsoft.model.entity.requests.draft.CourierRequest;
 @Repository
 public interface CourierRequestRepository extends JpaRepository<CourierRequest, Long> {
 
-	/**
-	 * Gets the courier request by drat rouet sheet id.
-	 *
-	 * @param id   the id
-	 * @param sort the sort
-	 * @return the courier request by drat rouet sheet id
-	 */
-	@Query(" SELECT request "
-			+ " FROM DraftRouteSheet draft "
-			+ " join draft.requests request "
-			+ " WHERE draft.id = :sheetid ")
-	List<CourierRequest> getCourierRequestByDratRequestSheetId(@Param("sheetid") Long id, Sort sort);
+    /**
+     * Gets the courier request by drat rouet sheet id.
+     *
+     * @param id   the id
+     * @param sort the sort
+     * @return the courier request by drat rouet sheet id
+     */
+    @Query(" SELECT request "
+	    + " FROM DraftRouteSheet draft "
+	    + " join draft.requests request "
+	    + " WHERE draft.id = :sheetid ")
+    List<CourierRequest> getCourierRequestByDratRequestSheetId(@Param("sheetid") Long id, Sort sort);
 }

@@ -18,7 +18,7 @@ import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.model.entity.requests.issued.IssuedRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.issued.IssuedRouteSheetRepository;
-import ua.com.sipsoft.services.requests.arcive.ArchiveRouteSheetService;
+import ua.com.sipsoft.services.requests.arcive.ArchivedSheetsService;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.services.utils.OffsetBasedPageRequest;
 
@@ -34,7 +34,7 @@ public class IssuedRouteSheetServiceImpl implements IssuedRouteSheetService, Has
 
 	/** The archive route sheet service. */
 	@Autowired
-	private ArchiveRouteSheetService archiveRouteSheetService;
+	private ArchivedSheetsService archiveRouteSheetService;
 
 	/**
 	 * Gets the queried issued route sheets.

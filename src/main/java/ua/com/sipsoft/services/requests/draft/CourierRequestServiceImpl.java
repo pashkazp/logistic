@@ -17,7 +17,7 @@ import ua.com.sipsoft.model.entity.requests.archive.ArchivedCourierVisit;
 import ua.com.sipsoft.model.entity.requests.draft.CourierRequest;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.draft.CourierRequestRepository;
-import ua.com.sipsoft.services.requests.arcive.ArchivedCourierVisitService;
+import ua.com.sipsoft.services.requests.arcive.ArchivedVisitsService;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.utils.CourierVisitState;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -43,7 +43,7 @@ public class CourierRequestServiceImpl implements CourierRequestService, HasQuer
 
 	/** The archived courier visit service. */
 	@Autowired
-	private ArchivedCourierVisitService archivedCourierVisitService;
+	private ArchivedVisitsService archivedCourierVisitService;
 
 	/**
 	 * Register changes and save.

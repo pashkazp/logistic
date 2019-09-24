@@ -481,7 +481,7 @@ INSERT INTO public.courier_request_events (id, creation_date, description, "vers
 INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(8, '2019-08-31 23:33:36.071', 'Зареестровано виклик курьера.', 0, 7, 8);
 INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(9, '2019-08-31 23:35:11.295', 'Виклик кур''єра було видано.', 0, 3, 8);
 INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(10, '2019-08-31 23:35:52.282', 'Візит кур''єра маркований як скасований з причини: "Уже не надо"', 0, 3, 8);
-INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(11, '2019-08-31 23:36:55.644', 'Цей виклик було перестворено з причини: "Сегодня монитор уже есть". Прототип має #id 3', 0, 3, 8);
+INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(11, '2019-08-31 23:36:55.644', 'Цей виклик було перестворено з виданого виклику з причини: "Сегодня монитор уже есть". Прототип має #id 3', 0, 3, 8);
 INSERT INTO public.courier_request_events (id, creation_date, description, "version", author_user_id, fk_courier_request_id) VALUES(12, '2019-08-31 23:36:55.645', 'Зареестровано виклик курьера.', 0, 3, 8);
 alter sequence courier_request_events_id_seq restart with 13;
 
@@ -526,7 +526,7 @@ INSERT INTO public.courier_visit_events (id, creation_date, description, "versio
 INSERT INTO public.courier_visit_events (id, creation_date, description, "version", author_user_id, fk_courier_visit_id) VALUES(6, '2019-08-31 23:35:11.295', 'Виклик кур''єра було видано.', 0, 3, 3);
 INSERT INTO public.courier_visit_events (id, creation_date, description, "version", author_user_id, fk_courier_visit_id) VALUES(7, '2019-08-31 23:35:52.282', 'Візит кур''єра маркований як скасований', 0, 3, 3);
 INSERT INTO public.courier_visit_events (id, creation_date, description, "version", author_user_id, fk_courier_visit_id) VALUES(8, '2019-08-31 23:36:04.583', 'Візит кур''єра маркований як виконаний', 0, 3, 2);
-INSERT INTO public.courier_visit_events (id, creation_date, description, "version", author_user_id, fk_courier_visit_id) VALUES(9, '2019-08-31 23:36:55.779', 'Цей виклик було перестворено з причини ''Сегодня монитор уже есть''. Нова чернетка зареєстрована з #id: 8', 0, 3, 3);
+INSERT INTO public.courier_visit_events (id, creation_date, description, "version", author_user_id, fk_courier_visit_id) VALUES(9, '2019-08-31 23:36:55.779', 'Цей виклик було взято за основу для повторного виклику з причини ''Сегодня монитор уже есть''. Нова чернетка зареєстрована з #id: 8', 0, 3, 3);
 alter sequence courier_visit_events_id_seq restart with 10;
 
 -- Wire Issued Sheets and Visits

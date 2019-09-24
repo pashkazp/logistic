@@ -19,7 +19,7 @@ import ua.com.sipsoft.model.entity.requests.draft.DraftRouteSheet;
 import ua.com.sipsoft.model.entity.requests.issued.IssuedRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.draft.DraftRouteSheetRepository;
-import ua.com.sipsoft.services.requests.arcive.ArchiveRouteSheetService;
+import ua.com.sipsoft.services.requests.arcive.ArchivedSheetsService;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetService;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 
@@ -35,7 +35,7 @@ public class DraftRouteSheetServiceImpl implements DraftRouteSheetService, HasQu
 
 	/** The archive route sheet service. */
 	@Autowired
-	private ArchiveRouteSheetService archiveRouteSheetService;
+	private ArchivedSheetsService archiveRouteSheetService;
 
 	/** The issued route sheet service. */
 	@Autowired

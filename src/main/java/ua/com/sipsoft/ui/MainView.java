@@ -33,6 +33,7 @@ import ua.com.sipsoft.ui.commons.LeftAppMenuBuilderExt;
 import ua.com.sipsoft.ui.commons.LeftSubMenuBuilderExt;
 import ua.com.sipsoft.ui.views.facilities.FacilitiesManager;
 import ua.com.sipsoft.ui.views.homeview.HomeView;
+import ua.com.sipsoft.ui.views.request.archive.ArchvedVisitsManager;
 import ua.com.sipsoft.ui.views.request.draft.CourierRequestsManager;
 import ua.com.sipsoft.ui.views.request.draft.CourierRequestsView;
 import ua.com.sipsoft.ui.views.request.issued.CourierVisitsManager;
@@ -67,113 +68,119 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @SpringComponent
 public class MainView extends AppLayoutRouterLayout {
 
-	private static final long serialVersionUID = 1112777237411381510L;
+    private static final long serialVersionUID = 1112777237411381510L;
 
-	private DefaultNotificationHolder notifications;
+    private DefaultNotificationHolder notifications;
 
-	private transient DefaultBadgeHolder badge;
+    private transient DefaultBadgeHolder badge;
 
-	/**
-	 * Construct MainView and add Main menu.
-	 */
-	public MainView() {
-		log.info("Create Main View");
-		notifications = new DefaultNotificationHolder(newStatus -> {
-		});
-		badge = new DefaultBadgeHolder(5);
-		for (int i = 1; i < 6; i++) {
-			notifications.addNotification(new DefaultNotification("Тестовий заголовок" + i,
-					"Досить довгий тестовий опис ..............." + i));
-		}
+    /**
+     * Construct MainView and add Main menu.
+     */
+    public MainView() {
+	log.info("Create Main View");
+	notifications = new DefaultNotificationHolder(newStatus -> {
+	});
+	badge = new DefaultBadgeHolder(5);
+	for (int i = 1; i < 6; i++) {
+	    notifications.addNotification(new DefaultNotification("Тестовий заголовок" + i,
+		    "Досить довгий тестовий опис ..............." + i));
+	}
 //		LeftNavigationItem menuEntry = new LeftNavigationItem("Меню", VaadinIcon.MENU.create(), View6.class);
 //		badge.bind(menuEntry.getBadge());
 
-		init(AppLayoutBuilder.get(Behaviour.LEFT_RESPONSIVE_HYBRID_NO_APP_BAR)
-				.withIcon("images/logo_b.png")
-				.withTitle(getTranslation(MainMenuMsg.APP_BAR_TITLE))
+	init(AppLayoutBuilder.get(
+		Behaviour.LEFT_RESPONSIVE_HYBRID_NO_APP_BAR)
+		.withIcon("images/logo_b.png")
+		.withTitle(getTranslation(MainMenuMsg.APP_BAR_TITLE))
 //				.withAppBar(
 //						AppBarBuilder.get()
 //						.add(new AppBarNotificationButton<>(VaadinIcon.BELL, notifications))
 //						.add(new AppBarNotificationButton<>(VaadinIcon.BELL, notifications))
 //								.build())
-				.withAppMenu(
-						LeftAppMenuBuilderExt.get()
+		.withAppMenu(
+			LeftAppMenuBuilderExt.get()
 //						.addToSection( new LeftHeaderItem("Menu-Header", "APP_LAYOUT_VERSION", "images/logo_b.png"),
 //										com.github.appreciated.app.layout.entity.Section.HEADER)
 //						.addToSection( new LeftClickableItem("Clickable Entry", VaadinIcon.COG.create(),
 //										clickEvent -> Notification.show("onClick ...")),
 //										com.github.appreciated.app.layout.entity.Section.HEADER)
-								.add((new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_HOME),
-										UIIcon.HOME.createIcon(), HomeView.class)))
-								.add(getElementOrNull(
-										new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_REQ),
-												UIIcon.PHONE.createIcon(), CourierRequestsView.class),
-										Role.ROLE_ADMIN, Role.ROLE_CLIENT, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-										Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-								.add(getElementOrNull(
-										new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_DRAFT),
-												UIIcon.SHEET_DRAFT.createIcon(), CourierRequestsManager.class),
-										Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-										Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-								.add(getElementOrNull(
-										new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ISSUED),
-												UIIcon.SHEET_ISSUED.createIcon(), CourierVisitsManager.class),
-										Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-										Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-								.add(getElementOrNull(
-										new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_FACILITIES),
-												VaadinIcon.OFFICE.create(), FacilitiesManager.class),
-										Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-										Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-								.add(getElementOrNull(LeftSubMenuBuilderExt
-										.get(getTranslation(MainMenuMsg.MENU_USERS),
-												UIIcon.USERS.createIcon())
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_REGISTERED),
-												RoleIcon.USER.createIcon(), AllRegisteredManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_CLIENTS),
-												RoleIcon.CLIENT.createIcon(), AllClientsManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_COURIERS),
-												RoleIcon.COURIER.createIcon(), AllCouriersManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_MANAGERS),
-												RoleIcon.MANAGER.createIcon(), AllManagersManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_PRODUCTOPERS),
-												RoleIcon.PRODUCTOPER.createIcon(), AllProductOpersManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_DISPATCHERS),
-												RoleIcon.DISPATCHER.createIcon(), AllDispatchersManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.add(getElementOrNull(
-												new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ADMINS),
-														RoleIcon.ADMIN.createIcon(), AllAdminsManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.add(getElementOrNull(new LeftNavigationItem(
-												getTranslation(MainMenuMsg.MENU_ALLUSERS),
-												UIIcon.GROUP.createIcon(), AllUsersManager.class),
-												Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-												Role.ROLE_PRODUCTOPER))
-										.build(),
-										Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-										Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-								.addToSection(
-										new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
-												UIIcon.SIGN_OUT.createIcon(),
-												clickEvent -> confirmLogout()),
-										com.github.appreciated.app.layout.entity.Section.FOOTER)
+				.add((new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_HOME),
+					UIIcon.HOME.createIcon(), HomeView.class)))
+				.add(getElementOrNull(
+					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_REQ),
+						UIIcon.PHONE.createIcon(), CourierRequestsView.class),
+					Role.ROLE_ADMIN, Role.ROLE_CLIENT, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.add(getElementOrNull(
+					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_DRAFT),
+						UIIcon.SHEET_DRAFT.createIcon(), CourierRequestsManager.class),
+					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.add(getElementOrNull(
+					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ISSUED),
+						UIIcon.SHEET_ISSUED.createIcon(), CourierVisitsManager.class),
+					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.add(getElementOrNull(
+					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ARCHIVED),
+						UIIcon.SHEET_ARCHIVE.createIcon(), ArchvedVisitsManager.class),
+					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.add(getElementOrNull(
+					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_FACILITIES),
+						VaadinIcon.OFFICE.create(), FacilitiesManager.class),
+					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.add(getElementOrNull(LeftSubMenuBuilderExt
+					.get(getTranslation(MainMenuMsg.MENU_USERS),
+						UIIcon.USERS.createIcon())
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_REGISTERED),
+						RoleIcon.USER.createIcon(), AllRegisteredManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_CLIENTS),
+						RoleIcon.CLIENT.createIcon(), AllClientsManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_COURIERS),
+						RoleIcon.COURIER.createIcon(), AllCouriersManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_MANAGERS),
+						RoleIcon.MANAGER.createIcon(), AllManagersManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_PRODUCTOPERS),
+						RoleIcon.PRODUCTOPER.createIcon(), AllProductOpersManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_DISPATCHERS),
+						RoleIcon.DISPATCHER.createIcon(), AllDispatchersManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.add(getElementOrNull(
+						new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ADMINS),
+							RoleIcon.ADMIN.createIcon(), AllAdminsManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.add(getElementOrNull(new LeftNavigationItem(
+						getTranslation(MainMenuMsg.MENU_ALLUSERS),
+						UIIcon.GROUP.createIcon(), AllUsersManager.class),
+						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+						Role.ROLE_PRODUCTOPER))
+					.build(),
+					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
+				.addToSection(
+					new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
+						UIIcon.SIGN_OUT.createIcon(),
+						clickEvent -> confirmLogout()),
+					com.github.appreciated.app.layout.entity.Section.FOOTER)
 //								.addToSection(
 //										new LeftClickableItem("",
 //												UIIcon.THEME_PAINTER.createIcon(),
@@ -186,77 +193,77 @@ public class MainView extends AppLayoutRouterLayout {
 //													}
 //												}),
 //										com.github.appreciated.app.layout.entity.Section.FOOTER)
-								.build())
-				.build());
-	}
+				.build())
+		.build());
+    }
 
-	/**
-	 * Return component menu if roles is null or if roles match Security Utils roles
-	 * for this Component
-	 *
-	 * @param element the element
-	 * @param roles   the roles
-	 * @return the element or null
-	 */
-	private Component getElementOrNull(Component element, Role... roles) {
-		log.info("Check roles {} for Component {}", roles, element);
-		if (roles == null) {
-			return element;
-		}
-		Collection<Role> sRoles = SecurityUtils.getUserRoles();
-		log.debug("Check for SecurityUtils roles {}", sRoles);
-		if (CollectionUtils.containsAny(sRoles, roles)) {
-			log.debug("Access to component granted");
-			return element;
-		}
-		log.debug("Access to component denied");
-		return null;
+    /**
+     * Return component menu if roles is null or if roles match Security Utils roles
+     * for this Component
+     *
+     * @param element the element
+     * @param roles   the roles
+     * @return the element or null
+     */
+    private Component getElementOrNull(Component element, Role... roles) {
+	log.info("Check roles {} for Component {}", roles, element);
+	if (roles == null) {
+	    return element;
 	}
-
-	/**
-	 * Confirm logout by {@link ConfirmDialog} and redirect to standard logout URL.
-	 */
-	public void confirmLogout() {
-		log.info("Create confirm logout dialog");
-		ConfirmDialog
-				.createQuestion()
-				.withCaption(getTranslation(MainMenuMsg.MENU_EXIT_TITLE))
-				.withMessage(getTranslation(MainMenuMsg.MENU_EXIT_QUESTION))
-				.withOkButton(() -> {
-					SecurityContextHolder.clearContext();
-					UI.getCurrent().getSession().close();
-					UI.getCurrent().getPage().reload();// to redirect user to the login page
-				},
-						ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SIGN_OUT)),
-						ButtonOption.icon(UIIcon.BTN_SIGN_OUT.getIcon()))
-				.withCancelButton(ButtonOption.caption(getTranslation(ButtonMsg.BTN_CANCEL)),
-						ButtonOption.icon(UIIcon.BTN_NO.getIcon()))
-				.open();
+	Collection<Role> sRoles = SecurityUtils.getUserRoles();
+	log.debug("Check for SecurityUtils roles {}", sRoles);
+	if (CollectionUtils.containsAny(sRoles, roles)) {
+	    log.debug("Access to component granted");
+	    return element;
 	}
+	log.debug("Access to component denied");
+	return null;
+    }
 
-	/**
-	 * Parameter in application.properties that make application Theme 'light' or
-	 * 'dark'
-	 */
-	@Value("${application.theme.style}")
-	private String logisticThemeStyle;
+    /**
+     * Confirm logout by {@link ConfirmDialog} and redirect to standard logout URL.
+     */
+    public void confirmLogout() {
+	log.info("Create confirm logout dialog");
+	ConfirmDialog
+		.createQuestion()
+		.withCaption(getTranslation(MainMenuMsg.MENU_EXIT_TITLE))
+		.withMessage(getTranslation(MainMenuMsg.MENU_EXIT_QUESTION))
+		.withOkButton(() -> {
+		    SecurityContextHolder.clearContext();
+		    UI.getCurrent().getSession().close();
+		    UI.getCurrent().getPage().reload();// to redirect user to the login page
+		},
+			ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SIGN_OUT)),
+			ButtonOption.icon(UIIcon.BTN_SIGN_OUT.getIcon()))
+		.withCancelButton(ButtonOption.caption(getTranslation(ButtonMsg.BTN_CANCEL)),
+			ButtonOption.icon(UIIcon.BTN_NO.getIcon()))
+		.open();
+    }
 
+    /**
+     * Parameter in application.properties that make application Theme 'light' or
+     * 'dark'
+     */
+    @Value("${application.theme.style}")
+    private String logisticThemeStyle;
+
+    /**
+     * Trick for fully pain Application interface.
+     *
+     * @param attachEvent the attach event
+     */
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+	super.onAttach(attachEvent);
+	log.info("Change MainView application theme");
 	/**
-	 * Trick for fully pain Application interface.
-	 *
-	 * @param attachEvent the attach event
+	 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
+	 * which will appear in the wrong color making them seemingly invisible. Instead
+	 * do it the following way as long as the issue is not solved
+	 * (https://github.com/vaadin/flow/issues/4765)
 	 */
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		super.onAttach(attachEvent);
-		log.info("Change MainView application theme");
-		/**
-		 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
-		 * which will appear in the wrong color making them seemingly invisible. Instead
-		 * do it the following way as long as the issue is not solved
-		 * (https://github.com/vaadin/flow/issues/4765)
-		 */
-		getUI().ifPresent(ui -> ui.getPage()
-				.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")"));
-	}
+	getUI().ifPresent(ui -> ui.getPage()
+		.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")"));
+    }
 }
