@@ -13,203 +13,203 @@ import org.springframework.data.domain.Sort;
  */
 public class OffsetBasedPageRequest implements Pageable, Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -25822477129613575L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -25822477129613575L;
 
-	/** The limit. */
-	private int limit;
+    /** The limit. */
+    private int limit;
 
-	/** The offset. */
-	private int offset;
+    /** The offset. */
+    private int offset;
 
-	/** The sort. */
-	private final Sort sort;
+    /** The sort. */
+    private final Sort sort;
 
-	/**
-	 * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
-	 *
-	 * @param offset zero-based offset.
-	 * @param limit  the size of the elements to be returned.
-	 * @param sort   can be {@literal null}.
-	 */
-	public OffsetBasedPageRequest(int offset, int limit, Sort sort) {
-		if (offset < 0) {
-			throw new IllegalArgumentException("Offset index must not be less than zero!");
-		}
-
-		if (limit < 1) {
-			throw new IllegalArgumentException("Limit must not be less than one!");
-		}
-		this.limit = limit;
-		this.offset = offset;
-		this.sort = sort;
+    /**
+     * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
+     *
+     * @param offset zero-based offset.
+     * @param limit  the size of the elements to be returned.
+     * @param sort   can be {@literal null}.
+     */
+    public OffsetBasedPageRequest(int offset, int limit, Sort sort) {
+	if (offset < 0) {
+	    throw new IllegalArgumentException("Offset index must not be less than zero!");
 	}
 
-	/**
-	 * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
-	 *
-	 * @param offset     zero-based offset.
-	 * @param limit      the size of the elements to be returned.
-	 * @param direction  the direction of the {@link Sort} to be specified, can be
-	 *                   {@literal null}.
-	 * @param properties the properties to sort by, must not be {@literal null} or
-	 *                   empty.
-	 */
-	public OffsetBasedPageRequest(int offset, int limit, Sort.Direction direction, String... properties) {
-		this(offset, limit, new Sort(direction, properties));
+	if (limit < 1) {
+	    throw new IllegalArgumentException("Limit must not be less than one!");
 	}
+	this.limit = limit;
+	this.offset = offset;
+	this.sort = sort;
+    }
 
-	/**
-	 * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
-	 *
-	 * @param offset zero-based offset.
-	 * @param limit  the size of the elements to be returned.
-	 */
-	public OffsetBasedPageRequest(int offset, int limit) {
-		this(offset, limit, new Sort(Sort.Direction.ASC, "id"));
-	}
+    /**
+     * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
+     *
+     * @param offset     zero-based offset.
+     * @param limit      the size of the elements to be returned.
+     * @param direction  the direction of the {@link Sort} to be specified, can be
+     *                   {@literal null}.
+     * @param properties the properties to sort by, must not be {@literal null} or
+     *                   empty.
+     */
+    public OffsetBasedPageRequest(int offset, int limit, Sort.Direction direction, String... properties) {
+	this(offset, limit, new Sort(direction, properties));
+    }
 
-	/**
-	 * Gets the page number.
-	 *
-	 * @return the page number
-	 */
-	@Override
-	public int getPageNumber() {
-		return offset / limit;
-	}
+    /**
+     * Creates a new {@link OffsetBasedPageRequest} with sort parameters applied.
+     *
+     * @param offset zero-based offset.
+     * @param limit  the size of the elements to be returned.
+     */
+    public OffsetBasedPageRequest(int offset, int limit) {
+	this(offset, limit, new Sort(Sort.Direction.ASC, "id"));
+    }
 
-	/**
-	 * Gets the page size.
-	 *
-	 * @return the page size
-	 */
-	@Override
-	public int getPageSize() {
-		return limit;
-	}
+    /**
+     * Gets the page number.
+     *
+     * @return the page number
+     */
+    @Override
+    public int getPageNumber() {
+	return offset / limit;
+    }
 
-	/**
-	 * Gets the offset.
-	 *
-	 * @return the offset
-	 */
-	@Override
-	public long getOffset() {
-		return offset;
-	}
+    /**
+     * Gets the page size.
+     *
+     * @return the page size
+     */
+    @Override
+    public int getPageSize() {
+	return limit;
+    }
 
-	/**
-	 * Gets the sort.
-	 *
-	 * @return the sort
-	 */
-	@Override
-	public Sort getSort() {
-		return sort;
-	}
+    /**
+     * Gets the offset.
+     *
+     * @return the offset
+     */
+    @Override
+    public long getOffset() {
+	return offset;
+    }
 
-	/**
-	 * Next.
-	 *
-	 * @return the pageable
-	 */
-	@Override
-	public Pageable next() {
-		// Typecast possible because number of entries cannot be bigger than integer
-		// (primary key is integer)
-		return new OffsetBasedPageRequest(getPageSize(), (int) (getOffset() + getPageSize()));
-	}
+    /**
+     * Gets the sort.
+     *
+     * @return the sort
+     */
+    @Override
+    public Sort getSort() {
+	return sort;
+    }
 
-	/**
-	 * Previous.
-	 *
-	 * @return the pageable
-	 */
-	public Pageable previous() {
-		// The integers are positive. Subtracting does not let them become bigger than
-		// integer.
-		return hasPrevious() ? new OffsetBasedPageRequest(getPageSize(), (int) (getOffset() - getPageSize())) : this;
-	}
+    /**
+     * Next.
+     *
+     * @return the pageable
+     */
+    @Override
+    public Pageable next() {
+	// Typecast possible because number of entries cannot be bigger than integer
+	// (primary key is integer)
+	return new OffsetBasedPageRequest(getPageSize(), (int) (getOffset() + getPageSize()));
+    }
 
-	/**
-	 * Previous or first.
-	 *
-	 * @return the pageable
-	 */
-	@Override
-	public Pageable previousOrFirst() {
-		return hasPrevious() ? previous() : first();
-	}
+    /**
+     * Previous.
+     *
+     * @return the pageable
+     */
+    public Pageable previous() {
+	// The integers are positive. Subtracting does not let them become bigger than
+	// integer.
+	return hasPrevious() ? new OffsetBasedPageRequest(getPageSize(), (int) (getOffset() - getPageSize())) : this;
+    }
 
-	/**
-	 * First.
-	 *
-	 * @return the pageable
-	 */
-	@Override
-	public Pageable first() {
-		return new OffsetBasedPageRequest(0, getPageSize(), getSort());
-	}
+    /**
+     * Previous or first.
+     *
+     * @return the pageable
+     */
+    @Override
+    public Pageable previousOrFirst() {
+	return hasPrevious() ? previous() : first();
+    }
 
-	/**
-	 * Checks for previous.
-	 *
-	 * @return true, if successful
-	 */
-	@Override
-	public boolean hasPrevious() {
-		return offset > limit;
-	}
+    /**
+     * First.
+     *
+     * @return the pageable
+     */
+    @Override
+    public Pageable first() {
+	return new OffsetBasedPageRequest(0, getPageSize(), getSort());
+    }
 
-	/**
-	 * Equals.
-	 *
-	 * @param o the o
-	 * @return true, if successful
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
+    /**
+     * Checks for previous.
+     *
+     * @return true, if successful
+     */
+    @Override
+    public boolean hasPrevious() {
+	return offset > limit;
+    }
 
-		if (!(o instanceof OffsetBasedPageRequest))
-			return false;
+    /**
+     * Equals.
+     *
+     * @param o the o
+     * @return true, if successful
+     */
+    @Override
+    public boolean equals(Object o) {
+	if (this == o)
+	    return true;
 
-		OffsetBasedPageRequest that = (OffsetBasedPageRequest) o;
+	if (!(o instanceof OffsetBasedPageRequest))
+	    return false;
 
-		return new EqualsBuilder()
-				.append(limit, that.limit)
-				.append(offset, that.offset)
-				.append(sort, that.sort)
-				.isEquals();
-	}
+	OffsetBasedPageRequest that = (OffsetBasedPageRequest) o;
 
-	/**
-	 * Hash code.
-	 *
-	 * @return the int
-	 */
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				.append(limit)
-				.append(offset)
-				.append(sort)
-				.toHashCode();
-	}
+	return new EqualsBuilder()
+		.append(limit, that.limit)
+		.append(offset, that.offset)
+		.append(sort, that.sort)
+		.isEquals();
+    }
 
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("limit", limit)
-				.append("offset", offset)
-				.append("sort", sort)
-				.toString();
-	}
+    /**
+     * Hash code.
+     *
+     * @return the int
+     */
+    @Override
+    public int hashCode() {
+	return new HashCodeBuilder(17, 37)
+		.append(limit)
+		.append(offset)
+		.append(sort)
+		.toHashCode();
+    }
+
+    /**
+     * To string.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString() {
+	return new ToStringBuilder(this)
+		.append("limit", limit)
+		.append("offset", offset)
+		.append("sort", sort)
+		.toString();
+    }
 }

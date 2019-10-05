@@ -33,42 +33,42 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Route(value = AppURL.HOME_URL, layout = MainView.class)
 public class HomeView extends VerticalLayout implements HasDynamicTitle {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -4942667214278985187L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4942667214278985187L;
 
-	/**
-	 * Instantiates a new home view.
-	 *
-	 * @param applicationContext the application context
-	 */
-	public HomeView(ApplicationContext applicationContext) {
-		log.info("Construct HomeView");
-		Component homeViewPresenter = new VerticalLayout(new Paragraph("NOTHING THERE"));
+    /**
+     * Instantiates a new home view.
+     *
+     * @param applicationContext the application context
+     */
+    public HomeView(ApplicationContext applicationContext) {
+	log.info("Construct HomeView");
+	Component homeViewPresenter = new VerticalLayout(new Paragraph("NOTHING THERE"));
 
-		if (SecurityUtils.getUserRoles().contains(Role.ROLE_REGISTERED)) {
-			homeViewPresenter = applicationContext.getBean(HomeViewPresenterRegistered.class);
-			log.info("Prepare HomeView information section for Registered Users");
-		}
-
-		if (SecurityUtils.getUserRoles().contains(Role.ROLE_ADMIN)) {
-			homeViewPresenter = applicationContext.getBean(HomeViewPresenterAdmin.class);
-			log.info("Prepare HomeView information section for Admin Users");
-		}
-		add(homeViewPresenter);
-		setAlignItems(Alignment.STRETCH);
-		setFlexGrow(1, homeViewPresenter);
-		setSizeFull();
+	if (SecurityUtils.getUserRoles().contains(Role.ROLE_REGISTERED)) {
+	    homeViewPresenter = applicationContext.getBean(HomeViewPresenterRegistered.class);
+	    log.info("Prepare HomeView information section for Registered Users");
 	}
 
-	/**
-	 * Gets the page title.
-	 *
-	 * @return the page title
-	 */
-	@Override
-	public String getPageTitle() {
-		UI current = UI.getCurrent();
-		Locale locale = current.getLocale();
-		return getTranslation(AppTitleMsg.APP_TITLE_HOME, locale);
+	if (SecurityUtils.getUserRoles().contains(Role.ROLE_ADMIN)) {
+	    homeViewPresenter = applicationContext.getBean(HomeViewPresenterAdmin.class);
+	    log.info("Prepare HomeView information section for Admin Users");
 	}
+	add(homeViewPresenter);
+	setAlignItems(Alignment.STRETCH);
+	setFlexGrow(1, homeViewPresenter);
+	setSizeFull();
+    }
+
+    /**
+     * Gets the page title.
+     *
+     * @return the page title
+     */
+    @Override
+    public String getPageTitle() {
+	UI current = UI.getCurrent();
+	Locale locale = current.getLocale();
+	return getTranslation(AppTitleMsg.APP_TITLE_HOME, locale);
+    }
 }

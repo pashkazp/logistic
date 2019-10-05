@@ -56,291 +56,291 @@ import ua.com.sipsoft.utils.security.Role;
 @Slf4j
 @SpringComponent
 public class FacilityUsersEditor<T extends Set<User>> extends FormLayout
-		implements HasOperationData<T>, HasDialogFormDataCollector {
+	implements HasOperationData<T>, HasDialogFormDataCollector {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -3291395147592860970L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3291395147592860970L;
 
-	/**
-	 * Sets the binder.
-	 *
-	 * @param binder the new binder
-	 */
-	@Setter
-	private Binder<T> binder;
+    /**
+     * Sets the binder.
+     *
+     * @param binder the new binder
+     */
+    @Setter
+    private Binder<T> binder;
 
-	/**
-	 * Sets the users service.
-	 *
-	 * @param usersService the new users service
-	 */
-	@Setter
-	private transient UsersService usersService;
+    /**
+     * Sets the users service.
+     *
+     * @param usersService the new users service
+     */
+    @Setter
+    private transient UsersService usersService;
 
-	/** The user data provider. */
-	private DataProvider<User, UserFilter> userDataProvider;
+    /** The user data provider. */
+    private DataProvider<User, UserFilter> userDataProvider;
 
-	/**
-	 * Gets the grid.
-	 *
-	 * @return the grid
-	 */
-	@Getter
-	private Grid<User> grid;
+    /**
+     * Gets the grid.
+     *
+     * @return the grid
+     */
+    @Getter
+    private Grid<User> grid;
 
-	/** The filter. */
-	private TextField filter;
+    /** The filter. */
+    private TextField filter;
 
-	/** The filter roles. */
-	private Collection<Role> filterRoles = Arrays.asList(Role.values());
+    /** The filter roles. */
+    private Collection<Role> filterRoles = Arrays.asList(Role.values());
 
-	/** The toolbar. */
-	private HorizontalLayout toolbar;
+    /** The toolbar. */
+    private HorizontalLayout toolbar;
 
-	/** The refresh btn. */
-	private Button refreshBtn;
+    /** The refresh btn. */
+    private Button refreshBtn;
 
-	/**
-	 * Gets the selected users.
-	 *
-	 * @return the selected users
-	 */
-	@Getter
+    /**
+     * Gets the selected users.
+     *
+     * @return the selected users
+     */
+    @Getter
 
-	/**
-	 * Sets the selected users.
-	 *
-	 * @param selectedUsers the new selected users
-	 */
-	@Setter
-	private transient Set<User> selectedUsers;
+    /**
+     * Sets the selected users.
+     *
+     * @param selectedUsers the new selected users
+     */
+    @Setter
+    private transient Set<User> selectedUsers;
 
-	/** The read only mode. */
-	private boolean readOnlyMode;
+    /** The read only mode. */
+    private boolean readOnlyMode;
 
-	/**
-	 * Instantiates a new facility users editor.
-	 *
-	 * @param usersService the users service
-	 */
-	public FacilityUsersEditor(UsersService usersService) {
-		super();
-		log.info("Instantiates a new facility users editor");
-		this.usersService = usersService;
-		VerticalLayout panelFields = new VerticalLayout();
+    /**
+     * Instantiates a new facility users editor.
+     *
+     * @param usersService the users service
+     */
+    public FacilityUsersEditor(UsersService usersService) {
+	super();
+	log.info("Instantiates a new facility users editor");
+	this.usersService = usersService;
+	VerticalLayout panelFields = new VerticalLayout();
 
-		filter = new TextField("", getTranslation(GridToolMsg.SEARCH_FIELD));
-		filter.setValueChangeMode(ValueChangeMode.EAGER);
-		filter.addValueChangeListener(e -> showUsers(e.getValue()));
+	filter = new TextField("", getTranslation(GridToolMsg.SEARCH_FIELD));
+	filter.setValueChangeMode(ValueChangeMode.EAGER);
+	filter.addValueChangeListener(e -> showUsers(e.getValue()));
 
-		refreshBtn = new Button(UIIcon.BTN_REFRESH.createIcon());
-		refreshBtn.addClickListener(e -> showFilteredUsers());
-		Div rb = new Div(refreshBtn);
-		rb.setTitle(getTranslation(ButtonMsg.BTN_REFRESH));
-		rb.setSizeUndefined();
+	refreshBtn = new Button(UIIcon.BTN_REFRESH.createIcon());
+	refreshBtn.addClickListener(e -> showFilteredUsers());
+	Div rb = new Div(refreshBtn);
+	rb.setTitle(getTranslation(ButtonMsg.BTN_REFRESH));
+	rb.setSizeUndefined();
 
-		grid = new Grid<>(User.class);
-		grid.setColumnReorderingAllowed(true);
-		grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_ROW_STRIPES);
+	grid = new Grid<>(User.class);
+	grid.setColumnReorderingAllowed(true);
+	grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_ROW_STRIPES);
 
-		grid.setColumns(/* "id", */ "username", "firstName", "lastName", "patronymic", "email");
+	grid.setColumns(/* "id", */ "username", "firstName", "lastName", "patronymic", "email");
 
-		grid.addColumn(buildUsersRoleColumn()).setSortable(true).setKey("roles");
-		grid.addColumn(buildUserStatesColumn()).setSortable(true).setKey("enabled");
+	grid.addColumn(buildUsersRoleColumn()).setSortable(true).setKey("roles");
+	grid.addColumn(buildUserStatesColumn()).setSortable(true).setKey("enabled");
 
-		grid.getColumns().forEach(column -> column.setResizable(true));
+	grid.getColumns().forEach(column -> column.setResizable(true));
 
-		grid.getColumnByKey("username").setFlexGrow(8).setFrozen(true)
-				.setHeader(getTranslation(UserEntityMsg.USERNAME));
-		grid.getColumnByKey("firstName").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.FIRSNAME));
-		grid.getColumnByKey("lastName").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.LASTNAME));
-		grid.getColumnByKey("patronymic").setFlexGrow(9)
-				.setHeader(getTranslation(UserEntityMsg.PATRONYMIC));
-		grid.getColumnByKey("email").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.EMAIL));
-		grid.getColumnByKey("roles").setFlexGrow(4).setHeader(getTranslation(UserEntityMsg.ROLES))
-				.setTextAlign(ColumnTextAlign.CENTER);
-		grid.getColumnByKey("enabled").setFlexGrow(2).setHeader(getTranslation(UserEntityMsg.ENABLED))
-				.setTextAlign(ColumnTextAlign.CENTER);
+	grid.getColumnByKey("username").setFlexGrow(8).setFrozen(true)
+		.setHeader(getTranslation(UserEntityMsg.USERNAME));
+	grid.getColumnByKey("firstName").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.FIRSNAME));
+	grid.getColumnByKey("lastName").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.LASTNAME));
+	grid.getColumnByKey("patronymic").setFlexGrow(9)
+		.setHeader(getTranslation(UserEntityMsg.PATRONYMIC));
+	grid.getColumnByKey("email").setFlexGrow(9).setHeader(getTranslation(UserEntityMsg.EMAIL));
+	grid.getColumnByKey("roles").setFlexGrow(4).setHeader(getTranslation(UserEntityMsg.ROLES))
+		.setTextAlign(ColumnTextAlign.CENTER);
+	grid.getColumnByKey("enabled").setFlexGrow(2).setHeader(getTranslation(UserEntityMsg.ENABLED))
+		.setTextAlign(ColumnTextAlign.CENTER);
 
-		GridMultiSelectionModel<User> multiSelection = (GridMultiSelectionModel<User>) grid
-				.setSelectionMode(Grid.SelectionMode.MULTI);
-		multiSelection.setSelectionColumnFrozen(true);
+	GridMultiSelectionModel<User> multiSelection = (GridMultiSelectionModel<User>) grid
+		.setSelectionMode(Grid.SelectionMode.MULTI);
+	multiSelection.setSelectionColumnFrozen(true);
 //		multiSelection.addMultiSelectionListener(this::usersGridSelectionListener);
 
-		toolbar = new HorizontalLayout(filter, rb);
-		toolbar.setMargin(false);
-		toolbar.setPadding(false);
-		toolbar.setSpacing(true);
-		toolbar.setDefaultVerticalComponentAlignment(Alignment.STRETCH);
-		toolbar.setFlexGrow(1, filter);
-		toolbar.setFlexGrow(0, rb);
+	toolbar = new HorizontalLayout(filter, rb);
+	toolbar.setMargin(false);
+	toolbar.setPadding(false);
+	toolbar.setSpacing(true);
+	toolbar.setDefaultVerticalComponentAlignment(Alignment.STRETCH);
+	toolbar.setFlexGrow(1, filter);
+	toolbar.setFlexGrow(0, rb);
 
-		grid.setWidthFull();
-		grid.setMultiSort(true);
-		grid.focus();
+	grid.setWidthFull();
+	grid.setMultiSort(true);
+	grid.focus();
 
-		panelFields.add(toolbar, grid);
-		panelFields.setAlignItems(Alignment.STRETCH);
-		panelFields.setFlexGrow(1, grid);
-		panelFields.setMargin(true);
-		panelFields.setPadding(false);
-		panelFields.setSpacing(true);
-		panelFields.setSizeFull();
-		panelFields.getStyle().set(Props.MARGIN, Props.EM_0_5);
-		panelFields.getStyle().set(Props.PADDING, null);
-		add(panelFields);
-		setSizeFull();
-		setMaxWidth(getWidth());
-		setMinWidth(getWidth());
+	panelFields.add(toolbar, grid);
+	panelFields.setAlignItems(Alignment.STRETCH);
+	panelFields.setFlexGrow(1, grid);
+	panelFields.setMargin(true);
+	panelFields.setPadding(false);
+	panelFields.setSpacing(true);
+	panelFields.setSizeFull();
+	panelFields.getStyle().set(Props.MARGIN, Props.EM_0_5);
+	panelFields.getStyle().set(Props.PADDING, null);
+	add(panelFields);
+	setSizeFull();
+	setMaxWidth(getWidth());
+	setMinWidth(getWidth());
 
-		userDataProvider = DataProvider.fromFilteringCallbacks(
-				query -> this.usersService.getQueriedUsersbyFilter(query,
-						UserFilter.builder()
-								.roles(filterRoles)
-								.username(filter.getValue()).build()),
-				query -> this.usersService.getQueriedUsersByFilterCount(query,
-						UserFilter.builder()
-								.roles(filterRoles)
-								.username(filter.getValue()).build()));
+	userDataProvider = DataProvider.fromFilteringCallbacks(
+		query -> this.usersService.getQueriedUsersbyFilter(query,
+			UserFilter.builder()
+				.roles(filterRoles)
+				.username(filter.getValue()).build()),
+		query -> this.usersService.getQueriedUsersByFilterCount(query,
+			UserFilter.builder()
+				.roles(filterRoles)
+				.username(filter.getValue()).build()));
 
-		grid.setDataProvider(userDataProvider.withConfigurableFilter());
+	grid.setDataProvider(userDataProvider.withConfigurableFilter());
 
-		filter.addValueChangeListener(e -> grid.getDataProvider().refreshAll());
-	}
+	filter.addValueChangeListener(e -> grid.getDataProvider().refreshAll());
+    }
 
-	/**
-	 * Builds the user states column.
-	 *
-	 * @return the component renderer
-	 */
-	private ComponentRenderer<Div, User> buildUserStatesColumn() {
-		return new ComponentRenderer<>(user -> {
-			Icon icon = new Icon();
-			if (user.getEnabled()) {
-				icon = VaadinIcon.CHECK.create();
-				icon.setColor("green");
-			} else {
-				icon = VaadinIcon.CLOSE.create();
-				icon.setColor("red");
-			}
-			icon.setSize(Props.EM_01);
-			return new Div(icon);
-		});
-	}
+    /**
+     * Builds the user states column.
+     *
+     * @return the component renderer
+     */
+    private ComponentRenderer<Div, User> buildUserStatesColumn() {
+	return new ComponentRenderer<>(user -> {
+	    Icon icon = new Icon();
+	    if (user.getEnabled()) {
+		icon = VaadinIcon.CHECK.create();
+		icon.setColor("green");
+	    } else {
+		icon = VaadinIcon.CLOSE.create();
+		icon.setColor("red");
+	    }
+	    icon.setSize(Props.EM_01);
+	    return new Div(icon);
+	});
+    }
 
-	/**
-	 * Builds the users role column.
-	 *
-	 * @return the component renderer
-	 */
-	private ComponentRenderer<Div, User> buildUsersRoleColumn() {
-		return new ComponentRenderer<>(user -> {
-			Div div = new Div();
-			if (user == null) {
-				return div;
-			}
-			Set<Role> roles = user.getRoles();
+    /**
+     * Builds the users role column.
+     *
+     * @return the component renderer
+     */
+    private ComponentRenderer<Div, User> buildUsersRoleColumn() {
+	return new ComponentRenderer<>(user -> {
+	    Div div = new Div();
+	    if (user == null) {
+		return div;
+	    }
+	    Set<Role> roles = user.getRoles();
 
-			StringBuilder sb = new StringBuilder("[ ");
+	    StringBuilder sb = new StringBuilder("[ ");
 
-			if (roles != null && !roles.isEmpty()) {
-				Icon icon;
-				for (Role r : roles) {
-					if (r != null) {
-						sb.append(getTranslation(r.getRoleName())).append(" ");
-						icon = r.getIcon().createIcon();
-						icon.setSize(Props.EM_0_85);
-						icon.getStyle().set(Props.MARGIN, Props.EM_0_1);
-						div.add(icon);
-					}
-				}
-				div.setTitle(sb.append("]").toString());
-			}
-			return div;
-		});
-	}
-
-	/**
-	 * Show users.
-	 *
-	 * @param name the name
-	 */
-	private void showUsers(String name) {
-		if (name != null) {
-			if (name.isEmpty()) {
-				grid.setItems(usersService.getByRoles(filterRoles));
-			} else {
-				grid.setItems(usersService.getByRolesAndFindByName(filterRoles, name));
-			}
+	    if (roles != null && !roles.isEmpty()) {
+		Icon icon;
+		for (Role r : roles) {
+		    if (r != null) {
+			sb.append(getTranslation(r.getRoleName())).append(" ");
+			icon = r.getIcon().createIcon();
+			icon.setSize(Props.EM_0_85);
+			icon.getStyle().set(Props.MARGIN, Props.EM_0_1);
+			div.add(icon);
+		    }
 		}
-	}
+		div.setTitle(sb.append("]").toString());
+	    }
+	    return div;
+	});
+    }
 
-	/**
-	 * Show filtered users.
-	 */
-	private void showFilteredUsers() {
-		grid.getDataProvider().refreshAll();
+    /**
+     * Show users.
+     *
+     * @param name the name
+     */
+    private void showUsers(String name) {
+	if (name != null) {
+	    if (name.isEmpty()) {
+		grid.setItems(usersService.getByRoles(filterRoles));
+	    } else {
+		grid.setItems(usersService.getByRolesAndFindByName(filterRoles, name));
+	    }
 	}
+    }
 
-	/**
-	 * Inits the.
-	 */
-	@PostConstruct
-	private void init() {
-		showFilteredUsers();
-	}
+    /**
+     * Show filtered users.
+     */
+    private void showFilteredUsers() {
+	grid.getDataProvider().refreshAll();
+    }
 
-	/**
-	 * Gets the binder.
-	 *
-	 * @return the binder
-	 */
-	@Override
-	public Binder<T> getBinder() {
-		return binder;
-	}
+    /**
+     * Inits the.
+     */
+    @PostConstruct
+    private void init() {
+	showFilteredUsers();
+    }
 
-	/**
-	 * Checks if is read only mode.
-	 *
-	 * @return the readOnlyMode
-	 */
-	public boolean isReadOnlyMode() {
-		return readOnlyMode;
-	}
+    /**
+     * Gets the binder.
+     *
+     * @return the binder
+     */
+    @Override
+    public Binder<T> getBinder() {
+	return binder;
+    }
 
-	/**
-	 * Sets the read only mode.
-	 *
-	 * @param readOnlyMode the readOnlyMode to set
-	 */
-	public void setReadOnlyMode(boolean readOnlyMode) {
-		this.readOnlyMode = readOnlyMode;
-		if (binder != null) {
-			binder.setReadOnly(readOnlyMode);
-		}
-	}
+    /**
+     * Checks if is read only mode.
+     *
+     * @return the readOnlyMode
+     */
+    public boolean isReadOnlyMode() {
+	return readOnlyMode;
+    }
 
-	/**
-	 * Collect operation data.
-	 *
-	 * @return the object
-	 */
-	@Override
-	public Object collectOperationData() {
-		selectedUsers = grid.getSelectedItems();
-		return selectedUsers;
+    /**
+     * Sets the read only mode.
+     *
+     * @param readOnlyMode the readOnlyMode to set
+     */
+    public void setReadOnlyMode(boolean readOnlyMode) {
+	this.readOnlyMode = readOnlyMode;
+	if (binder != null) {
+	    binder.setReadOnly(readOnlyMode);
 	}
+    }
 
-	/**
-	 * Distribute operation data.
-	 *
-	 * @param operationData the operation data
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void distributeOperationData(Object operationData) {
-		selectedUsers = (Set<User>) operationData;
-	}
+    /**
+     * Collect operation data.
+     *
+     * @return the object
+     */
+    @Override
+    public Object collectOperationData() {
+	selectedUsers = grid.getSelectedItems();
+	return selectedUsers;
+    }
+
+    /**
+     * Distribute operation data.
+     *
+     * @param operationData the operation data
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void distributeOperationData(Object operationData) {
+	selectedUsers = (Set<User>) operationData;
+    }
 
 }

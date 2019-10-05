@@ -26,27 +26,27 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @Route(value = AppURL.ADMINS_ALL, layout = MainView.class)
 public class AllAdminsManager extends AbstractSelectedUsersManager<AllAdminsGridViewer> implements HasDynamicTitle {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 6413236308489307604L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6413236308489307604L;
 
-	/**
-	 * Instantiates a new all admins manager.
-	 *
-	 * @param allAdminsGridViewer the all admins grid viewer
-	 * @param userEditor          the user editor
-	 */
-	@Autowired
-	public AllAdminsManager(AllAdminsGridViewer allAdminsGridViewer, UserEditor userEditor) {
-		super(allAdminsGridViewer, userEditor);
-	}
+    /**
+     * Instantiates a new all admins manager.
+     *
+     * @param allAdminsGridViewer the all admins grid viewer
+     * @param userEditor          the user editor
+     */
+    @Autowired
+    public AllAdminsManager(AllAdminsGridViewer allAdminsGridViewer, UserEditor userEditor) {
+	super(allAdminsGridViewer, userEditor);
+    }
 
-	/**
-	 * Gets the page title.
-	 *
-	 * @return the page title
-	 */
-	@Override
-	public String getPageTitle() {
-		return getTranslation(AppTitleMsg.APP_TITLE_USERS_ADMINS, UI.getCurrent().getLocale());
-	}
+    /**
+     * Gets the page title.
+     *
+     * @return the page title
+     */
+    @Override
+    public String getPageTitle() {
+	return getTranslation(AppTitleMsg.APP_TITLE_USERS_ADMINS, UI.getCurrent().getLocale());
+    }
 }

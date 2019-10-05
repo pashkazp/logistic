@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface AppTitleGen {
-	String getPageTitle() default "application.title";
-	// TODO Make AppTitleGen annotation
+    String getPageTitle() default "application.title";
+    // TODO Make AppTitleGen annotation
 }

@@ -21,17 +21,17 @@ import ua.com.sipsoft.utils.security.Role;
 @SpringComponent
 public class AllAdminsGridViewer extends AbstractSelectedUsersGridViewer {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -755974581926270912L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -755974581926270912L;
 
-	/**
-	 * Instantiates a new all admins grid viewer.
-	 *
-	 * @param usersService the users service
-	 */
-	@Autowired
-	public AllAdminsGridViewer(UsersService usersService) {
-		super(usersService, Arrays.asList(Role.ROLE_ADMIN));
-	}
+    /**
+     * Instantiates a new all admins grid viewer.
+     *
+     * @param usersService the users service
+     */
+    @Autowired
+    public AllAdminsGridViewer(UsersService usersService) {
+	super(usersService, Arrays.asList(Role.ROLE_ADMIN));
+    }
 
 }

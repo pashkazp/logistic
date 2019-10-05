@@ -18,22 +18,22 @@ import ua.com.sipsoft.model.entity.user.User;
 @EqualsAndHashCode
 public class FacilitiesFilter {
 
-	/** The name. */
-	@Builder.Default
-	private String name = null;
+    /** The name. */
+    @Builder.Default
+    private String name = null;
 
-	/** The users. */
-	@Builder.Default
-	private Collection<User> users = null;
+    /** The users. */
+    @Builder.Default
+    private Collection<User> users = null;
 
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
-	@Override
-	public String toString() {
-		return String.format("FacilitiesFilter [name=\"%s\"]", name);
-	}
+    /**
+     * To string.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString() {
+	return String.format("FacilitiesFilter [name=\"%s\"]", name);
+    }
 
 }

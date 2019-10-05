@@ -25,29 +25,29 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @SpringComponent
 @Route(value = AppURL.PRODUCTOPERS_ALL, layout = MainView.class)
 public class AllProductOpersManager extends AbstractSelectedUsersManager<AllProductOpersGridViewer>
-		implements HasDynamicTitle {
+	implements HasDynamicTitle {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -6710377991849177825L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6710377991849177825L;
 
-	/**
-	 * Instantiates a new all productOpers manager.
-	 *
-	 * @param allProductOpersGridViewer the all productOpers grid viewer
-	 * @param userEditor                the user editor
-	 */
-	@Autowired
-	public AllProductOpersManager(AllProductOpersGridViewer allProductOpersGridViewer, UserEditor userEditor) {
-		super(allProductOpersGridViewer, userEditor);
-	}
+    /**
+     * Instantiates a new all productOpers manager.
+     *
+     * @param allProductOpersGridViewer the all productOpers grid viewer
+     * @param userEditor                the user editor
+     */
+    @Autowired
+    public AllProductOpersManager(AllProductOpersGridViewer allProductOpersGridViewer, UserEditor userEditor) {
+	super(allProductOpersGridViewer, userEditor);
+    }
 
-	/**
-	 * Gets the page title.
-	 *
-	 * @return the page title
-	 */
-	@Override
-	public String getPageTitle() {
-		return getTranslation(AppTitleMsg.APP_TITLE_USERS_PRODUCTOPERS, UI.getCurrent().getLocale());
-	}
+    /**
+     * Gets the page title.
+     *
+     * @return the page title
+     */
+    @Override
+    public String getPageTitle() {
+	return getTranslation(AppTitleMsg.APP_TITLE_USERS_PRODUCTOPERS, UI.getCurrent().getLocale());
+    }
 }

@@ -29,97 +29,108 @@ import ua.com.sipsoft.utils.messages.LoginMsg;
 @SpringComponent
 @Route(AppURL.LOGIN_URL)
 public class LoginView extends VerticalLayout
-		implements HasDynamicTitle, LocaleChangeObserver, AfterNavigationObserver {
+	implements HasDynamicTitle, LocaleChangeObserver, AfterNavigationObserver {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -1714117238446328956L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1714117238446328956L;
 
-	/** The login. */
-	private LoginOverlay login = new LoginOverlay();
+    /** The login. */
+    private LoginOverlay login = new LoginOverlay();
 
-	/**
-	 * Gets the page title.
-	 *
-	 * @return the page title
-	 */
-	@Override
-	public String getPageTitle() {
-		return getTranslation(AppTitleMsg.APP_TITLE_LOGIN, UI.getCurrent().getLocale());
+    /**
+     * Gets the page title.
+     *
+     * @return the page title
+     */
+    @Override
+    public String getPageTitle() {
+	return getTranslation(AppTitleMsg.APP_TITLE_LOGIN, UI.getCurrent().getLocale());
+    }
+
+    /**
+     * Instantiates a new login view.
+     */
+    public LoginView() {
+	login.setI18n(createTranslatedI18N());
+	login.setForgotPasswordButtonVisible(true);
+	login.setAction("login");
+	login.addForgotPasswordListener(e -> extracted());
+	login.setOpened(true);
+	getElement().appendChild(login.getElement());
+    }
+
+    private void extracted() {
+	// getElement().removeChild(login.getElement());
+	login.setOpened(false);
+	getUI().ifPresent(ui -> ui.navigate(AppURL.LOGIN_REGISTRATION));
+    }
+
+    /**
+     * Creates the translated I 18 N.
+     *
+     * @return the login I 18 n
+     */
+    private LoginI18n createTranslatedI18N() {
+	LoginI18n i18n = LoginI18n.createDefault();
+	i18n.setHeader(new LoginI18n.Header());
+	i18n.setForm(new LoginI18n.Form());
+
+	i18n.getHeader().setTitle(getTranslation(LoginMsg.MY_APP_NAME));
+	i18n.getHeader().setDescription(getTranslation(LoginMsg.HEADER_DESCRIPTION));
+	i18n.getForm().setSubmit(getTranslation(LoginMsg.SIGNIN));
+	i18n.getForm().setTitle(getTranslation(LoginMsg.LOGIN_TITLE));
+	i18n.getForm().setUsername(getTranslation(LoginMsg.USERNAME));
+	i18n.getForm().setPassword(getTranslation(LoginMsg.PASSWORD));
+	i18n.getForm().setForgotPassword(getTranslation(LoginMsg.FORGOT_SIGN));
+	i18n.getErrorMessage().setTitle(getTranslation(LoginMsg.LOGIN_ERROR_TITLE));
+	i18n.getErrorMessage().setMessage(getTranslation(LoginMsg.LOGIN_ERROR));
+	i18n.setAdditionalInformation(getTranslation(LoginMsg.LOGIN_INFO));
+	return i18n;
+    }
+
+    /**
+     * Locale change.
+     *
+     * @param event the event
+     */
+    @Override
+    public void localeChange(LocaleChangeEvent event) {
+	login.setI18n(createTranslatedI18N());
+    }
+
+    /**
+     * After navigation.
+     *
+     * @param event the event
+     */
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+	if (!login.isOpened()) {
+	    login.setOpened(true);
 	}
+	login.setError(
+		event.getLocation().getQueryParameters().getParameters().containsKey("error"));
+    }
 
+    /** The logistic theme style. */
+    @Value("${application.theme.style}")
+    private String logisticThemeStyle;
+
+    /**
+     * On attach.
+     *
+     * @param attachEvent the attach event
+     */
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+	super.onAttach(attachEvent);
 	/**
-	 * Instantiates a new login view.
+	 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
+	 * which will appear in the wrong color making them seemingly invisible. Instead
+	 * do it the following way as long as the issue is not solved
+	 * (https://github.com/vaadin/flow/issues/4765)
 	 */
-	public LoginView() {
-		login.setI18n(createTranslatedI18N());
-		login.getElement().setAttribute("no-forgot-password", true);
-		login.setAction("login");
-		login.setOpened(true);
-		getElement().appendChild(login.getElement());
-	}
-
-	/**
-	 * Creates the translated I 18 N.
-	 *
-	 * @return the login I 18 n
-	 */
-	private LoginI18n createTranslatedI18N() {
-		LoginI18n i18n = LoginI18n.createDefault();
-		i18n.setHeader(new LoginI18n.Header());
-		i18n.setForm(new LoginI18n.Form());
-
-		i18n.getHeader().setTitle(getTranslation(LoginMsg.MY_APP_NAME));
-		// i18n.getHeader().setDescription("");
-		i18n.getForm().setSubmit(getTranslation(LoginMsg.LOGIN));
-		i18n.getForm().setTitle(getTranslation(LoginMsg.LOGIN));
-		i18n.getForm().setUsername(getTranslation(LoginMsg.USERNAME));
-		i18n.getForm().setPassword(getTranslation(LoginMsg.PASSWORD));
-		i18n.getErrorMessage().setTitle(getTranslation(LoginMsg.LOGIN_ERROR_TITLE));
-		i18n.getErrorMessage().setMessage(getTranslation(LoginMsg.LOGIN_ERROR));
-		i18n.setAdditionalInformation(getTranslation(LoginMsg.LOGIN_INFO));
-		return i18n;
-	}
-
-	/**
-	 * Locale change.
-	 *
-	 * @param event the event
-	 */
-	@Override
-	public void localeChange(LocaleChangeEvent event) {
-		login.setI18n(createTranslatedI18N());
-	}
-
-	/**
-	 * After navigation.
-	 *
-	 * @param event the event
-	 */
-	@Override
-	public void afterNavigation(AfterNavigationEvent event) {
-		login.setError(
-				event.getLocation().getQueryParameters().getParameters().containsKey("error"));
-	}
-
-	/** The logistic theme style. */
-	@Value("${application.theme.style}")
-	private String logisticThemeStyle;
-
-	/**
-	 * On attach.
-	 *
-	 * @param attachEvent the attach event
-	 */
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		super.onAttach(attachEvent);
-		/**
-		 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
-		 * which will appear in the wrong color making them seemingly invisible. Instead
-		 * do it the following way as long as the issue is not solved
-		 * (https://github.com/vaadin/flow/issues/4765)
-		 */
-		getUI().get().getPage()
-				.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")");
-	}
+	getUI().get().getPage()
+		.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")");
+    }
 }

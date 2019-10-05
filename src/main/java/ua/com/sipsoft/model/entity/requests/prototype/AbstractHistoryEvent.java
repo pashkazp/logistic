@@ -33,77 +33,77 @@ import ua.com.sipsoft.model.entity.user.User;
 @MappedSuperclass
 public abstract class AbstractHistoryEvent implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 9047035523222681687L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9047035523222681687L;
 
-	/** The id. */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    /** The id. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	/** The version. */
-	@Version
-	@Column(columnDefinition = "integer DEFAULT 0", nullable = false)
-	private Long version = 0L;
+    /** The version. */
+    @Version
+    @Column(columnDefinition = "integer DEFAULT 0", nullable = false)
+    private Long version = 0L;
 
-	/** The creation date. */
-	@Column(nullable = false)
-	private LocalDateTime creationDate = LocalDateTime.now();
+    /** The creation date. */
+    @Column(nullable = false)
+    private LocalDateTime creationDate = LocalDateTime.now();
 
-	/** The description. */
-	@Column(nullable = false, length = 1000)
-	private String description = "";
+    /** The description. */
+    @Column(nullable = false, length = 1000)
+    private String description = "";
 
-	/** The author. */
-	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-	private User author;
+    /** The author. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    private User author;
 
-	/**
-	 * Instantiates a new abstract history event.
-	 *
-	 * @param description  the {@link String}
-	 * @param author       the {@link User}
-	 * @param creationDate the creation {@link LocalDateTime}
-	 */
-	public AbstractHistoryEvent(@NonNull String description, @NonNull User author, LocalDateTime creationDate) {
-		super();
-		this.description = description;
-		this.author = author;
-		if (creationDate == null) {
-			creationDate = LocalDateTime.now();
-		}
-		this.creationDate = creationDate;
+    /**
+     * Instantiates a new abstract history event.
+     *
+     * @param description  the {@link String}
+     * @param author       the {@link User}
+     * @param creationDate the creation {@link LocalDateTime}
+     */
+    public AbstractHistoryEvent(@NonNull String description, @NonNull User author, LocalDateTime creationDate) {
+	super();
+	this.description = description;
+	this.author = author;
+	if (creationDate == null) {
+	    creationDate = LocalDateTime.now();
 	}
+	this.creationDate = creationDate;
+    }
 
-	/**
-	 * Equals.
-	 *
-	 * @param obj the obj
-	 * @return true, if successful
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof AbstractHistoryEvent)) {
-			return false;
-		}
-		AbstractHistoryEvent other = (AbstractHistoryEvent) obj;
-		if (this.id == null && other.id == null) {
-			return false;
-		}
-		return Objects.equals(id, other.id);
+    /**
+     * Equals.
+     *
+     * @param obj the obj
+     * @return true, if successful
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
 	}
+	if (!(obj instanceof AbstractHistoryEvent)) {
+	    return false;
+	}
+	AbstractHistoryEvent other = (AbstractHistoryEvent) obj;
+	if (this.id == null && other.id == null) {
+	    return false;
+	}
+	return Objects.equals(id, other.id);
+    }
 
-	/**
-	 * Hash code.
-	 *
-	 * @return the int
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    /**
+     * Hash code.
+     *
+     * @return the int
+     */
+    @Override
+    public int hashCode() {
+	return Objects.hash(id);
+    }
 
 }

@@ -25,17 +25,17 @@ import ua.com.sipsoft.model.entity.user.User;
 @Table(name = "courier_request_events")
 public class CourierRequestEvent extends AbstractHistoryEvent implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -6036932028289544332L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6036932028289544332L;
 
-	/**
-	 * Instantiates a new courier request event.
-	 *
-	 * @param description      the {@linkplain String}
-	 * @param creationDateTime the {@linkplain LocalDateTime}
-	 * @param author           the {@linkplain User}
-	 */
-	public CourierRequestEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
-		super(description, author, creationDateTime);
-	}
+    /**
+     * Instantiates a new courier request event.
+     *
+     * @param description      the {@linkplain String}
+     * @param creationDateTime the {@linkplain LocalDateTime}
+     * @param author           the {@linkplain User}
+     */
+    public CourierRequestEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
+	super(description, author, creationDateTime);
+    }
 }

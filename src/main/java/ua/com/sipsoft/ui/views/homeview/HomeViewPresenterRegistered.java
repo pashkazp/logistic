@@ -21,15 +21,15 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @SpringComponent
 public class HomeViewPresenterRegistered extends HorizontalLayout {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -7900942361709596270L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7900942361709596270L;
 
-	/**
-	 * Instantiates a new home view presenter for User Registered.
-	 */
-	public HomeViewPresenterRegistered() {
-		add(new Paragraph(SecurityUtils.getUser().getUsername()
-				+ ", у вас недостатньо прав для здійснення будь яких операцій. Зверніться до менеджера щоб вирішити це питанння."));
-	}
+    /**
+     * Instantiates a new home view presenter for User Registered.
+     */
+    public HomeViewPresenterRegistered() {
+	add(new Paragraph(SecurityUtils.getUser().getUsername()
+		+ ", у вас недостатньо прав для здійснення будь яких операцій. Зверніться до менеджера щоб вирішити це питанння."));
+    }
 
 }

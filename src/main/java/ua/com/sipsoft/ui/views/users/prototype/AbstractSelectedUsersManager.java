@@ -19,61 +19,61 @@ import ua.com.sipsoft.utils.Props;
 @Slf4j
 public class AbstractSelectedUsersManager<T extends AbstractSelectedUsersGridViewer> extends VerticalLayout {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 3120440143379685008L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3120440143379685008L;
 
-	/** The background. */
-	private SplitLayout background;
+    /** The background. */
+    private SplitLayout background;
 
-	/** The user editor. */
-	private UserEditor userEditor;
+    /** The user editor. */
+    private UserEditor userEditor;
 
-	/** The selected users grid viewer. */
-	private T selectedUsersGridViewer;
+    /** The selected users grid viewer. */
+    private T selectedUsersGridViewer;
 
-	/**
-	 * Instantiates a new abstract selected users manager.
-	 *
-	 * @param selectedUsersGridViewer the selected users grid viewer
-	 * @param userEditor              the user editor
-	 */
-	public AbstractSelectedUsersManager(T selectedUsersGridViewer, UserEditor userEditor) {
-		this.userEditor = userEditor;
-		this.selectedUsersGridViewer = selectedUsersGridViewer;
-		background = new SplitLayout();
+    /**
+     * Instantiates a new abstract selected users manager.
+     *
+     * @param selectedUsersGridViewer the selected users grid viewer
+     * @param userEditor              the user editor
+     */
+    public AbstractSelectedUsersManager(T selectedUsersGridViewer, UserEditor userEditor) {
+	this.userEditor = userEditor;
+	this.selectedUsersGridViewer = selectedUsersGridViewer;
+	background = new SplitLayout();
 
-		selectedUsersGridViewer.getUsersGrid().addSelectionListener(
-				event -> this.showDetails(event.getFirstSelectedItem().stream().findFirst().orElse(null)));
-		userEditor.setChangeHandler(selectedUsersGridViewer.getRefreshChangeHandler());
-		userEditor.setVisible(false);
+	selectedUsersGridViewer.getUsersGrid().addSelectionListener(
+		event -> this.showDetails(event.getFirstSelectedItem().stream().findFirst().orElse(null)));
+	userEditor.setChangeHandler(selectedUsersGridViewer.getRefreshChangeHandler());
+	userEditor.setVisible(false);
 
-		background.addToPrimary(selectedUsersGridViewer);
-		background.addToSecondary(userEditor);
+	background.addToPrimary(selectedUsersGridViewer);
+	background.addToSecondary(userEditor);
 
-		background.getStyle().set(Props.MARGIN, Props.EM_0_5);
-		background.getStyle().set("padding", null);
+	background.getStyle().set(Props.MARGIN, Props.EM_0_5);
+	background.getStyle().set("padding", null);
 
-		add(background);
-		setAlignItems(Alignment.STRETCH);
-		setFlexGrow(1, background);
-		setSizeFull();
-		setMargin(false);
-		setPadding(false);
-		setSpacing(true);
+	add(background);
+	setAlignItems(Alignment.STRETCH);
+	setFlexGrow(1, background);
+	setSizeFull();
+	setMargin(false);
+	setPadding(false);
+	setSpacing(true);
+    }
+
+    /**
+     * Show details.
+     *
+     * @param user the user
+     */
+    public void showDetails(User user) {
+	log.debug("showDetail swithch visibility of UserEditor by user: {}", user);
+	if (user != null) {
+	    userEditor.setVisible(true);
+	    userEditor.editUser(user);
+	} else {
+	    userEditor.setVisible(false);
 	}
-
-	/**
-	 * Show details.
-	 *
-	 * @param user the user
-	 */
-	public void showDetails(User user) {
-		log.debug("showDetail swithch visibility of UserEditor by user: {}", user);
-		if (user != null) {
-			userEditor.setVisible(true);
-			userEditor.editUser(user);
-		} else {
-			userEditor.setVisible(false);
-		}
-	}
+    }
 }

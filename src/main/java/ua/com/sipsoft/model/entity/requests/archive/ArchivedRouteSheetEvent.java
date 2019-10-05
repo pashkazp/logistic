@@ -26,19 +26,19 @@ import ua.com.sipsoft.model.entity.user.User;
 @Slf4j
 public class ArchivedRouteSheetEvent extends AbstractHistoryEvent implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 3401875132999941972L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3401875132999941972L;
 
-	/**
-	 * Instantiates a new archived route sheet event.
-	 *
-	 * @param description      the description
-	 * @param creationDateTime the creation date time
-	 * @param author           the author
-	 */
-	public ArchivedRouteSheetEvent(String description, LocalDateTime creationDateTime, User author) {
-		super(description, author, creationDateTime);
-		log.info("Instantiates a new archived route sheet event by author '{}' {} '{}'", author.getUsername(),
-				creationDateTime, description);
-	}
+    /**
+     * Instantiates a new archived route sheet event.
+     *
+     * @param description      the description
+     * @param creationDateTime the creation date time
+     * @param author           the author
+     */
+    public ArchivedRouteSheetEvent(String description, LocalDateTime creationDateTime, User author) {
+	super(description, author, creationDateTime);
+	log.info("Instantiates a new archived route sheet event by author '{}' {} '{}'", author.getUsername(),
+		creationDateTime, description);
+    }
 }

@@ -16,14 +16,14 @@ import ua.com.sipsoft.model.entity.common.Facility;
 @Repository
 public interface FacilityRepository extends JpaRepository<Facility, Long> {
 
-	/**
-	 * Gets the by name.
-	 *
-	 * @param name the name
-	 * @param pageable the pageable
-	 * @return the by name
-	 */
-	@Query("from Facility f " + "where LOWER ( f.name ) " + " like concat('%',:name,'%') ")
-	List<Facility> getByName(String name, Pageable pageable);
+    /**
+     * Gets the by name.
+     *
+     * @param name     the name
+     * @param pageable the pageable
+     * @return the by name
+     */
+    @Query("from Facility f " + "where LOWER ( f.name ) " + " like concat('%',:name,'%') ")
+    List<Facility> getByName(String name, Pageable pageable);
 
 }

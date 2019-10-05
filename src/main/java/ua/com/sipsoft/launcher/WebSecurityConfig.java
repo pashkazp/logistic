@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,85 +27,97 @@ import ua.com.sipsoft.utils.AppURL;
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	/** The user details service. */
-	@Autowired
-	private UserDetailsService userDetailsService;
+    /** The user details service. */
+    @Autowired
+    private UserDetailsService userDetailsService;
 
-	/**
-	 * Authentication provider.
-	 *
-	 * @return the authentication provider
-	 */
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		log.info("Create AuthenticationProvider");
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(userDetailsService);
-		provider.setPasswordEncoder(new BCryptPasswordEncoder(10));
-		return provider;
-	}
+    /**
+     * Authentication provider.
+     *
+     * @return the authentication provider
+     */
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+	log.info("Create AuthenticationProvider");
+	DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+	provider.setUserDetailsService(userDetailsService);
+	provider.setPasswordEncoder(passwordEncoder());
+	return provider;
+    }
 
-	/**
-	 * Configure.
-	 *
-	 * @param http the http
-	 * @throws Exception the exception
-	 */
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		log.info("Configure HttpSecurity");
-		// @formatter:off
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+	return new BCryptPasswordEncoder(10);
+    }
 
-		http
-				.csrf().disable() // CSRF handled by Vaadin
-				.exceptionHandling().accessDeniedPage("/" + AppURL.ACCESS_DENIED_URL)
-				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/" + AppURL.LOGIN_URL))
-				.and()
-				.authorizeRequests()
-				// allow Vaadin URLs without authentication
-				.regexMatchers(
-						// Vaadin Flow static resources
-						"/VAADIN/.*",
+    /**
+     * Configure.
+     *
+     * @param http the http
+     * @throws Exception the exception
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+	log.info("Configure HttpSecurity");
+	// @formatter:off
 
-						"/" + AppURL.LOGIN_URL + ".*",
-						"/" + AppURL.ACCESS_DENIED_URL + ".*",
+	http
+		.csrf().disable() // CSRF handled by Vaadin
+		.exceptionHandling().accessDeniedPage("/" + AppURL.ACCESS_DENIED_URL)
+		.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/" + AppURL.LOGIN_URL))
+		.and()
+		.authorizeRequests()
+		// allow Vaadin URLs without authentication
+		.regexMatchers(
+			// Vaadin Flow static resources
+			"/VAADIN/.*",
+			"/HEARTBEAT/.*",
+			"/UIDL/.*",
+			"/resources/.*",
+			"/PUSH/.*",
 
-						// the standard favicon URI
-						"/favicon.ico",
+			"/" + AppURL.LOGIN_URL + ".*",
+			"/" + AppURL.ACCESS_DENIED_URL + ".*",
+			"/" + AppURL.LOGIN_REGISTRATION + ".*",
+			"/" + AppURL.REGISTRATION_CONFIRM + ".*",
+			"/" + AppURL.REGISTRATION_FORGOT + ".*",
 
-						"/images/.*",
+			// the standard favicon URI
+			"/favicon.ico",
 
-						// the robots exclusion standard
-						"/robots.txt",
+			"/images/.*",
 
-						// web application manifest
-						"/manifest.webmanifest",
-						"/sw.js",
-						"/offline-page.html",
+			// the robots exclusion standard
+			"/robots.txt",
 
-						// (production mode) static resources //
-						"/frontend-es5/*",
-						"/frontend-es6/*",
+			// web application manifest
+			"/manifest.webmanifest",
+			"/sw.js",
+			"/offline-page.html",
 
-						// (development mode) static resources
-						"/frontend/.*",
+			// (production mode) static resources //
+			"/frontend-es5/.*",
+			"/frontend-es6/.*",
 
-						// (development mode) webjars
-						"/webjars/*"
+			// (development mode) static resources
+			"/frontend/.*",
 
-				)
-				.permitAll()
-				.regexMatchers(HttpMethod.POST, "/\\?v-r=.*").permitAll()
-				// deny other URLs until authenticated
-				.antMatchers("/**").fullyAuthenticated()
-				.and()
-				.formLogin()
-				.loginPage("/" + AppURL.LOGIN_URL)
-				.defaultSuccessUrl("/" + AppURL.HOME_URL, true)
-				.and()
-				.logout()
-				.logoutUrl("/" + AppURL.LOGOUT_URL)
-				.logoutSuccessUrl("/" + AppURL.LOGIN_URL).permitAll();
-	}
+			// (development mode) webjars
+			"/webjars/.*"
+
+		)
+		.permitAll()
+		.regexMatchers(HttpMethod.POST, "/\\?v-r=.*").permitAll()
+		// deny other URLs until authenticated
+		.antMatchers("/**").fullyAuthenticated()
+		.and()
+		.formLogin()
+		.loginPage("/" + AppURL.LOGIN_URL)
+		.defaultSuccessUrl("/" + AppURL.HOME_URL, true)
+		.and()
+		.logout()
+		.logoutUrl("/" + AppURL.LOGOUT_URL)
+		.logoutSuccessUrl("/" + AppURL.LOGIN_URL).permitAll();
+    }
 
 }

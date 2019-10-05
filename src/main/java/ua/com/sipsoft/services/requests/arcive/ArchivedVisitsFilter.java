@@ -17,27 +17,27 @@ import ua.com.sipsoft.utils.CourierVisitState;
 
 public class ArchivedVisitsFilter {
 
-	/** The description. */
-	@Builder.Default
-	private String description = null;
+    /** The description. */
+    @Builder.Default
+    private String description = null;
 
-	/** The sheet id. */
-	@Builder.Default
-	private Long sheetId = null;
+    /** The sheet id. */
+    @Builder.Default
+    private Long sheetId = null;
 
-	/** The courier visit state. */
-	@Builder.Default
-	private CourierVisitState courierVisitState = null;
+    /** The courier visit state. */
+    @Builder.Default
+    private CourierVisitState courierVisitState = null;
 
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
-	@Override
-	public String toString() {
-		return "ArchivedVisitsFilter [description=\"" + description + "\", sheetId=" + sheetId + ", courierVisitState="
-				+ courierVisitState + "]";
-	}
+    /**
+     * To string.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString() {
+	return "ArchivedVisitsFilter [description=\"" + description + "\", sheetId=" + sheetId + ", courierVisitState="
+		+ courierVisitState + "]";
+    }
 
 }

@@ -6,11 +6,11 @@ package ua.com.sipsoft.model.entity.persistent.prototype;
  */
 public interface PersistentObject {
 
-	public String getId();
+    public String getId();
 
-	public void setId(String id);
+    public void setId(String id);
 
-	public Integer getVersion();
+    public Integer getVersion();
 
-	public void setVersion(Integer version);
+    public void setVersion(Integer version);
 }

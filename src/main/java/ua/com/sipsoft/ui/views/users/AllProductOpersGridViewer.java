@@ -21,17 +21,17 @@ import ua.com.sipsoft.utils.security.Role;
 //@Slf4j
 public class AllProductOpersGridViewer extends AbstractSelectedUsersGridViewer {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 122167612532264708L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 122167612532264708L;
 
-	/**
-	 * Instantiates a new all productOpers grid viewer.
-	 *
-	 * @param usersService the users service
-	 */
-	@Autowired
-	public AllProductOpersGridViewer(UsersService usersService) {
-		super(usersService, Arrays.asList(Role.ROLE_PRODUCTOPER));
-	}
+    /**
+     * Instantiates a new all productOpers grid viewer.
+     *
+     * @param usersService the users service
+     */
+    @Autowired
+    public AllProductOpersGridViewer(UsersService usersService) {
+	super(usersService, Arrays.asList(Role.ROLE_PRODUCTOPER));
+    }
 
 }

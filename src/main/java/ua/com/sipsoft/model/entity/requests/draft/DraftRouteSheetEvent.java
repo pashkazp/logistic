@@ -25,17 +25,17 @@ import ua.com.sipsoft.model.entity.user.User;
 @Table(name = "draft_route_sheet_events")
 public class DraftRouteSheetEvent extends AbstractHistoryEvent implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 6690214330269697310L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6690214330269697310L;
 
-	/**
-	 * Instantiates a new draft route sheet event.
-	 *
-	 * @param description      the description
-	 * @param creationDateTime the creation date time
-	 * @param author           the author
-	 */
-	public DraftRouteSheetEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
-		super(description, author, creationDateTime);
-	}
+    /**
+     * Instantiates a new draft route sheet event.
+     *
+     * @param description      the description
+     * @param creationDateTime the creation date time
+     * @param author           the author
+     */
+    public DraftRouteSheetEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
+	super(description, author, creationDateTime);
+    }
 }

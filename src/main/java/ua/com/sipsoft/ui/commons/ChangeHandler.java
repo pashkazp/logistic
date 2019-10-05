@@ -8,10 +8,10 @@ package ua.com.sipsoft.ui.commons;
  */
 public interface ChangeHandler<T> {
 
-	/**
-	 * On change.
-	 *
-	 * @param value the value
-	 */
-	void onChange(T value);
+    /**
+     * On change.
+     *
+     * @param value the value
+     */
+    void onChange(T value);
 }

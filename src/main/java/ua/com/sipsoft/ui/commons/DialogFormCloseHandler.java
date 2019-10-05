@@ -8,10 +8,10 @@ package ua.com.sipsoft.ui.commons;
  */
 public interface DialogFormCloseHandler<S extends DialogForm<T>, T> {
 
-	/**
-	 * On close.
-	 *
-	 * @param event the event
-	 */
-	void onClose(DialogFormCloseEvent<S, T> event);
+    /**
+     * On close.
+     *
+     * @param event the event
+     */
+    void onClose(DialogFormCloseEvent<S, T> event);
 }

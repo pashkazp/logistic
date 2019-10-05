@@ -5,11 +5,11 @@ package ua.com.sipsoft.utils.messages;
  */
 public class Prototype {
 
-	public static final String A = "";
+    public static final String A = "";
 
-	/**
-	 * Instantiates a new prototype.
-	 */
-	private Prototype() {
-	}
+    /**
+     * Instantiates a new prototype.
+     */
+    private Prototype() {
+    }
 }

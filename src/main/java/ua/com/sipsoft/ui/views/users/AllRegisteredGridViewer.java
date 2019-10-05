@@ -21,17 +21,17 @@ import ua.com.sipsoft.utils.security.Role;
 //@Slf4j
 public class AllRegisteredGridViewer extends AbstractSelectedUsersGridViewer {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 3229161951777614811L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3229161951777614811L;
 
-	/**
-	 * Instantiates a new all registered Users grid viewer.
-	 *
-	 * @param usersService the users service
-	 */
-	@Autowired
-	public AllRegisteredGridViewer(UsersService usersService) {
-		super(usersService, Arrays.asList(Role.ROLE_REGISTERED));
-	}
+    /**
+     * Instantiates a new all registered Users grid viewer.
+     *
+     * @param usersService the users service
+     */
+    @Autowired
+    public AllRegisteredGridViewer(UsersService usersService) {
+	super(usersService, Arrays.asList(Role.ROLE_REGISTERED));
+    }
 
 }

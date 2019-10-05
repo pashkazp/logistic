@@ -5,18 +5,18 @@ package ua.com.sipsoft.ui.commons;
  */
 public interface HasDialogFormDataCollector {
 
-	/**
-	 * Distribute operation data.
-	 *
-	 * @param operationData the operation data
-	 */
-	void distributeOperationData(Object operationData);
+    /**
+     * Distribute operation data.
+     *
+     * @param operationData the operation data
+     */
+    void distributeOperationData(Object operationData);
 
-	/**
-	 * Collect operation data.
-	 *
-	 * @return the object
-	 */
-	Object collectOperationData();
+    /**
+     * Collect operation data.
+     *
+     * @return the object
+     */
+    Object collectOperationData();
 
 }

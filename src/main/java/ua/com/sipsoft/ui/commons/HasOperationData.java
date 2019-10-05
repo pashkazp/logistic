@@ -10,11 +10,11 @@ import com.vaadin.flow.data.binder.Binder;
  */
 public interface HasOperationData<T> {
 
-	/**
-	 * Gets the binder.
-	 *
-	 * @return the binder
-	 */
-	Binder<T> getBinder();
+    /**
+     * Gets the binder.
+     *
+     * @return the binder
+     */
+    Binder<T> getBinder();
 
 }

@@ -13,17 +13,17 @@ import com.vaadin.flow.data.provider.SortDirection;
  */
 public interface HasQueryToSortConvertor {
 
-	/**
-	 * Query to sort.
-	 *
-	 * @param query the query
-	 * @return the sort
-	 */
-	default Sort queryToSort(Query<?, ?> query) {
-		return Sort.by(query.getSortOrders().stream()
-				.map(order -> new Order(
-						order.getDirection() == SortDirection.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC,
-						order.getSorted()))
-				.collect(Collectors.toList()));
-	}
+    /**
+     * Query to sort.
+     *
+     * @param query the query
+     * @return the sort
+     */
+    default Sort queryToSort(Query<?, ?> query) {
+	return Sort.by(query.getSortOrders().stream()
+		.map(order -> new Order(
+			order.getDirection() == SortDirection.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC,
+			order.getSorted()))
+		.collect(Collectors.toList()));
+    }
 }

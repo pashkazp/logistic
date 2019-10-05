@@ -41,70 +41,70 @@ import ua.com.sipsoft.model.entity.user.User;
 @Slf4j
 public class ArchivedRouteSheet extends AbstractRouteSheet implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -8955016987705988470L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8955016987705988470L;
 
-	/** The requests. */
-	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<ArchivedCourierVisit> requests = new HashSet<>();
+    /** The requests. */
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<ArchivedCourierVisit> requests = new HashSet<>();
 
-	/** The history events. */
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "fk_sheet_id")
-	private Set<ArchivedRouteSheetEvent> historyEvents = new HashSet<>();
+    /** The history events. */
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "fk_sheet_id")
+    private Set<ArchivedRouteSheetEvent> historyEvents = new HashSet<>();
 
-	/**
-	 * Adds the history event.
-	 *
-	 * @param description      the description
-	 * @param creationDateTime the creation date time
-	 * @param author           the author
-	 */
-	public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
-		log.info("Add history event by author '{}' {} '{}'", author.getUsername(), creationDateTime, description);
-		historyEvents.add(new ArchivedRouteSheetEvent(description, creationDateTime, author));
+    /**
+     * Adds the history event.
+     *
+     * @param description      the description
+     * @param creationDateTime the creation date time
+     * @param author           the author
+     */
+    public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
+	log.info("Add history event by author '{}' {} '{}'", author.getUsername(), creationDateTime, description);
+	historyEvents.add(new ArchivedRouteSheetEvent(description, creationDateTime, author));
+    }
+
+    /**
+     * Instantiates a new archived route sheet.
+     *
+     * @param draftRouteSheet the draft route sheet
+     */
+    public ArchivedRouteSheet(@NonNull DraftRouteSheet draftRouteSheet) {
+	log.info("Instantiates a new archived route sheet from DraftRouteSheet");
+	setAuthor(draftRouteSheet.getAuthor());
+	setDescription(draftRouteSheet.getDescription());
+
+	draftRouteSheet.getHistoryEvents()
+		.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
+    }
+
+    /**
+     * Instantiates a new archived route sheet.
+     *
+     * @param author the author
+     */
+    public ArchivedRouteSheet(@NonNull User author) {
+	super(author);
+	log.info("Instantiates Archived Sheet by author '{}'", author.getUsername());
+    }
+
+    /**
+     * Instantiates a new archived route sheet.
+     *
+     * @param issuedRouteSheet the issued route sheet
+     */
+    public ArchivedRouteSheet(@NonNull IssuedRouteSheet issuedRouteSheet) {
+	log.info("Instantiates Archived Sheet from Issued Sheet");
+	setAuthor(issuedRouteSheet.getAuthor());
+	setDescription(issuedRouteSheet.getDescription());
+	for (IssuedRouteSheetEvent event : issuedRouteSheet.getHistoryEvents()) {
+	    addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor());
+	}
+	for (CourierVisit request : issuedRouteSheet.getRequests()) {
+	    requests.add(new ArchivedCourierVisit(request));
 	}
 
-	/**
-	 * Instantiates a new archived route sheet.
-	 *
-	 * @param draftRouteSheet the draft route sheet
-	 */
-	public ArchivedRouteSheet(@NonNull DraftRouteSheet draftRouteSheet) {
-		log.info("Instantiates a new archived route sheet from DraftRouteSheet");
-		setAuthor(draftRouteSheet.getAuthor());
-		setDescription(draftRouteSheet.getDescription());
-
-		draftRouteSheet.getHistoryEvents()
-				.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
-	}
-
-	/**
-	 * Instantiates a new archived route sheet.
-	 *
-	 * @param author the author
-	 */
-	public ArchivedRouteSheet(@NonNull User author) {
-		super(author);
-		log.info("Instantiates Archived Sheet by author '{}'", author.getUsername());
-	}
-
-	/**
-	 * Instantiates a new archived route sheet.
-	 *
-	 * @param issuedRouteSheet the issued route sheet
-	 */
-	public ArchivedRouteSheet(@NonNull IssuedRouteSheet issuedRouteSheet) {
-		log.info("Instantiates Archived Sheet from Issued Sheet");
-		setAuthor(issuedRouteSheet.getAuthor());
-		setDescription(issuedRouteSheet.getDescription());
-		for (IssuedRouteSheetEvent event : issuedRouteSheet.getHistoryEvents()) {
-			addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor());
-		}
-		for (CourierVisit request : issuedRouteSheet.getRequests()) {
-			requests.add(new ArchivedCourierVisit(request));
-		}
-
-	}
+    }
 
 }

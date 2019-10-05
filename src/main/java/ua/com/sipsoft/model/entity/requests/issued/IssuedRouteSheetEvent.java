@@ -27,18 +27,18 @@ import ua.com.sipsoft.model.entity.user.User;
 @Slf4j
 public class IssuedRouteSheetEvent extends AbstractHistoryEvent implements Serializable {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -7944618171896372529L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7944618171896372529L;
 
-	/**
-	 * Instantiates a new issued route sheet event.
-	 *
-	 * @param description      the description
-	 * @param creationDateTime the creation date time
-	 * @param author           the author
-	 */
-	public IssuedRouteSheetEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
-		super(description, author, creationDateTime);
-		log.info("Instantiates a new issued route sheet event");
-	}
+    /**
+     * Instantiates a new issued route sheet event.
+     *
+     * @param description      the description
+     * @param creationDateTime the creation date time
+     * @param author           the author
+     */
+    public IssuedRouteSheetEvent(@NonNull String description, LocalDateTime creationDateTime, @NonNull User author) {
+	super(description, author, creationDateTime);
+	log.info("Instantiates a new issued route sheet event");
+    }
 }

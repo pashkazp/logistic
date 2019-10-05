@@ -19,22 +19,22 @@ import ua.com.sipsoft.model.entity.common.FacilityAddress;
 @Repository
 public interface FacilityAddressRepository extends JpaRepository<FacilityAddress, Long> {
 
-	/**
-	 * Find by facility.
-	 *
-	 * @param facility the facility
-	 * @return the list
-	 */
-	List<FacilityAddress> findByFacility(Facility facility);
+    /**
+     * Find by facility.
+     *
+     * @param facility the facility
+     * @return the list
+     */
+    List<FacilityAddress> findByFacility(Facility facility);
 
-	/**
-	 * Gets the by facility id.
-	 *
-	 * @param id   the id
-	 * @param sort the sort
-	 * @return the by facility id
-	 */
-	@Query(" FROM FacilityAddress fa "
-			+ " WHERE fa.facility.id = :facilityid ")
-	List<FacilityAddress> getByFacilityId(@Param("facilityid") Long id, Sort sort);
+    /**
+     * Gets the by facility id.
+     *
+     * @param id   the id
+     * @param sort the sort
+     * @return the by facility id
+     */
+    @Query(" FROM FacilityAddress fa "
+	    + " WHERE fa.facility.id = :facilityid ")
+    List<FacilityAddress> getByFacilityId(@Param("facilityid") Long id, Sort sort);
 }

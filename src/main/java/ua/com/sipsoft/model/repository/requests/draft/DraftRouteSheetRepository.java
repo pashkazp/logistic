@@ -19,13 +19,13 @@ import ua.com.sipsoft.model.entity.requests.draft.DraftRouteSheet;
 @Repository
 public interface DraftRouteSheetRepository extends JpaRepository<DraftRouteSheet, Long> {
 
-	/**
-	 * Gets the by requests.
-	 *
-	 * @param requests the requests
-	 * @return the by requests
-	 */
-	@Query("select distinct rs from DraftRouteSheet rs left join rs.requests as r where r in (:requests) ")
-	List<DraftRouteSheet> getByRequests(@Param("requests") Collection<CourierRequest> requests);
+    /**
+     * Gets the by requests.
+     *
+     * @param requests the requests
+     * @return the by requests
+     */
+    @Query("select distinct rs from DraftRouteSheet rs left join rs.requests as r where r in (:requests) ")
+    List<DraftRouteSheet> getByRequests(@Param("requests") Collection<CourierRequest> requests);
 
 }

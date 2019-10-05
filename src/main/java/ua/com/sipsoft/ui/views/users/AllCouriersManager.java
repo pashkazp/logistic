@@ -26,27 +26,27 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @Route(value = AppURL.COURIERS_ALL, layout = MainView.class)
 public class AllCouriersManager extends AbstractSelectedUsersManager<AllCouriersGridViewer> implements HasDynamicTitle {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -404507111374215492L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -404507111374215492L;
 
-	/**
-	 * Instantiates a new all couriers manager.
-	 *
-	 * @param allCouriersGridViewer the all couriers grid viewer
-	 * @param userEditor            the user editor
-	 */
-	@Autowired
-	public AllCouriersManager(AllCouriersGridViewer allCouriersGridViewer, UserEditor userEditor) {
-		super(allCouriersGridViewer, userEditor);
-	}
+    /**
+     * Instantiates a new all couriers manager.
+     *
+     * @param allCouriersGridViewer the all couriers grid viewer
+     * @param userEditor            the user editor
+     */
+    @Autowired
+    public AllCouriersManager(AllCouriersGridViewer allCouriersGridViewer, UserEditor userEditor) {
+	super(allCouriersGridViewer, userEditor);
+    }
 
-	/**
-	 * Gets the page title.
-	 *
-	 * @return the page title
-	 */
-	@Override
-	public String getPageTitle() {
-		return getTranslation(AppTitleMsg.APP_TITLE_USERS_COURIERS, UI.getCurrent().getLocale());
-	}
+    /**
+     * Gets the page title.
+     *
+     * @return the page title
+     */
+    @Override
+    public String getPageTitle() {
+	return getTranslation(AppTitleMsg.APP_TITLE_USERS_COURIERS, UI.getCurrent().getLocale());
+    }
 }

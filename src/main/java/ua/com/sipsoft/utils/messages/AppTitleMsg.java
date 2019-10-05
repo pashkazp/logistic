@@ -9,6 +9,8 @@ public class AppTitleMsg {
     public static final String APP_TITLE_REQUESTS = "app.title.requests";
     public static final String APP_TITLE_HOME = "app.title.home";
     public static final String APP_TITLE_LOGIN = "app.title.login";
+    public static final String APP_TITLE_SIGNUP = "app.title.signup";
+    public static final String APP_TITLE_REGCONFIRM = "app.title.regconfirm";
     public static final String APP_TITLE_ACCSDENIED = "app.title.access.denied";
     public static final String APP_TITLE_ISSUED = "app.title.issued";
     public static final String APP_TITLE_ARCHIVED = "app.title.archived";

@@ -1,11 +1,11 @@
 -- insert User entities
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (1,'Rebecca_Saunders532@irrepsy.com',true,'Margot','Петренко','$2a$10$MS6jMQPb.LRdVwYvuII20.kFC5YXTZMA149Di8VvUBmJniZkoD9Xi','Stone','Admin',15);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (2,'Callie_Gardner4493@dionrab.com',true,'Игорь','Potts','$2a$10$K3jWFbh49D7YdF90prOS1uED01eXW04rID6KhpE7GH1/Vo/skSx6.','','Registered',7);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (3,'Zoe_Barrett1744@eirey.tech',true,'Марина','','$2a$10$LWPsUaTVpQ9T2urxQIcj8.hob5Xe42PukcIYTq.igl1obs3OY83rS','','Dispatcher',8);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (4,'Matt_Jarrett5404@bulaffy.com',true,'Манделл','Wellington','$2a$10$C9UrkDdz2OYlxaP62WU9s.PQBnTaVbYNWO2sdcKuM8Nu7DRG6Uj1K','Nelson','Client',21);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (5,'Enoch_Healy9311@dionrab.com',true,'Варяг','Nelson','$2a$10$7d.U3g36stiigdAfeZnOo.dnibjwYHBjw6scIy5wkIB.aJ9YWLTBe','Петрович','Courier',22);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (6,'Melania_Thompson6748@deons.tech',true,'Хло','Stone','$2a$10$OoJ0HuWXUZg7/WMUv1aTcOIs2CGm1MobMTFYYFHfaoYlNqZLmATmu','','Productoper',13);
-INSERT INTO public.users (user_id,email,enabled,firstname,lastname,"password",patronymic,username,"version") VALUES (7,'Roger_Thomson640@hourpy.biz',true,'Jacob','Tait','$2a$10$wz9O5V9S03LuXTp48m/hv..cJLP1p4ZYJ1Ye960ZvPl5w4d2S0mZa','Tait','Manager',13);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (1,'Rebecca_Saunders532@irrepsy.com',true,true,'Margot','Петренко','$2a$10$MS6jMQPb.LRdVwYvuII20.kFC5YXTZMA149Di8VvUBmJniZkoD9Xi','Stone','Admin',15);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (2,'Callie_Gardner4493@dionrab.com',true,true,'Игорь','Potts','$2a$10$UJclxx4TaTnPoqSJPeVHce38Qk7y2EIXRtxwRgY9CyWBEoVVLYyXG','','Registered',7);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (3,'Zoe_Barrett1744@eirey.tech',true,true,'Марина','','$2a$10$V1xtSwAc6n4JZeAshuwsr.2Chk6TC1PyBEp4..03.N0832a9cBWx.','','Dispatcher',8);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (4,'Matt_Jarrett5404@bulaffy.com',true,true,'Манделл','Wellington','$2a$10$SIfCk8TxDRxdJDNw9VYDTutmp8SEmBj2lVdsLqoHNvMtaS6Xsf4K.','Nelson','Client',21);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (5,'Enoch_Healy9311@dionrab.com',true,true,'Варяг','Nelson','$2a$10$43pE3uxi6SOmI1/iLW3b.u56TkduQtnjBV69bAii0a.r3p/YyUcDq','Петрович','Courier',22);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (6,'Melania_Thompson6748@deons.tech',true,true,'Хло','Stone','$2a$10$3msbqoY7AjOdt/z9yBo01uGGCf.A2WQyiyz9XTr3kZ8qXWRurL6X.','','Productoper',13);
+INSERT INTO public.users (user_id,email,enabled,verified,firstname,lastname,"password",patronymic,username,"version") VALUES (7,'Roger_Thomson640@hourpy.biz',true,true,'Jacob','Tait','$2a$10$YfaizApGqWua/7gs1QlwtOwv7j6hy2k1WQIc1bHxf/A3mXHNLORiS','Tait','Manager',13);
 
 -- reset User sequense
 alter sequence user_seq restart with 8;
@@ -534,3 +534,9 @@ INSERT INTO public.issued_route_sheets_requests (issued_route_sheet_sheet_id, re
 INSERT INTO public.issued_route_sheets_requests (issued_route_sheet_sheet_id, requests_id) VALUES(1, 2);
 INSERT INTO public.issued_route_sheets_requests (issued_route_sheet_sheet_id, requests_id) VALUES(1, 3);
 
+INSERT INTO users (user_id, email, enabled,verified, firstname, lastname, "password", patronymic, username, "version") VALUES(8, 'pashkazp@gmail.com', true,false, 'Этоимя', 'Этофамилия', '$2a$10$YPJH.2bioTSCRze9h3rFxO5h4.gXVYeKMmZIihWltExra3FuvTst.', 'Этоотчество', 'Client1', 1);
+alter sequence user_seq restart with 9;
+INSERT INTO public.user_roles (user_id,user_role) VALUES (8,'ROLE_REGISTERED');
+INSERT INTO users_verification_tokens (token_id, expiry_date, "token", token_type, enabled, used_date, user_id) VALUES(101, '2019-10-04 15:10:57.256', '980185bf-d16c-459c-ba2d-d5f460cc4bff', 'RNU', false, NULL, 8);
+
+alter sequence hibernate_sequence restart with 102;
