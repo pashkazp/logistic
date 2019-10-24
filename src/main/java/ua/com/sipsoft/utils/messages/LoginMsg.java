@@ -32,15 +32,12 @@ public class LoginMsg {
     public static final String TOKEN_LACKED = "login.token.lacked";
     public static final String PASSWORD_RESET_WRONG = "login.pass.reset.wrong";
 
-    public static final String REG_CONFIRM_SUBJ = "email.confirm.reg.subj";
-    public static final String REG_CONFIRM_MSG_HELLO = "email.confirm.reg.msg.hello";
+    public static final String REG_CONFIRM_MSG_SUBJ = "email.confirm.reg.msg.subj";
     public static final String REG_CONFIRM_MSG_BODY = "email.confirm.reg.msg.body";
     public static final String REG_CONFIRM_MSG_SENDED = "email.confirm.reg.msg.sended";
 
-    public static final String REMEMBER_PASS_SUBJ = "email.remember.pass.subj";
-    public static final String REMEMBER_PASS_MSG_HELLO = "email.remember.pass.msg.hello";
-    public static final String REMEMBER_PASS_MSG_BODY1 = "email.remember.pass.msg.body1";
-    public static final String REMEMBER_PASS_MSG_BODY2 = "email.remember.pass.msg.body2";
+    public static final String REMEMBER_PASS_SUBJ = "email.remember.pass.msg.subj";
+    public static final String REMEMBER_PASS_MSG_BODY = "email.remember.pass.msg.body";
     public static final String REMEMBER_PASS_MSG_SENDED = "email.remember.pass.msg.sended";
 
     /**

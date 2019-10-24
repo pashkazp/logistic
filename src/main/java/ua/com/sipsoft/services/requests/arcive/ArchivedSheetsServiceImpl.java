@@ -14,7 +14,6 @@ import ua.com.sipsoft.model.entity.requests.archive.ArchivedRouteSheet;
 import ua.com.sipsoft.model.repository.requests.archive.ArchivedRouteSheetRepository;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 
-// TODO: Auto-generated Javadoc
 /** The Constant log. */
 
 /** The Constant log. */

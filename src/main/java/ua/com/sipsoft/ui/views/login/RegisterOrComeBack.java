@@ -47,7 +47,9 @@ import ua.com.sipsoft.utils.messages.ButtonMsg;
 import ua.com.sipsoft.utils.messages.LoginMsg;
 import ua.com.sipsoft.utils.messages.UserEntityCheckMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
-import ua.com.sipsoft.utils.security.AgreedRegistrationCheck;
+import ua.com.sipsoft.utils.security.AgreedEmailCheck;
+import ua.com.sipsoft.utils.security.AgreedPasswordCheck;
+import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
 import ua.com.sipsoft.utils.security.OnRegistrationCompleteEvent;
 import ua.com.sipsoft.utils.security.OnRememberPasswordEvent;
 import ua.com.sipsoft.utils.security.Role;
@@ -57,7 +59,8 @@ import ua.com.sipsoft.utils.security.Role;
 @Route(AppURL.LOGIN_REGISTRATION)
 @Slf4j
 public class RegisterOrComeBack extends VerticalLayout
-	implements HasDynamicTitle, AfterNavigationObserver, AgreedRegistrationCheck {
+	implements HasDynamicTitle, AfterNavigationObserver, AgreedPasswordCheck, AgreedEmailCheck,
+	AgreedUsernameCheck {
 
     private static final long serialVersionUID = 8147366992440026453L;
 

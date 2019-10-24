@@ -44,7 +44,7 @@ import ua.com.sipsoft.utils.messages.ButtonMsg;
 import ua.com.sipsoft.utils.messages.LoginMsg;
 import ua.com.sipsoft.utils.messages.UserEntityCheckMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
-import ua.com.sipsoft.utils.security.AgreedRegistrationCheck;
+import ua.com.sipsoft.utils.security.AgreedPasswordCheck;
 import ua.com.sipsoft.utils.security.VerificationTokenType;
 
 @UIScope
@@ -52,7 +52,7 @@ import ua.com.sipsoft.utils.security.VerificationTokenType;
 @Route(AppURL.REGISTRATION_FORGOT)
 @Slf4j
 public class RememberPasswordView extends VerticalLayout
-	implements HasDynamicTitle, HasUrlParameter<String>, AfterNavigationObserver, AgreedRegistrationCheck {
+	implements HasDynamicTitle, HasUrlParameter<String>, AfterNavigationObserver, AgreedPasswordCheck {
 
     private static final long serialVersionUID = -5532342441179556241L;
 

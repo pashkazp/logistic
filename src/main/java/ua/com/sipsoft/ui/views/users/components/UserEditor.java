@@ -30,7 +30,9 @@ import ua.com.sipsoft.utils.messages.AppNotifyMsg;
 import ua.com.sipsoft.utils.messages.ButtonMsg;
 import ua.com.sipsoft.utils.messages.UserEntityCheckMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
-import ua.com.sipsoft.utils.security.AgreedRegistrationCheck;
+import ua.com.sipsoft.utils.security.AgreedEmailCheck;
+import ua.com.sipsoft.utils.security.AgreedPasswordCheck;
+import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
 
 /**
  * The Class UserEditor.
@@ -44,7 +46,7 @@ import ua.com.sipsoft.utils.security.AgreedRegistrationCheck;
 
 /** The Constant log. */
 @Slf4j
-public class UserEditor extends FormLayout implements AgreedRegistrationCheck {
+public class UserEditor extends FormLayout implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2209381064166335239L;

@@ -3,6 +3,7 @@ package ua.com.sipsoft.utils.security;
 
 import java.util.UUID;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -83,15 +84,11 @@ public class RememberPasswordListener implements
 	String confirmationUrl = AppURL.SITE_ADDRESS + event.getAppUrl() + "/" + AppURL.REGISTRATION_FORGOT + "?token="
 		+ token;
 
-	String message = i18n.getTranslation(LoginMsg.REMEMBER_PASS_MSG_HELLO, event.getLocale())
-		+ " \r\n\r\n"
-		+ i18n.getTranslation(LoginMsg.REMEMBER_PASS_MSG_BODY1, event.getLocale())
-		+ " \r\n\r\n"
-		+ confirmationUrl
-		+ " \r\n\r\n"
-		+ i18n.getTranslation(LoginMsg.REMEMBER_PASS_MSG_BODY2, event.getLocale());
+	String message = i18n.getTranslation(LoginMsg.REMEMBER_PASS_MSG_BODY, event.getLocale());
 
 	message = String.format(message, user.getUsername(), confirmationUrl);
+
+	message = StringEscapeUtils.unescapeJava(message);
 
 	email.setTo(recipientAddress);
 	email.setSubject(subject);

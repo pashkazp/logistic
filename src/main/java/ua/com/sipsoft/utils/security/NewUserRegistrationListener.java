@@ -3,6 +3,7 @@ package ua.com.sipsoft.utils.security;
 
 import java.util.UUID;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -78,19 +79,16 @@ public class NewUserRegistrationListener implements
 
 	String recipientAddress = user.getEmail();
 
-	String subject = i18n.getTranslation(LoginMsg.REG_CONFIRM_SUBJ, event.getLocale());
+	String subject = i18n.getTranslation(LoginMsg.REG_CONFIRM_MSG_SUBJ, event.getLocale());
 
 	String confirmationUrl = AppURL.SITE_ADDRESS + event.getAppUrl() + "/" + AppURL.REGISTRATION_CONFIRM + "?token="
 		+ token;
 
-	String message = i18n.getTranslation(LoginMsg.REG_CONFIRM_MSG_HELLO, event.getLocale())
-		+ " \r\n\r\n"
-		+ confirmationUrl
-		+ " \r\n\r\n"
-		+ i18n.getTranslation(LoginMsg.REG_CONFIRM_MSG_BODY, event.getLocale());
+	String message = i18n.getTranslation(LoginMsg.REG_CONFIRM_MSG_BODY, event.getLocale());
 
-	message = String.format(message, user.getFirstName().isEmpty() ? user.getUsername() : user.getFirstName(),
-		confirmationUrl);
+	message = String.format(message, user.getUsername(), confirmationUrl);
+
+	message = StringEscapeUtils.unescapeJava(message);
 
 	email.setTo(recipientAddress);
 	email.setSubject(subject);

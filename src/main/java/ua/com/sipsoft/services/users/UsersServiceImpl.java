@@ -1,6 +1,7 @@
 package ua.com.sipsoft.services.users;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -48,8 +49,17 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
      */
     @Override
     public User saveUser(User user) {
-	// TODO checkeing
-	return dao.save(user);
+	log.info("Perform Save user: \"{}\"", user);
+	if (user == null) {
+	    log.warn("User saving impossible. Missing some data. ");
+	    return null;
+	}
+	try {
+	    return dao.save(user);
+	} catch (Exception e) {
+	    log.warn(e.getMessage());
+	    return null;
+	}
     }
 
     /**
@@ -60,8 +70,16 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
      */
     @Override
     public Optional<User> fetchById(Long id) {
-	// TODO checkeing
-	return dao.findById(id);
+	log.info("Perform get user by Id: \"{}\"", id);
+	if (id == null) {
+	    log.warn("User fetching impossible. Missing some data. ");
+	}
+	try {
+	    return dao.findById(id);
+	} catch (Exception e) {
+	    log.warn(e.getMessage());
+	}
+	return Optional.ofNullable(null);
     }
 
     /**
@@ -72,8 +90,16 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
      */
     @Override
     public List<User> getByRoles(Collection<Role> roles) {
-	// TODO checkeing
-	return dao.getByRoles(roles);
+	log.info("Get users by Roles collection: \"{}\"", roles);
+	if (roles == null) {
+	    log.warn("Users fetching impossible. Missing some data. ");
+	}
+	try {
+	    return dao.getByRoles(roles);
+	} catch (Exception e) {
+	    log.warn(e.getMessage());
+	}
+	return Collections.emptyList();
     }
 
     /**
@@ -84,8 +110,16 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
      * @return the by roles and find by name
      */
     public List<User> getByRolesAndFindByName(Collection<Role> roles, String name) {
-	// TODO checkeing
-	return dao.getByRolesAndFindByName(roles, name.toLowerCase());
+	log.info("Get Users by roles \"{}\" and by name: \"{}\"", roles, name);
+	if (roles == null || name == null) {
+	    log.warn("Users fetching impossible. Missing some data. ");
+	}
+	try {
+	    return dao.getByRolesAndFindByName(roles, name.toLowerCase());
+	} catch (Exception e) {
+	    log.warn(e.getMessage());
+	}
+	return Collections.emptyList();
     }
 
     /**
@@ -216,6 +250,7 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
 	log.info("Creation verification token \"{}\" for new user: \"{}\"", token, user);
 	if (user == null || token == null || token.isEmpty()) {
 	    log.warn("Creation verification token impossible. Missing some data. ");
+	    return null;
 	}
 	try {
 	    VerificationToken vToken = new VerificationToken(user, token, tokenType);

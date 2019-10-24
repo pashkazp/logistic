@@ -12,7 +12,6 @@ import lombok.Setter;
 import ua.com.sipsoft.model.entity.requests.prototype.AbstractHistoryEvent;
 import ua.com.sipsoft.model.entity.user.User;
 
-// TODO: Auto-generated Javadoc
 /**
  * Simple JavaBeen object that represents standard system history event.
  *

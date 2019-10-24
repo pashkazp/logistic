@@ -22,7 +22,6 @@ import ua.com.sipsoft.model.entity.requests.prototype.AbstractCourierRequest;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.utils.CourierVisitState;
 
-// TODO: Auto-generated Javadoc
 /**
  * Simple JavaBeen object that represents Courier Request.
  *
