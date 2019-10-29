@@ -21,11 +21,9 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel.SelectAllCheckboxVisibility;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -34,7 +32,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout.Orientation;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -517,15 +514,6 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	    issuedRouteSheetSeletcionEventProcessor(event.getFirstSelectedItem().orElse(null));
 
 	});
-
-	HeaderRow filteringHeader = issuedSheetsGrid.appendHeaderRow();
-	Column<IssuedRouteSheet> column = issuedSheetsGrid.getColumnByKey("description");
-	TextField filter = new TextField();
-	filter.setWidth("100%");
-	filter.setPlaceholder("Filter");
-	filter.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-
-	filteringHeader.getCell(column).setComponent(new TextField());
 
 	fieldIssuedSheetFilter.addValueChangeListener(e -> issuedSheetsGrid.getDataProvider().refreshAll());
 
