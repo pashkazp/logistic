@@ -28,7 +28,6 @@ import lombok.extern.log4j.Log4j2;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
-import ua.com.sipsoft.ui.commons.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.TooltippedComponent;
 import ua.com.sipsoft.utils.UIIcon;

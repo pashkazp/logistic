@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UsersService;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.ChangeHandler;
+import ua.com.sipsoft.ui.views.users.prototype.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.AppNotifyMsg;

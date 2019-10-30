@@ -12,7 +12,6 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBox.ItemFilter;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -20,7 +19,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -31,6 +29,7 @@ import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.requests.draft.CourierRequest;
 import ua.com.sipsoft.services.common.FacilitiesService;
+import ua.com.sipsoft.ui.commons.entityedit.AbstractBindedEntityEditor;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 
@@ -45,21 +44,10 @@ import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 /** The Constant log. */
 @Slf4j
 @SpringComponent
-public class CourierRequestEditor<T extends CourierRequest> extends FormLayout {
+public class CourierRequestEditor<T extends CourierRequest> extends AbstractBindedEntityEditor<T> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3371271741841875886L;
-
-    /**
-     * Sets the binder.
-     *
-     * @param binder the new binder
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Binder<T> binder = new Binder(CourierRequest.class);
-
-    /** The operation data. */
-    private T operationData;
 
     /** The author. */
     private TextField author;
@@ -92,14 +80,12 @@ public class CourierRequestEditor<T extends CourierRequest> extends FormLayout {
 		    || fas.getAddress().toLowerCase()
 			    .contains(filterString.toLowerCase());
 
-    /** The read only mode. */
-    private boolean readOnlyMode;
-
     /**
      * Instantiates a new courier request editor.
      */
     CourierRequestEditor() {
 	super();
+	initBinder();
 	log.info("Instantiates a new courier request editor");
 	VerticalLayout panelFields = new VerticalLayout();
 	author = new TextField();
@@ -220,12 +206,12 @@ public class CourierRequestEditor<T extends CourierRequest> extends FormLayout {
 	description.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
 	description.getStyle().set(Props.PADDING, null);
 
-	binder.forField(author).bind(courierRequest -> courierRequest.getAuthor().getUsername(), null);
-	binder.forField(fromPoint).asRequired(getTranslation(CourierRequestsMsg.SELECT_FACILITY_SENDER_CHECK))
+	getBinder().forField(author).bind(courierRequest -> courierRequest.getAuthor().getUsername(), null);
+	getBinder().forField(fromPoint).asRequired(getTranslation(CourierRequestsMsg.SELECT_FACILITY_SENDER_CHECK))
 		.bind("fromPoint");
-	binder.forField(toPoint).asRequired(getTranslation(CourierRequestsMsg.SELECT_FACILITY_RECIEVER_CHECK))
+	getBinder().forField(toPoint).asRequired(getTranslation(CourierRequestsMsg.SELECT_FACILITY_RECIEVER_CHECK))
 		.bind("toPoint");
-	binder.forField(description).asRequired(getTranslation(CourierRequestsMsg.SELECT_REQUEST_DESCR_CHECK))
+	getBinder().forField(description).asRequired(getTranslation(CourierRequestsMsg.SELECT_REQUEST_DESCR_CHECK))
 		.withValidator(description -> description
 			.length() <= 100, getTranslation(CourierRequestsMsg.SELECT_REQUEST_DESCR_CHECK_LONG))
 		.withValidator(
@@ -251,6 +237,11 @@ public class CourierRequestEditor<T extends CourierRequest> extends FormLayout {
 	setResponsiveSteps(new ResponsiveStep("0", 1));
 	setMaxWidth(getWidth());
 	setMinWidth(getWidth());
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void initBinder() {
+	setBinder(new Binder(CourierRequest.class));
     }
 
     /**
@@ -357,50 +348,4 @@ public class CourierRequestEditor<T extends CourierRequest> extends FormLayout {
 	    toPoint.setValue(fa);
 	}
     }
-
-    /**
-     * Checks if is read only mode.
-     *
-     * @return the readOnlyMode
-     */
-    public boolean isReadOnlyMode() {
-	log.info("Checks if is read only mode {}", readOnlyMode);
-	return readOnlyMode;
-    }
-
-    /**
-     * Sets the read only mode.
-     *
-     * @param readOnlyMode the readOnlyMode to set
-     */
-    public void setReadOnlyMode(boolean readOnlyMode) {
-	log.info("Sets the read only mode {}", readOnlyMode);
-	this.readOnlyMode = readOnlyMode;
-	if (binder != null) {
-	    binder.setReadOnly(readOnlyMode);
-	}
-    }
-
-    public void setOperationData(T operationData) {
-	this.operationData = operationData;
-	binder.readBean(operationData);
-    }
-
-    public boolean isValidOperationData() {
-	if (binder.validate().isOk() & binder.isValid()) {
-	    if (operationData == null) {
-		log.warn("Property 'operationData' can not be null", this.operationData);
-		return false;
-	    }
-	    BinderValidationStatus<T> status = binder.validate();
-	    binder.writeBeanIfValid(operationData);
-	    return status.isOk();
-	}
-	return false;
-    }
-
-    public T getOperationData() {
-	return operationData;
-    }
-
 }

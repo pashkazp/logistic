@@ -4,16 +4,15 @@ import java.util.Objects;
 
 import org.springframework.context.annotation.Scope;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.common.Facility;
+import ua.com.sipsoft.ui.commons.entityedit.AbstractBindedEntityEditor;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.FacilityEntityMsg;
 
@@ -26,34 +25,20 @@ import ua.com.sipsoft.utils.messages.FacilityEntityMsg;
 @Scope("prototype")
 @Slf4j
 @SpringComponent
-public class FacilityEditor<T extends Facility> extends FormLayout {
+public class FacilityEditor<T extends Facility> extends AbstractBindedEntityEditor<T> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3291395147592860970L;
 
-    /**
-     * Sets the binder.
-     *
-     * @param binder the new binder
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Binder<T> binder = new Binder(Facility.class);
-
-    /** The operation data. */
-    private T operationData;
-
     /** The name. */
     private final TextField name;
-
-    /** The read only mode. */
-    private boolean readOnlyMode;
 
     /**
      * Instantiates a new facility editor.
      */
     public FacilityEditor() {
 	super();
-
+	initBinder();
 	VerticalLayout panelFields = new VerticalLayout();
 
 	name = new TextField();
@@ -66,7 +51,7 @@ public class FacilityEditor<T extends Facility> extends FormLayout {
 	name.getStyle().set(Props.PADDING, null);
 	name.focus();
 
-	binder.forField(name)
+	getBinder().forField(name)
 		.withValidator(description -> description
 			.length() >= 5, getTranslation(FacilityEntityMsg.CHK_NAME_SHORT))
 		.withValidator(description -> description
@@ -90,25 +75,9 @@ public class FacilityEditor<T extends Facility> extends FormLayout {
 
     }
 
-    /**
-     * Checks if is read only mode.
-     *
-     * @return the readOnlyMode
-     */
-    public boolean isReadOnlyMode() {
-	return readOnlyMode;
-    }
-
-    /**
-     * Sets the read only mode.
-     *
-     * @param readOnlyMode the readOnlyMode to set
-     */
-    public void setReadOnlyMode(boolean readOnlyMode) {
-	this.readOnlyMode = readOnlyMode;
-	if (binder != null) {
-	    binder.setReadOnly(readOnlyMode);
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void initBinder() {
+	setBinder(new Binder(Facility.class));
     }
 
     /**
@@ -118,13 +87,13 @@ public class FacilityEditor<T extends Facility> extends FormLayout {
      */
     @Override
     public String toString() {
-	return "FacilityEditor [binder=" + binder + ", name=" + name + ", readOnlyMode=" + readOnlyMode
+	return "FacilityEditor [binder=" + getBinder() + ", name=" + name + ", readOnlyMode=" + isReadOnlyMode()
 		+ ", toString()=" + super.toString() + "]";
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(binder, name, readOnlyMode);
+	return Objects.hash(getBinder(), name, isReadOnlyMode());
     }
 
     @Override
@@ -136,30 +105,8 @@ public class FacilityEditor<T extends Facility> extends FormLayout {
 	    return false;
 	}
 	FacilityEditor<?> other = (FacilityEditor<?>) obj;
-	return Objects.equals(binder, other.binder) && Objects.equals(name, other.name)
-		&& readOnlyMode == other.readOnlyMode;
-    }
-
-    public void setOperationData(T operationData) {
-	this.operationData = operationData;
-	binder.readBean(operationData);
-    }
-
-    public boolean isValidOperationData() {
-	if (binder.validate().isOk() & binder.isValid()) {
-	    if (operationData == null) {
-		log.warn("Property 'operationData' can not be null", this.operationData);
-		return false;
-	    }
-	    BinderValidationStatus<T> status = binder.validate();
-	    binder.writeBeanIfValid(operationData);
-	    return status.isOk();
-	}
-	return false;
-    }
-
-    public T getOperationData() {
-	return operationData;
+	return Objects.equals(getBinder(), other.getBinder()) && Objects.equals(name, other.name)
+		&& isReadOnlyMode() == other.isReadOnlyMode();
     }
 
 }

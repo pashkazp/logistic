@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
@@ -33,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
+import ua.com.sipsoft.ui.commons.entityedit.AbstractEntityEditor;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.ButtonMsg;
@@ -52,7 +52,7 @@ import ua.com.sipsoft.utils.security.Role;
 /** The Constant log. */
 @Slf4j
 @SpringComponent
-public class FacilityUsersEditor<T extends Set<User>> extends FormLayout {
+public class FacilityUsersEditor<T extends Set<User>> extends AbstractEntityEditor<T> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3291395147592860970L;
@@ -87,11 +87,6 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout {
 
     /** The refresh btn. */
     private Button refreshBtn;
-
-    private T operationData;
-
-    /** The read only mode. */
-    private boolean readOnlyMode;
 
     /**
      * Instantiates a new facility users editor.
@@ -265,24 +260,6 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout {
 	showFilteredUsers();
     }
 
-    /**
-     * Checks if is read only mode.
-     *
-     * @return the readOnlyMode
-     */
-    public boolean isReadOnlyMode() {
-	return readOnlyMode;
-    }
-
-    /**
-     * Sets the read only mode.
-     *
-     * @param readOnlyMode the readOnlyMode to set
-     */
-    public void setReadOnlyMode(boolean readOnlyMode) {
-	this.readOnlyMode = readOnlyMode;
-    }
-
     @SuppressWarnings("unchecked")
     public boolean isValidOperationData() {
 	operationData = (T) grid.getSelectedItems();
@@ -290,14 +267,6 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout {
 	    return true;
 	}
 	return false;
-    }
-
-    public void setOperationData(T operationData) {
-	this.operationData = operationData;
-    }
-
-    public T getOperationData() {
-	return operationData;
     }
 
 }

@@ -1,4 +1,4 @@
-package ua.com.sipsoft.ui.commons;
+package ua.com.sipsoft.ui.views.users.prototype;
 
 /**
  * The Interface ChangeHandler.
