@@ -9,12 +9,13 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
-import ua.com.sipsoft.ui.commons.HasOperationData;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.FacilityAddrEntityMsg;
 
@@ -25,10 +26,9 @@ import ua.com.sipsoft.utils.messages.FacilityAddrEntityMsg;
  * @param <T> the generic type
  */
 @Scope("prototype")
-//@Slf4j
+@Slf4j
 @SpringComponent
-public class FacilityAddrEditor<T extends FacilityAddress> extends FormLayout
-	implements HasOperationData<T> {
+public class FacilityAddrEditor<T extends FacilityAddress> extends FormLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3291395147592860970L;
@@ -38,8 +38,12 @@ public class FacilityAddrEditor<T extends FacilityAddress> extends FormLayout
      *
      * @param binder the new binder
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Setter
     private Binder<T> binder = new Binder(FacilityAddress.class);
+
+    /** The operation data. */
+    private T operationData;
 
     /** The addresses alias. */
     private final TextField addressesAlias;
@@ -139,16 +143,6 @@ public class FacilityAddrEditor<T extends FacilityAddress> extends FormLayout
     }
 
     /**
-     * Gets the binder.
-     *
-     * @return the binder
-     */
-    @Override
-    public Binder<T> getBinder() {
-	return binder;
-    }
-
-    /**
      * Checks if is read only mode.
      *
      * @return the readOnlyMode
@@ -188,5 +182,27 @@ public class FacilityAddrEditor<T extends FacilityAddress> extends FormLayout
     @Override
     public int hashCode() {
 	return Objects.hash(binder, addressesAlias, readOnlyMode);
+    }
+
+    public void setOperationData(T operationData) {
+	this.operationData = operationData;
+	binder.readBean(operationData);
+    }
+
+    public boolean isValidOperationData() {
+	if (binder.validate().isOk() & binder.isValid()) {
+	    if (operationData == null) {
+		log.warn("Property 'operationData' can not be null", this.operationData);
+		return false;
+	    }
+	    BinderValidationStatus<T> status = binder.validate();
+	    binder.writeBeanIfValid(operationData);
+	    return status.isOk();
+	}
+	return false;
+    }
+
+    public T getOperationData() {
+	return operationData;
     }
 }

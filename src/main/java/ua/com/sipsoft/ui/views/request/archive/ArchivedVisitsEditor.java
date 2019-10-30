@@ -31,7 +31,6 @@ import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.services.common.FacilitiesService;
-import ua.com.sipsoft.ui.commons.HasOperationData;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 
@@ -46,8 +45,7 @@ import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 /** The Constant log. */
 @Slf4j
 @SpringComponent
-public class ArchivedVisitsEditor<T extends CourierVisit> extends FormLayout
-	implements HasOperationData<T> {
+public class ArchivedVisitsEditor<T extends CourierVisit> extends FormLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3371271741841875886L;
@@ -362,13 +360,4 @@ public class ArchivedVisitsEditor<T extends CourierVisit> extends FormLayout
 	}
     }
 
-    /**
-     * Gets the binder.
-     *
-     * @return the binder
-     */
-    @Override
-    public Binder<T> getBinder() {
-	return this.binder;
-    }
 }

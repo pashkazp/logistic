@@ -8,12 +8,12 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.common.Facility;
-import ua.com.sipsoft.ui.commons.HasOperationData;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.FacilityEntityMsg;
 
@@ -24,10 +24,9 @@ import ua.com.sipsoft.utils.messages.FacilityEntityMsg;
  * @param <T> the generic type
  */
 @Scope("prototype")
-//@Slf4j
+@Slf4j
 @SpringComponent
-public class FacilityEditor<T extends Facility> extends FormLayout
-	implements HasOperationData<T> {
+public class FacilityEditor<T extends Facility> extends FormLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3291395147592860970L;
@@ -37,8 +36,11 @@ public class FacilityEditor<T extends Facility> extends FormLayout
      *
      * @param binder the new binder
      */
-    @Setter
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Binder<T> binder = new Binder(Facility.class);
+
+    /** The operation data. */
+    private T operationData;
 
     /** The name. */
     private final TextField name;
@@ -86,16 +88,6 @@ public class FacilityEditor<T extends Facility> extends FormLayout
 	setMaxWidth(getWidth());
 	setMinWidth(getWidth());
 
-    }
-
-    /**
-     * Gets the binder.
-     *
-     * @return the binder
-     */
-    @Override
-    public Binder<T> getBinder() {
-	return binder;
     }
 
     /**
@@ -147,4 +139,27 @@ public class FacilityEditor<T extends Facility> extends FormLayout
 	return Objects.equals(binder, other.binder) && Objects.equals(name, other.name)
 		&& readOnlyMode == other.readOnlyMode;
     }
+
+    public void setOperationData(T operationData) {
+	this.operationData = operationData;
+	binder.readBean(operationData);
+    }
+
+    public boolean isValidOperationData() {
+	if (binder.validate().isOk() & binder.isValid()) {
+	    if (operationData == null) {
+		log.warn("Property 'operationData' can not be null", this.operationData);
+		return false;
+	    }
+	    BinderValidationStatus<T> status = binder.validate();
+	    binder.writeBeanIfValid(operationData);
+	    return status.isOk();
+	}
+	return false;
+    }
+
+    public T getOperationData() {
+	return operationData;
+    }
+
 }

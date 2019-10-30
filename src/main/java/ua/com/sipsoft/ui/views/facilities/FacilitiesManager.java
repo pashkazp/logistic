@@ -12,7 +12,6 @@ import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -50,9 +49,9 @@ import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.Modality;
 import ua.com.sipsoft.utils.AppURL;
-import ua.com.sipsoft.utils.Modality;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.AppNotifyMsg;
@@ -779,35 +778,35 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      */
     private void facilityAdd() {
 	Facility facilityIn = new Facility();
-	new DialogForm<Facility>() {
 
-	    private static final long serialVersionUID = 1064271255777918530L;
+	FacilityEditor<Facility> editor = facilityEditor();
+	editor.setOperationData(facilityIn);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
-		} else {
-		    try {
-			Optional<Facility> facilityOut = facilitiesService.save(getOperationData());
-			if (facilityOut.isPresent()) {
-			    facilitiesGrid.deselectAll();
-			    facilitiesGrid.getDataProvider().refreshAll();
-			    facilitiesGrid.select(facilityOut.get());
-			    super.btnSaveClickListener(event);
-			}
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(facilityEditor())
-		.withOperationData(facilityIn)
+	DialogForm dialogForm = new DialogForm();
+
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityEntityMsg.ADD))
 		.withWidth(Props.EM_21)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<Facility> facilityOut = facilitiesService.save(editor.getOperationData());
+			    if (facilityOut.isPresent()) {
+				facilitiesGrid.deselectAll();
+				facilitiesGrid.getDataProvider().refreshAll();
+				facilitiesGrid.select(facilityOut.get());
+				dialogForm.closeWithResult(Modality.MR_SAVE);
+			    }
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -832,34 +831,33 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	Facility facilityIn = facilityInO.get();
 
-	new DialogForm<Facility>() {
+	FacilityEditor<Facility> editor = facilityEditor();
+	editor.setOperationData(facilityIn);
 
-	    private static final long serialVersionUID = -5969366875983440466L;
+	DialogForm dialogForm = new DialogForm();
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
-		} else {
-		    try {
-			Optional<Facility> facilityOut = facilitiesService.save(getOperationData());
-
-			if (facilityOut.isPresent()) {
-			    facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(facilityEditor())
-		.withOperationData(facilityIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityEntityMsg.EDIT))
 		.withWidth(Props.EM_21)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<Facility> facilityOut = facilitiesService.save(editor.getOperationData());
+
+			    if (facilityOut.isPresent()) {
+				facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
+			    }
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -883,30 +881,30 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
-	new DialogForm<Facility>() {
 
-	    private static final long serialVersionUID = 5492106013444422543L;
+	FacilityEditor<Facility> editor = facilityEditor();
+	editor.setReadOnlyMode(true);
+	editor.setOperationData(facilityIn);
 
-	    @Override
-	    public void btnDeleteClickListener(ComponentEvent<Button> event) {
+	DialogForm dialogForm = new DialogForm();
 
-		try {
-		    facilitiesService.delete(facilityIn);
-		    facilitiesGrid.getDataProvider().refreshAll();
-		    facilityAddrGrid.getDataProvider().refreshAll();
-		    usersGrid.getDataProvider().refreshAll();
-		    super.btnDeleteClickListener(event);
-		} catch (Exception e) {
-		    log.error(e.getMessage() + " " + e);
-		    AppNotificator.notify(5000, e.getMessage());
-		}
-	    }
-	}
-		.withDataEditor(facilityEditor(), true)
-		.withOperationData(facilityIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withWidth(Props.EM_21)
 		.withHeader(getTranslation(FacilityEntityMsg.DEL))
-		.withModality(Modality.MR_DELETE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_DELETE, event -> {
+		    try {
+			facilitiesService.delete(facilityIn);
+			facilitiesGrid.getDataProvider().refreshAll();
+			facilityAddrGrid.getDataProvider().refreshAll();
+			usersGrid.getDataProvider().refreshAll();
+			dialogForm.closeWithResult(Modality.MR_DELETE);
+		    } catch (Exception e) {
+			log.error(e.getMessage() + " " + e);
+			AppNotificator.notify(5000, e.getMessage());
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_DELETE) {
@@ -934,44 +932,43 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 
 	FacilityAddress facilityAddressIn = new FacilityAddress();
 
-	new DialogForm<FacilityAddress>() {
+	FacilityAddrEditor<FacilityAddress> editor = facilityAddrEditor();
+	editor.setOperationData(facilityAddressIn);
 
-	    private static final long serialVersionUID = 1064271255777918530L;
+	DialogForm dialogForm = new DialogForm();
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
-		} else {
-
-		    try {
-			Optional<Facility> facilityInO = facilitiesService
-				.fetchById(facilityIn.getId());
-			if (!facilityInO.isPresent()) {
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
-			    return;
-			}
-
-			Optional<Facility> facilityOut = facilitiesService.addAddrToFacility(facilityInO.get(),
-				getOperationData());
-			if (facilityOut.isPresent()) {
-			    facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
-			    facilityAddrGrid.getDataProvider().refreshAll();
-			    super.btnSaveClickListener(event);
-			}
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(facilityAddrEditor())
-		.withOperationData(facilityAddressIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityAddrEntityMsg.ADD) + " \""
 			+ facilityIn.getName() + "\"")
 		.withWidth(Props.EM_34)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
+		    } else {
+
+			try {
+			    Optional<Facility> facilityInR = facilitiesService
+				    .fetchById(facilityIn.getId());
+			    if (!facilityInR.isPresent()) {
+				AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+				return;
+			    }
+
+			    Optional<Facility> facilityOut = facilitiesService.addAddrToFacility(facilityInR.get(),
+				    editor.getOperationData());
+			    if (facilityOut.isPresent()) {
+				facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
+				facilityAddrGrid.getDataProvider().refreshAll();
+				dialogForm.closeWithResult(Modality.MR_SAVE);
+			    }
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -1009,48 +1006,48 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	FacilityAddress facilityAddressIn = facilityAddrInO.get();
 
-	new DialogForm<FacilityAddress>() {
+	FacilityAddrEditor<FacilityAddress> editor = facilityAddrEditor();
+	editor.setOperationData(facilityAddressIn);
 
-	    private static final long serialVersionUID = -5969366875983440466L;
+	DialogForm dialogForm = new DialogForm();
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
-		} else {
-
-		    try {
-			Optional<Facility> facilityInO = facilitiesService
-				.fetchById(facilityIn.getId());
-			if (!facilityInO.isPresent()) {
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
-			    return;
-			}
-			Optional<FacilityAddress> facilityAdrrInO = facilityAdrrService
-				.fetchById(facilityAddressIn.getId());
-			if (!facilityAdrrInO.isPresent()) {
-			    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
-			    return;
-			}
-			Optional<FacilityAddress> facilityAdrrOut = facilityAdrrService.save(getOperationData());
-
-			if (facilityAdrrOut.isPresent()) {
-			    facilityAddrGrid.getDataProvider().refreshItem(facilityAdrrOut.get());
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(facilityAddrEditor())
-		.withOperationData(facilityAddressIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityAddrEntityMsg.EDIT) + " \""
 			+ facilityAddressIn.getFacility().getName() + "\"")
 		.withWidth(Props.EM_34)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
+		    } else {
+
+			try {
+			    Optional<Facility> facilityInR = facilitiesService
+				    .fetchById(facilityIn.getId());
+			    if (!facilityInR.isPresent()) {
+				AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+				return;
+			    }
+			    Optional<FacilityAddress> facilityAdrrInO = facilityAdrrService
+				    .fetchById(facilityAddressIn.getId());
+			    if (!facilityAdrrInO.isPresent()) {
+				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
+				return;
+			    }
+			    Optional<FacilityAddress> facilityAdrrOut = facilityAdrrService
+				    .save(editor.getOperationData());
+
+			    if (facilityAdrrOut.isPresent()) {
+				facilityAddrGrid.getDataProvider().refreshItem(facilityAdrrOut.get());
+			    }
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -1091,38 +1088,39 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_LASTDEL_FAIL));
 	    return;
 	}
-	new DialogForm<FacilityAddress>() {
 
-	    private static final long serialVersionUID = 2385106429630880443L;
+	FacilityAddrEditor<FacilityAddress> editor = facilityAddrEditor();
+	editor.setReadOnlyMode(true);
+	editor.setOperationData(facilityAddressIn);
 
-	    @Override
-	    public void btnDeleteClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_DEL_FAIL));
-		} else {
-		    try {
-			Optional<Facility> facilityOut = facilitiesService.delAddrFromFacility(facilityIn,
-				facilityAddressIn);
+	DialogForm dialogForm = new DialogForm();
 
-			if (facilityOut.isPresent()) {
-			    facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
-			    facilityAddrGrid.getSelectionModel().deselectAll();
-			    facilityAddrGrid.getDataProvider().refreshAll();
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(facilityAddrEditor(), true)
-		.withOperationData(facilityAddressIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityAddrEntityMsg.DEL) + " \""
 			+ facilityAddressIn.getFacility().getName() + "\"")
 		.withWidth(Props.EM_34)
-		.withModality(Modality.MR_DELETE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_DELETE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_DEL_FAIL));
+		    } else {
+			try {
+			    Optional<Facility> facilityOut = facilitiesService.delAddrFromFacility(facilityIn,
+				    facilityAddressIn);
+
+			    if (facilityOut.isPresent()) {
+				facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
+				facilityAddrGrid.getSelectionModel().deselectAll();
+				facilityAddrGrid.getDataProvider().refreshAll();
+			    }
+			    dialogForm.closeWithResult(Modality.MR_DELETE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_DELETE) {
@@ -1149,37 +1147,36 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	Facility facilityIn = facilityInO.get();
 
-	new DialogForm<Set<User>>() {
+	FacilityUsersEditor<Set<User>> editor = userEditor();
+	editor.setOperationData(new HashSet<User>());
 
-	    private static final long serialVersionUID = 1064271255777918530L;
+	DialogForm dialogForm = new DialogForm();
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_USR_ADD_CHK_FAIL));
-		} else {
-		    try {
-
-			Set<User> users = getOperationData();
-			Optional<Facility> facilityOut = facilitiesService.addLinksToUsers(facilityIn, users);
-			if (facilityOut.isPresent()) {
-			    facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
-			    usersGrid.getDataProvider().refreshAll();
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(userEditor())
-		.withOperationData(new HashSet<User>())
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(FacilityUsersMsg.FACILITY_USR_ADD_TITLE) + " \""
 			+ facilityIn.getName() + "\"")
 		.withWidth(Props.EM_56)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_USR_ADD_CHK_FAIL));
+		    } else {
+			try {
+
+			    Set<User> users = editor.getOperationData();
+			    Optional<Facility> facilityOut = facilitiesService.addLinksToUsers(facilityIn, users);
+			    if (facilityOut.isPresent()) {
+				facilitiesGrid.getDataProvider().refreshItem(facilityOut.get());
+				usersGrid.getDataProvider().refreshAll();
+			    }
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {

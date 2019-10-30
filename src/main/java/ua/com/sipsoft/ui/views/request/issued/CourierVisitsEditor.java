@@ -20,18 +20,17 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.services.common.FacilitiesService;
-import ua.com.sipsoft.ui.commons.HasOperationData;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 
@@ -46,8 +45,7 @@ import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 /** The Constant log. */
 @Slf4j
 @SpringComponent
-public class CourierVisitsEditor<T extends CourierVisit> extends FormLayout
-	implements HasOperationData<T> {
+public class CourierVisitsEditor<T extends CourierVisit> extends FormLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3371271741841875886L;
@@ -60,7 +58,6 @@ public class CourierVisitsEditor<T extends CourierVisit> extends FormLayout
      *
      * @param binder the new binder
      */
-    @Setter
     private Binder<T> binder = new Binder(CourierVisit.class);
 
     /** The operation data. */
@@ -362,13 +359,29 @@ public class CourierVisitsEditor<T extends CourierVisit> extends FormLayout
 	}
     }
 
-    /**
-     * Gets the binder.
-     *
-     * @return the binder
-     */
-    @Override
-    public Binder<T> getBinder() {
-	return this.binder;
+    // TODO make this as a part of interface HasOperationData
+    public T getOperationData() {
+	return operationData;
     }
+
+    // TODO make this as a part of interface HasOperationData
+    public boolean isValidOperationData() {
+	if (binder.validate().isOk() & binder.isValid()) {
+	    if (operationData == null) {
+		log.warn("Property 'operationData' can not be null", this.operationData);
+		return false;
+	    }
+	    BinderValidationStatus<T> status = binder.validate();
+	    binder.writeBeanIfValid(operationData);
+	    return status.isOk();
+	}
+	return false;
+    }
+
+    // TODO make this as a part of interface HasOperationData
+    public void setOperationData(T operationData) {
+	this.operationData = operationData;
+	binder.readBean(operationData);
+    }
+
 }

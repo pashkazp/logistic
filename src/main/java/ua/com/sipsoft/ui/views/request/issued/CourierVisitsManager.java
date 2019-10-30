@@ -16,7 +16,6 @@ import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -51,11 +50,11 @@ import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetFilter;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.Modality;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.CourierVisitState;
-import ua.com.sipsoft.utils.Modality;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierVisitSnapshot;
@@ -1050,36 +1049,35 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	    return;
 	}
 	CourierVisitSnapshot visitSnapshot = new CourierVisitSnapshot(courierVisitsIn.get());
-	new DialogForm<CourierVisit>() {
 
-	    private static final long serialVersionUID = -2032188453197122997L;
+	CourierVisitsEditor<CourierVisit> editor = courierVisitEditor();
+	editor.setOperationData(courierVisitsIn.get());
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		    return;
-		}
-		try {
-		    Optional<CourierVisit> courierRequestOut = issuedCourierVisitService.registerChangesAndSave(
-			    getOperationData(), visitSnapshot,
-			    SecurityUtils.getUser());
-
-		    if (courierRequestOut.isPresent()) {
-			selectedCourierVisitsGrid.getDataCommunicator().refresh(courierRequestOut.get());
-			courierVisitsGrid.getDataCommunicator().refresh(courierRequestOut.get());
-		    }
-		    super.btnSaveClickListener(event);
-		} catch (Exception e) {
-		    AppNotificator.notify(5000, e.getMessage());
-		}
-	    }
-	}
-		.withDataEditor(courierVisitEditor())
-		.withOperationData(courierVisitsIn.get())
+	DialogForm dialogForm = new DialogForm();
+	dialogForm.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.EDIT))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			return;
+		    }
+		    try {
+			Optional<CourierVisit> courierRequestOut = issuedCourierVisitService.registerChangesAndSave(
+				editor.getOperationData(), visitSnapshot,
+				SecurityUtils.getUser());
+
+			if (courierRequestOut.isPresent()) {
+			    selectedCourierVisitsGrid.getDataCommunicator().refresh(courierRequestOut.get());
+			    courierVisitsGrid.getDataCommunicator().refresh(courierRequestOut.get());
+			}
+			dialogForm.closeWithResult(Modality.MR_SAVE);
+		    } catch (Exception e) {
+			AppNotificator.notify(5000, e.getMessage());
+		    }
+
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {

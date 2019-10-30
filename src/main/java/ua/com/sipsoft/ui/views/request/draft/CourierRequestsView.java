@@ -13,7 +13,6 @@ import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 
-import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
@@ -47,10 +46,10 @@ import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.Modality;
 import ua.com.sipsoft.ui.views.common.AccessDenied;
 import ua.com.sipsoft.utils.AppURL;
-import ua.com.sipsoft.utils.Modality;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -350,34 +349,34 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	log.info("Try to add Curier Request");
 	CourierRequest courierRequest = new CourierRequest();
 	courierRequest.setAuthor(SecurityUtils.getUser());
-	new DialogForm<CourierRequest>() {
 
-	    private static final long serialVersionUID = 1484824509005848764L;
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequest);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			log.info("Perform to add Courier Request");
-			CourierRequest requestIn = getOperationData();
-			courierRequestService.addRequest(requestIn,
-				SecurityUtils.getUser());
-			requestsGrid.getDataProvider().refreshAll();
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequest)
+	DialogForm dialogForm = new DialogForm();
+
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.ADD))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    log.info("Perform to add Courier Request");
+			    CourierRequest requestIn = editor.getOperationData();
+			    courierRequestService.addRequest(requestIn,
+				    SecurityUtils.getUser());
+			    requestsGrid.getDataProvider().refreshAll();
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -404,35 +403,35 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	}
 	CourierRequest courierRequestIn = courierRequestInO.get();
 	CourierRequestSnapshot requestSnapshot = new CourierRequestSnapshot(courierRequestIn);
-	new DialogForm<CourierRequest>() {
 
-	    private static final long serialVersionUID = -2032188453197122997L;
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequestIn);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			log.info("Perform to save Courier Request");
-			Optional<CourierRequest> courierRequestOut = courierRequestService
-				.registerChangesAndSave(getOperationData(), requestSnapshot, SecurityUtils.getUser());
-			if (courierRequestOut.isPresent()) {
-			    requestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
+	DialogForm dialogForm = new DialogForm();
 
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequestIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.EDIT))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    log.info("Perform to save Courier Request");
+			    Optional<CourierRequest> courierRequestOut = courierRequestService
+				    .registerChangesAndSave(editor.getOperationData(), requestSnapshot,
+					    SecurityUtils.getUser());
+			    if (courierRequestOut.isPresent()) {
+				requestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
+			    }
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {

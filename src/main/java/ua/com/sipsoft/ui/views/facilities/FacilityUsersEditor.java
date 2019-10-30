@@ -22,7 +22,6 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -34,8 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
-import ua.com.sipsoft.ui.commons.HasDialogFormDataCollector;
-import ua.com.sipsoft.ui.commons.HasOperationData;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.ButtonMsg;
@@ -55,19 +52,10 @@ import ua.com.sipsoft.utils.security.Role;
 /** The Constant log. */
 @Slf4j
 @SpringComponent
-public class FacilityUsersEditor<T extends Set<User>> extends FormLayout
-	implements HasOperationData<T>, HasDialogFormDataCollector {
+public class FacilityUsersEditor<T extends Set<User>> extends FormLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3291395147592860970L;
-
-    /**
-     * Sets the binder.
-     *
-     * @param binder the new binder
-     */
-    @Setter
-    private Binder<T> binder;
 
     /**
      * Sets the users service.
@@ -100,20 +88,7 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout
     /** The refresh btn. */
     private Button refreshBtn;
 
-    /**
-     * Gets the selected users.
-     *
-     * @return the selected users
-     */
-    @Getter
-
-    /**
-     * Sets the selected users.
-     *
-     * @param selectedUsers the new selected users
-     */
-    @Setter
-    private transient Set<User> selectedUsers;
+    private T operationData;
 
     /** The read only mode. */
     private boolean readOnlyMode;
@@ -291,16 +266,6 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout
     }
 
     /**
-     * Gets the binder.
-     *
-     * @return the binder
-     */
-    @Override
-    public Binder<T> getBinder() {
-	return binder;
-    }
-
-    /**
      * Checks if is read only mode.
      *
      * @return the readOnlyMode
@@ -316,31 +281,23 @@ public class FacilityUsersEditor<T extends Set<User>> extends FormLayout
      */
     public void setReadOnlyMode(boolean readOnlyMode) {
 	this.readOnlyMode = readOnlyMode;
-	if (binder != null) {
-	    binder.setReadOnly(readOnlyMode);
-	}
     }
 
-    /**
-     * Collect operation data.
-     *
-     * @return the object
-     */
-    @Override
-    public Object collectOperationData() {
-	selectedUsers = grid.getSelectedItems();
-	return selectedUsers;
-    }
-
-    /**
-     * Distribute operation data.
-     *
-     * @param operationData the operation data
-     */
     @SuppressWarnings("unchecked")
-    @Override
-    public void distributeOperationData(Object operationData) {
-	selectedUsers = (Set<User>) operationData;
+    public boolean isValidOperationData() {
+	operationData = (T) grid.getSelectedItems();
+	if (operationData != null) {
+	    return true;
+	}
+	return false;
+    }
+
+    public void setOperationData(T operationData) {
+	this.operationData = operationData;
+    }
+
+    public T getOperationData() {
+	return operationData;
     }
 
 }

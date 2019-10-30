@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -51,10 +50,10 @@ import ua.com.sipsoft.services.requests.draft.DraftRouteSheetFilter;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.dialogform.Modality;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.AppURL;
-import ua.com.sipsoft.utils.Modality;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -1053,47 +1052,47 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 	CourierRequest courierRequestIn = new CourierRequest();
 	courierRequestIn.setAuthor(SecurityUtils.getUser());
-	new DialogForm<CourierRequest>() {
 
-	    private static final long serialVersionUID = -5821296597309175777L;
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequestIn);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			Optional<DraftRouteSheet> draftSheetInO = draftRouteSheetService
-				.fetchById(draftRouteSheetIn.getId());
-			if (!draftSheetInO.isPresent()) {
-			    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
-			    return;
-			}
+	DialogForm dialogForm = new DialogForm();
+	dialogForm
 
-			Optional<CourierRequest> courierRequestOut = courierRequestService
-				.addRequest(getOperationData(), SecurityUtils.getUser());
-			if (courierRequestOut.isPresent()) {
-			    Optional<DraftRouteSheet> draftRouteSheetOut = draftRouteSheetService
-				    .addCourierRequestsAndSave(draftRouteSheetIn, SecurityUtils.getUser(),
-					    courierRequestOut.get());
-			    if (draftRouteSheetOut.isPresent()) {
-				draftSheetsGrid.getDataProvider().refreshItem(draftRouteSheetOut.get());
-				allCourierRequestsGrid.getDataProvider().refreshAll();
-				linkedCourierRequestsGrid.getDataProvider().refreshAll();
-			    }
-			    super.btnSaveClickListener(event);
-			}
-		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequestIn)
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.ADD))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<DraftRouteSheet> draftSheetInR = draftRouteSheetService
+				    .fetchById(draftRouteSheetIn.getId());
+			    if (!draftSheetInR.isPresent()) {
+				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+				return;
+			    }
+
+			    Optional<CourierRequest> courierRequestOut = courierRequestService
+				    .addRequest(editor.getOperationData(), SecurityUtils.getUser());
+			    if (courierRequestOut.isPresent()) {
+				Optional<DraftRouteSheet> draftRouteSheetOut = draftRouteSheetService
+					.addCourierRequestsAndSave(draftRouteSheetIn, SecurityUtils.getUser(),
+						courierRequestOut.get());
+				if (draftRouteSheetOut.isPresent()) {
+				    draftSheetsGrid.getDataProvider().refreshItem(draftRouteSheetOut.get());
+				    allCourierRequestsGrid.getDataProvider().refreshAll();
+				    linkedCourierRequestsGrid.getDataProvider().refreshAll();
+				}
+				dialogForm.closeWithResult(Modality.MR_SAVE);
+			    }
+			} catch (Exception e) {
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -1131,49 +1130,50 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequest courierRequestIn = requestInO.get();
 
 	CourierRequestSnapshot requestSnapshot = new CourierRequestSnapshot(courierRequestIn);
-	new DialogForm<CourierRequest>() {
 
-	    private static final long serialVersionUID = -2032188453197122997L;
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequestIn);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			Optional<DraftRouteSheet> draftSheetInO = draftRouteSheetService
-				.fetchById(draftRouteSheetIn.getId());
-			if (!draftSheetInO.isPresent()) {
-			    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
-			    return;
-			}
-			Optional<CourierRequest> requestInO = courierRequestService.fetchById(courierRequestIn.getId());
-			if (!requestInO.isPresent()) {
-			    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
-			    return;
-			}
+	DialogForm dialogForm = new DialogForm();
 
-			Optional<CourierRequest> courierRequestOut = courierRequestService
-				.registerChangesAndSave(getOperationData(), requestSnapshot, SecurityUtils.getUser());
-
-			if (courierRequestOut.isPresent()) {
-			    allCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
-			    linkedCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequestIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.EDIT))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<DraftRouteSheet> draftSheetInR = draftRouteSheetService
+				    .fetchById(draftRouteSheetIn.getId());
+			    if (!draftSheetInR.isPresent()) {
+				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+				return;
+			    }
+			    Optional<CourierRequest> requestInOO = courierRequestService
+				    .fetchById(courierRequestIn.getId());
+			    if (!requestInOO.isPresent()) {
+				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+				return;
+			    }
+
+			    Optional<CourierRequest> courierRequestOut = courierRequestService
+				    .registerChangesAndSave(editor.getOperationData(), requestSnapshot,
+					    SecurityUtils.getUser());
+
+			    if (courierRequestOut.isPresent()) {
+				allCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
+				linkedCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
+			    }
+			    dialogForm.closeWithResult(Modality.MR_SAVE);
+			} catch (Exception e) {
+			    log.error(e.getMessage() + " " + e);
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -1239,33 +1239,33 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     private void courierRequestsAdd() {
 	CourierRequest courierRequestIn = new CourierRequest();
 	courierRequestIn.setAuthor(SecurityUtils.getUser());
-	new DialogForm<CourierRequest>() {
 
-	    private static final long serialVersionUID = -981710039417360813L;
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequestIn);
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			Optional<CourierRequest> courierRequestOut = courierRequestService
-				.addRequest(getOperationData(), SecurityUtils.getUser());
-			if (courierRequestOut.isPresent()) {
-			    allCourierRequestsGrid.getDataProvider().refreshAll();
-			    super.btnSaveClickListener(event);
-			}
-		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequestIn)
+	DialogForm dialogForm = new DialogForm();
+
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.ADD))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<CourierRequest> courierRequestOut = courierRequestService
+				    .addRequest(editor.getOperationData(), SecurityUtils.getUser());
+			    if (courierRequestOut.isPresent()) {
+				allCourierRequestsGrid.getDataProvider().refreshAll();
+				dialogForm.closeWithResult(Modality.MR_SAVE);
+			    }
+			} catch (Exception e) {
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {
@@ -1341,37 +1341,36 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequest courierRequestIn = courierRequestInO.get();
 	CourierRequestSnapshot requestSnapshot = new CourierRequestSnapshot(courierRequestIn);
 
-	new DialogForm<CourierRequest>() {
+	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
+	editor.setOperationData(courierRequestIn);
 
-	    private static final long serialVersionUID = -2032188453197122997L;
+	DialogForm dialogForm = new DialogForm();
 
-	    @Override
-	    public void btnSaveClickListener(ComponentEvent<Button> event) {
-		if (!isValidOperationData()) {
-		    AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
-		} else {
-		    try {
-			Optional<CourierRequest> courierRequestOut = courierRequestService.registerChangesAndSave(
-				getOperationData(), requestSnapshot,
-				SecurityUtils.getUser());
-
-			if (courierRequestOut.isPresent()) {
-			    allCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
-			    linkedCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
-			}
-			super.btnSaveClickListener(event);
-		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
-		    }
-		}
-	    }
-
-	}
-		.withDataEditor(getCourierRequestEditor())
-		.withOperationData(courierRequestIn)
+	dialogForm
+		.withDataEditor(editor)
 		.withHeader(getTranslation(CourierRequestsMsg.EDIT))
 		.withWidth(Props.EM_28)
-		.withModality(Modality.MR_SAVE, Modality.MR_CANCEL)
+		.withModality(Modality.MR_SAVE, event -> {
+		    if (!editor.isValidOperationData()) {
+			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+		    } else {
+			try {
+			    Optional<CourierRequest> courierRequestOut = courierRequestService.registerChangesAndSave(
+				    editor.getOperationData(), requestSnapshot,
+				    SecurityUtils.getUser());
+
+			    if (courierRequestOut.isPresent()) {
+				allCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
+				linkedCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
+			    }
+			    dialogForm.setCompletitionMode(Modality.MR_SAVE);
+			    dialogForm.close();
+			} catch (Exception e) {
+			    AppNotificator.notify(5000, e.getMessage());
+			}
+		    }
+		})
+		.withModality(Modality.MR_CANCEL)
 		.withCloseOnOutsideClick(false)
 		.withOnCloseHandler(event -> {
 		    if (event != null && event.getCloseMode() == Modality.MR_SAVE) {

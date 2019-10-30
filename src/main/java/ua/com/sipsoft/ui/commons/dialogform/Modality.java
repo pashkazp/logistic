@@ -1,6 +1,6 @@
-package ua.com.sipsoft.utils;
+package ua.com.sipsoft.ui.commons.dialogform;
 
-import ua.com.sipsoft.ui.commons.DialogForm;
+import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.ButtonMsg;
 
 /**
