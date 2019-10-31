@@ -774,8 +774,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
     @Lookup
     DialogForm getDialogForm() {
-	return null;
-    }
+	return null;}
 
     /**
      * Draft sheet add.

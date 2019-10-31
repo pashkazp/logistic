@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
@@ -822,8 +821,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 
     @Lookup
     DialogForm getDialogForm() {
-	return null;
-    }
+	return null;    }
 
     /**
      * Issued sheet done unfinished.
