@@ -9,7 +9,10 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Lookup;
+
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -773,6 +776,11 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	return null;
     }
 
+    @Lookup
+    DialogForm getDialogForm() {
+	return null;
+    }
+
     /**
      * Facility add.
      */
@@ -782,7 +790,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	FacilityEditor<Facility> editor = facilityEditor();
 	editor.setOperationData(facilityIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -834,7 +842,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	FacilityEditor<Facility> editor = facilityEditor();
 	editor.setOperationData(facilityIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -886,7 +894,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	editor.setReadOnlyMode(true);
 	editor.setOperationData(facilityIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();	
 
 	dialogForm
 		.withDataEditor(editor)
@@ -935,7 +943,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	FacilityAddrEditor<FacilityAddress> editor = facilityAddrEditor();
 	editor.setOperationData(facilityAddressIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -1009,7 +1017,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	FacilityAddrEditor<FacilityAddress> editor = facilityAddrEditor();
 	editor.setOperationData(facilityAddressIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -1093,7 +1101,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	editor.setReadOnlyMode(true);
 	editor.setOperationData(facilityAddressIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -1150,7 +1158,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	FacilityUsersEditor<Set<User>> editor = userEditor();
 	editor.setOperationData(new HashSet<User>());
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)

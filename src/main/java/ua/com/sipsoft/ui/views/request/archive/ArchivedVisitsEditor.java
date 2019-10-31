@@ -85,7 +85,6 @@ public class ArchivedVisitsEditor<T extends CourierVisit> extends AbstractBinded
      */
     ArchivedVisitsEditor() {
 	super();
-	initBinder();
 	log.info("Instantiates a new courier visits editor");
 	VerticalLayout panelFields = new VerticalLayout();
 	author = new TextField();
@@ -240,7 +239,8 @@ public class ArchivedVisitsEditor<T extends CourierVisit> extends AbstractBinded
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void initBinder() {
+    @Override
+    protected void initBinder() {
 	setBinder(new Binder(CourierVisit.class));
     }
 

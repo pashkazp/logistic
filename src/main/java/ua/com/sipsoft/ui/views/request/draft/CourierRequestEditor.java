@@ -85,7 +85,6 @@ public class CourierRequestEditor<T extends CourierRequest> extends AbstractBind
      */
     CourierRequestEditor() {
 	super();
-	initBinder();
 	log.info("Instantiates a new courier request editor");
 	VerticalLayout panelFields = new VerticalLayout();
 	author = new TextField();
@@ -240,7 +239,8 @@ public class CourierRequestEditor<T extends CourierRequest> extends AbstractBind
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void initBinder() {
+    @Override
+    protected void initBinder() {
 	setBinder(new Binder(CourierRequest.class));
     }
 

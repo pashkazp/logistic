@@ -342,6 +342,10 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	return null;
     }
 
+    DialogForm getDialogForm() {
+	return null;
+    }
+
     /**
      * Request add.
      */
@@ -353,7 +357,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequest);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -407,7 +411,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequestIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)

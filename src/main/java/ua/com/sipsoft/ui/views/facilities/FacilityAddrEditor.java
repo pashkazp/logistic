@@ -48,7 +48,6 @@ public class FacilityAddrEditor<T extends FacilityAddress> extends AbstractBinde
      */
     public FacilityAddrEditor() {
 	super();
-	initBinder();
 	VerticalLayout panelFields = new VerticalLayout();
 
 	addressesAlias = new TextField();
@@ -127,7 +126,8 @@ public class FacilityAddrEditor<T extends FacilityAddress> extends AbstractBinde
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void initBinder() {
+    @Override
+    protected void initBinder() {
 	setBinder(new Binder(FacilityAddress.class));
     }
 

@@ -772,6 +772,11 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	return null;
     }
 
+    @Lookup
+    DialogForm getDialogForm() {
+	return null;
+    }
+
     /**
      * Draft sheet add.
      */
@@ -1056,7 +1061,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequestIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 	dialogForm
 
 		.withDataEditor(editor)
@@ -1134,7 +1139,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequestIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -1243,7 +1248,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequestIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)
@@ -1344,7 +1349,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	CourierRequestEditor<CourierRequest> editor = getCourierRequestEditor();
 	editor.setOperationData(courierRequestIn);
 
-	DialogForm dialogForm = new DialogForm();
+	DialogForm dialogForm = getDialogForm();
 
 	dialogForm
 		.withDataEditor(editor)

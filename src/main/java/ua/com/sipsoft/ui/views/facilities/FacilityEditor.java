@@ -38,7 +38,6 @@ public class FacilityEditor<T extends Facility> extends AbstractBindedEntityEdit
      */
     public FacilityEditor() {
 	super();
-	initBinder();
 	VerticalLayout panelFields = new VerticalLayout();
 
 	name = new TextField();
@@ -76,7 +75,8 @@ public class FacilityEditor<T extends Facility> extends AbstractBindedEntityEdit
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void initBinder() {
+    @Override
+    protected void initBinder() {
 	setBinder(new Binder(Facility.class));
     }
 

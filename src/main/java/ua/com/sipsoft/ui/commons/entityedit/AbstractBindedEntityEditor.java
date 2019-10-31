@@ -12,8 +12,13 @@ public abstract class AbstractBindedEntityEditor<T> extends AbstractEntityEditor
     private static final long serialVersionUID = -1715796619592562117L;
 
     @Getter
-
     private Binder<T> binder;
+
+    public AbstractBindedEntityEditor() {
+	initBinder();
+    }
+
+    protected abstract void initBinder();
 
     @Override
     public boolean isValidOperationData() {
