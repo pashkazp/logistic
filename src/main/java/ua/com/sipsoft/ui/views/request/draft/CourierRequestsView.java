@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.Key;
@@ -332,19 +332,15 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	btnRequestsGridReset.addClickListener(e -> requestsGrid.getDataProvider().refreshAll());
     }
 
-    /** The application context. */
-    @Autowired
-    private transient ApplicationContext applicationContext;
-
     /**
      * Creates and get courier request editor.
      *
      * @return the courier request editor
      */
-    @SuppressWarnings("unchecked")
-    private CourierRequestEditor<CourierRequest> getCourierRequestEditor() {
+    @Lookup
+    CourierRequestEditor<CourierRequest> getCourierRequestEditor() {
 	log.info("Create courier request editor");
-	return applicationContext.getBean(CourierRequestEditor.class);
+	return null;
     }
 
     /**

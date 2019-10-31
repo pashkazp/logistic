@@ -13,8 +13,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -810,18 +809,15 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	btnVisitsGridReset.addClickListener(e -> courierVisitDataProvider.refreshAll());
     }
 
-    /** The application context. */
-    @Autowired
-    private transient ApplicationContext applicationContext;
-
     /**
      * Courier visit editor.
      *
      * @return the courier visits editor
      */
-    @SuppressWarnings("unchecked")
-    private CourierVisitsEditor<CourierVisit> courierVisitEditor() {
-	return applicationContext.getBean(CourierVisitsEditor.class);
+    @Lookup
+    CourierVisitsEditor<CourierVisit> courierVisitEditor() {
+	log.info("Create CourierVisitsEditor");
+	return null;
     }
 
     /**

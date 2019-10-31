@@ -9,8 +9,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Lookup;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -742,18 +741,15 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	});
     }
 
-    /** The application context. */
-    @Autowired
-    private transient ApplicationContext applicationContext;
-
     /**
      * Facility editor.
      *
      * @return the facility editor
      */
-    @SuppressWarnings("unchecked")
-    private FacilityEditor<Facility> facilityEditor() {
-	return applicationContext.getBean(FacilityEditor.class);
+    @Lookup
+    FacilityEditor<Facility> facilityEditor() {
+	log.info("Create FacilityEditor");
+	return null;
     }
 
     /**
@@ -761,9 +757,10 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      *
      * @return the facility addr editor
      */
-    @SuppressWarnings("unchecked")
-    private FacilityAddrEditor<FacilityAddress> facilityAddrEditor() {
-	return applicationContext.getBean(FacilityAddrEditor.class);
+    @Lookup
+    FacilityAddrEditor<FacilityAddress> facilityAddrEditor() {
+	log.info("Create FacilityAddrEditor");
+	return null;
     }
 
     /**
@@ -771,9 +768,10 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      *
      * @return the facility users editor
      */
-    @SuppressWarnings("unchecked")
-    private FacilityUsersEditor<Set<User>> userEditor() {
-	return applicationContext.getBean(FacilityUsersEditor.class);
+    @Lookup
+    FacilityUsersEditor<Set<User>> userEditor() {
+	log.info("Create FacilityUsersEditor");
+	return null;
     }
 
     /**
