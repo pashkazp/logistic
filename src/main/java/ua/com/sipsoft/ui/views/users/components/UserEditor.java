@@ -1,7 +1,5 @@
 package ua.com.sipsoft.ui.views.users.components;
 
-import javax.validation.ValidationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -23,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UsersService;
 import ua.com.sipsoft.ui.commons.AppNotificator;
+import ua.com.sipsoft.ui.commons.entityedit.AbstractBindedEntityEditor;
 import ua.com.sipsoft.ui.views.users.prototype.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
@@ -46,7 +44,8 @@ import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
 
 /** The Constant log. */
 @Slf4j
-public class UserEditor extends FormLayout implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
+public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
+	implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2209381064166335239L;
@@ -58,12 +57,6 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
     private RolesPresenter rolesPresenter;
 
     private PasswordEncoder passwordEncoder;
-
-    /** The user. */
-    private User user;
-
-    /** The binder. */
-    private final Binder<User> binder = new Binder<>(User.class);
 
     /** The id. */
     private final TextField id = new TextField();
@@ -185,7 +178,7 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
 	bindFields();
 
 	saveBtn.addClickListener(e -> saveUser());
-	resetBtn.addClickListener(e -> binder.readBean(user));
+	resetBtn.addClickListener(e -> getBinder().readBean(operationData));
 	cancelBtn.addClickListener(e -> this.setVisible(false));
 
 	saveBtn.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -209,25 +202,25 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
      */
     private void bindFields() {
 	log.debug("UserEditor bind fields");
-	binder.forField(id).asRequired().withConverter(Long::valueOf, String::valueOf).bind(User::getId, null);
-	binder.forField(username)
+	getBinder().forField(id).asRequired().withConverter(Long::valueOf, String::valueOf).bind(User::getId, null);
+	getBinder().forField(username)
 		.withValidator(username -> agreedUsernameCheck(username),
 			getTranslation(UserEntityCheckMsg.USERNAME_CHR))
 		.asRequired().bind(User::getUsername, User::setUsername);
-	binder.forField(firstName)
+	getBinder().forField(firstName)
 		.withValidator(firstName -> firstName
 			.length() <= 75, getTranslation(UserEntityCheckMsg.LONG_FIRSTNAME))
 		.bind(User::getFirstName, User::setFirstName);
-	binder.forField(lastName)
+	getBinder().forField(lastName)
 		.withValidator(lastName -> lastName
 			.length() <= 75, getTranslation(UserEntityCheckMsg.LONG_SECONDNAME))
 		.bind(User::getLastName, User::setLastName);
-	binder.forField(patronymic)
+	getBinder().forField(patronymic)
 		.withValidator(patronymic -> patronymic
 			.length() <= 75, getTranslation(UserEntityCheckMsg.LONG_PATRONYMIC))
 		.bind(User::getPatronymic, User::setPatronymic);
 
-	binder.forField(password)
+	getBinder().forField(password)
 		.withValidator(
 			password -> adreedPasswordCheck(password),
 			getTranslation(UserEntityCheckMsg.PASS_CHR))
@@ -237,21 +230,22 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
 		    }
 		});
 
-	binder.forField(confirmPassword)
+	getBinder().forField(confirmPassword)
 		.withValidator(pass -> (!pass.isEmpty() && pass.equals(password.getValue()))
 			|| (password.getValue().isEmpty() && pass.isEmpty()),
 			getTranslation(UserEntityCheckMsg.PASS_EQUAL))
 		.bind(user -> password.getEmptyValue(), (user, pass) -> {
 		});
 
-	binder.forField(email).asRequired()
+	getBinder().forField(email).asRequired()
 		.withValidator(email -> agreedEmailCheck(email), getTranslation(UserEntityCheckMsg.EMAIL_CHR))
 		.bind(User::getEmail, User::setEmail);
 
-	binder.forField(verifiedCb).bind(User::getVerified, (user, ena) -> user.setVerified(verifiedCb.getValue()));
-	binder.forField(enabledCb).bind(User::getEnabled, (user, ena) -> user.setEnabled(enabledCb.getValue()));
+	getBinder().forField(verifiedCb).bind(User::getVerified,
+		(user, ena) -> user.setVerified(verifiedCb.getValue()));
+	getBinder().forField(enabledCb).bind(User::getEnabled, (user, ena) -> user.setEnabled(enabledCb.getValue()));
 
-	binder.forField(rolesPresenter).asRequired()
+	getBinder().forField(rolesPresenter).asRequired()
 		.withValidator(roles -> (rolesPresenter.counter() > 0),
 			getTranslation(UserEntityCheckMsg.ROLE_QTY))
 		.bind(User::getRoles, (user, ena) -> user.setRoles(rolesPresenter.getValue()));
@@ -261,17 +255,16 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
      * Save user.
      */
     private void saveUser() {
-	try {
-	    if (binder.writeBeanIfValid(user)) {
-		user = usersService.saveUser(user);
-		if (changeHandler != null) {
-		    changeHandler.onChange(user);
-		}
-		AppNotificator.notify(getTranslation(AppNotifyMsg.USER_SAVED));
+	if (isValidOperationData()) {
+	    operationData = (T) usersService.saveUser(operationData);
+	    if (changeHandler != null) {
+		changeHandler.onChange(operationData);
 	    }
-	} catch (ValidationException e) {
-	    log.debug("User is not saved. Exception is thrown. " + e.getMessage());
-	    AppNotificator.notify(5000, e.getMessage());
+	    AppNotificator.notify(getTranslation(AppNotifyMsg.USER_SAVED));
+
+	} else {
+	    AppNotificator.notify(getTranslation(AppNotifyMsg.USER_NOT_SAVED));
+
 	}
     }
 
@@ -280,14 +273,19 @@ public class UserEditor extends FormLayout implements AgreedPasswordCheck, Agree
      *
      * @param user the user
      */
-    public void editUser(User user) {
+    public void editUser(T user) {
 	log.debug("UserEditor edit user: {}", user);
 	if (user == null) {
 	    setVisible(false);
 	    return;
 	}
-	this.user = user;
-	binder.readBean(user);
+	setOperationData(user);
 	username.focus();
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected void initBinder() {
+	setBinder(new Binder(User.class));
     }
 }
