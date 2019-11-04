@@ -342,6 +342,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	return null;
     }
 
+    @Lookup
     DialogForm getDialogForm() {
 	return null;
     }
