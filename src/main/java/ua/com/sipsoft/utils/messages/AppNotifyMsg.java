@@ -9,6 +9,7 @@ import ua.com.sipsoft.ui.commons.AppNotificator;
  */
 public class AppNotifyMsg {
     public static final String USER_SAVED = "app.note.user.saved";
+    public static final String USER_NOT_SAVED = "app.note.user.not.saved";
     public static final String FACILITY_CHK_FAIL = "app.note.facility.check.fail";
     public static final String FACILITY_DEL_FAIL = "app.note.facility.delete.fail";
     public static final String FACILITY_SAVED = "app.note.facility.saved";
