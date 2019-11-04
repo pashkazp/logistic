@@ -1,4 +1,4 @@
-package ua.com.sipsoft.ui.views.users.prototype;
+package ua.com.sipsoft.ui.views.users.components;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -22,12 +23,15 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
+import ua.com.sipsoft.ui.views.users.prototype.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.TooltippedComponent;
 import ua.com.sipsoft.utils.UIIcon;
@@ -37,13 +41,15 @@ import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.Role;
 
 /**
- * The Class AbstractSelectedUsersGridViewer.
+ * The Class UsersGridViewer.
  *
  * @author Pavlo Degtyaryev
  */
 
 @Log4j2
-public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout implements TooltippedComponent {
+@UIScope
+@SpringComponent
+public abstract class UsersGridViewer extends VerticalLayout implements TooltippedComponent {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5662619402901561707L;
@@ -74,11 +80,10 @@ public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout imp
      * @param usersService the users service
      * @param filterRoles  the filter roles
      */
-    public AbstractSelectedUsersGridViewer(UsersService usersService,
-	    Collection<Role> filterRoles) {
+    @Autowired
+    public UsersGridViewer(UsersService usersService) {
 
 	log.debug("Create Selected Users Grid Viewer for roles: " + filterRoles.toString());
-	this.filterRoles = filterRoles;
 	this.usersService = usersService;
 
 	fieldUsersFilter = new TextField("", getTranslation(GridToolMsg.SEARCH_FIELD));
@@ -127,7 +132,6 @@ public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout imp
      * Prepare behavior of the form.
      */
     private void prepare() {
-	DataProvider<User, UserFilter> userDataProvider;
 
 	fieldUsersFilter.setValueChangeMode(ValueChangeMode.EAGER);
 
@@ -176,6 +180,14 @@ public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout imp
 	usersGrid.setColumnReorderingAllowed(true);
 	usersGrid.setMultiSort(true);
 
+	resetDataProvider();
+
+	btnUsersGridReset.addClickListener(e -> usersGrid.getDataProvider().refreshAll());
+	fieldUsersFilter.addValueChangeListener(e -> usersGrid.getDataProvider().refreshAll());
+    }
+
+    private void resetDataProvider() {
+	DataProvider<User, UserFilter> userDataProvider;
 	userDataProvider = DataProvider.fromFilteringCallbacks(
 		query -> this.usersService.getQueriedUsersbyFilter(query,
 			UserFilter.builder()
@@ -187,9 +199,6 @@ public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout imp
 				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build()));
 
 	usersGrid.setDataProvider(userDataProvider.withConfigurableFilter());
-
-	btnUsersGridReset.addClickListener(e -> usersGrid.getDataProvider().refreshAll());
-	fieldUsersFilter.addValueChangeListener(e -> usersGrid.getDataProvider().refreshAll());
     }
 
     /**
@@ -313,5 +322,6 @@ public abstract class AbstractSelectedUsersGridViewer extends VerticalLayout imp
      */
     public void setFilterRoles(Collection<Role> filterRoles) {
 	this.filterRoles = filterRoles;
+	resetDataProvider();
     }
 }

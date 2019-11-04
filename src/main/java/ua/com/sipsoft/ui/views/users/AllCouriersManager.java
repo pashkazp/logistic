@@ -1,5 +1,7 @@
 package ua.com.sipsoft.ui.views.users;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
@@ -10,9 +12,11 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
+import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.ui.views.users.prototype.AbstractSelectedUsersManager;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.messages.AppTitleMsg;
+import ua.com.sipsoft.utils.security.Role;
 
 /**
  * The Class AllCouriersManager.
@@ -24,7 +28,7 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @UIScope
 @SpringComponent
 @Route(value = AppURL.COURIERS_ALL, layout = MainView.class)
-public class AllCouriersManager extends AbstractSelectedUsersManager<AllCouriersGridViewer> implements HasDynamicTitle {
+public class AllCouriersManager extends AbstractSelectedUsersManager<UsersGridViewer> implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -404507111374215492L;
@@ -32,12 +36,13 @@ public class AllCouriersManager extends AbstractSelectedUsersManager<AllCouriers
     /**
      * Instantiates a new all couriers manager.
      *
-     * @param allCouriersGridViewer the all couriers grid viewer
-     * @param userEditor            the user editor
+     * @param usersGridViewer the all couriers grid viewer
+     * @param userEditor      the user editor
      */
     @Autowired
-    public AllCouriersManager(AllCouriersGridViewer allCouriersGridViewer, UserEditor userEditor) {
-	super(allCouriersGridViewer, userEditor);
+    public AllCouriersManager(UsersGridViewer usersGridViewer, UserEditor userEditor) {
+	super(usersGridViewer, userEditor);
+	usersGridViewer.setFilterRoles(Arrays.asList(Role.ROLE_COURIER));
     }
 
     /**

@@ -44,7 +44,7 @@ import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
 
 /** The Constant log. */
 @Slf4j
-public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
+public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
 	implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
 
     /** The Constant serialVersionUID. */
@@ -256,7 +256,7 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
      */
     private void saveUser() {
 	if (isValidOperationData()) {
-	    operationData = (T) usersService.saveUser(operationData);
+	    operationData = usersService.saveUser(operationData);
 	    if (changeHandler != null) {
 		changeHandler.onChange(operationData);
 	    }
@@ -273,7 +273,7 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
      *
      * @param user the user
      */
-    public void editUser(T user) {
+    public void editUser(User user) {
 	log.debug("UserEditor edit user: {}", user);
 	if (user == null) {
 	    setVisible(false);

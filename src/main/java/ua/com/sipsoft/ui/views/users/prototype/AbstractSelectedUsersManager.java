@@ -6,6 +6,7 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
+import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.utils.Props;
 
 /**
@@ -17,7 +18,7 @@ import ua.com.sipsoft.utils.Props;
 
 /** The Constant log. */
 @Slf4j
-public class AbstractSelectedUsersManager<T extends AbstractSelectedUsersGridViewer> extends VerticalLayout {
+public class AbstractSelectedUsersManager<T extends UsersGridViewer> extends VerticalLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3120440143379685008L;
@@ -26,28 +27,28 @@ public class AbstractSelectedUsersManager<T extends AbstractSelectedUsersGridVie
     private SplitLayout background;
 
     /** The user editor. */
-    private UserEditor userEditor;
+    private UserEditor<User> userEditor;
 
     /** The selected users grid viewer. */
-    private T selectedUsersGridViewer;
+    private T usersGridViewer;
 
     /**
      * Instantiates a new abstract selected users manager.
      *
-     * @param selectedUsersGridViewer the selected users grid viewer
+     * @param usersGridViewer the selected users grid viewer
      * @param userEditor              the user editor
      */
-    public AbstractSelectedUsersManager(T selectedUsersGridViewer, UserEditor userEditor) {
+    public AbstractSelectedUsersManager(T usersGridViewer, UserEditor<User> userEditor) {
 	this.userEditor = userEditor;
-	this.selectedUsersGridViewer = selectedUsersGridViewer;
+	this.setUsersGridViewer(usersGridViewer);
 	background = new SplitLayout();
 
-	selectedUsersGridViewer.getUsersGrid().addSelectionListener(
+	usersGridViewer.getUsersGrid().addSelectionListener(
 		event -> this.showDetails(event.getFirstSelectedItem().stream().findFirst().orElse(null)));
-	userEditor.setChangeHandler(selectedUsersGridViewer.getRefreshChangeHandler());
+	userEditor.setChangeHandler(usersGridViewer.getRefreshChangeHandler());
 	userEditor.setVisible(false);
 
-	background.addToPrimary(selectedUsersGridViewer);
+	background.addToPrimary(usersGridViewer);
 	background.addToSecondary(userEditor);
 
 	background.getStyle().set(Props.MARGIN, Props.EM_0_5);
@@ -75,5 +76,19 @@ public class AbstractSelectedUsersManager<T extends AbstractSelectedUsersGridVie
 	} else {
 	    userEditor.setVisible(false);
 	}
+    }
+
+    /**
+     * @return the usersGridViewer
+     */
+    public T getUsersGridViewer() {
+	return usersGridViewer;
+    }
+
+    /**
+     * @param usersGridViewer the usersGridViewer to set
+     */
+    public void setUsersGridViewer(T usersGridViewer) {
+	this.usersGridViewer = usersGridViewer;
     }
 }

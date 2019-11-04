@@ -1,5 +1,7 @@
 package ua.com.sipsoft.ui.views.users;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
@@ -10,9 +12,11 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
+import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.ui.views.users.prototype.AbstractSelectedUsersManager;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.messages.AppTitleMsg;
+import ua.com.sipsoft.utils.security.Role;
 
 /**
  * The Class AllClientsManager.
@@ -24,7 +28,7 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @UIScope
 @SpringComponent
 @Route(value = AppURL.CLIENTS_ALL, layout = MainView.class)
-public class AllClientsManager extends AbstractSelectedUsersManager<AllClientsGridViewer> implements HasDynamicTitle {
+public class AllClientsManager extends AbstractSelectedUsersManager<UsersGridViewer> implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3717224936589845560L;
@@ -32,12 +36,13 @@ public class AllClientsManager extends AbstractSelectedUsersManager<AllClientsGr
     /**
      * Instantiates a new all clients manager.
      *
-     * @param allClientsGridViewer the all clients grid viewer
-     * @param userEditor           the user editor
+     * @param usersGridViewer the all clients grid viewer
+     * @param userEditor      the user editor
      */
     @Autowired
-    public AllClientsManager(AllClientsGridViewer allClientsGridViewer, UserEditor userEditor) {
-	super(allClientsGridViewer, userEditor);
+    public AllClientsManager(UsersGridViewer usersGridViewer, UserEditor userEditor) {
+	super(usersGridViewer, userEditor);
+	usersGridViewer.setFilterRoles(Arrays.asList(Role.ROLE_CLIENT));
     }
 
     /**

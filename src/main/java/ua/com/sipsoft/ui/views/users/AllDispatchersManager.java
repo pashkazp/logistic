@@ -1,5 +1,7 @@
 package ua.com.sipsoft.ui.views.users;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
@@ -10,9 +12,11 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
+import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.ui.views.users.prototype.AbstractSelectedUsersManager;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.messages.AppTitleMsg;
+import ua.com.sipsoft.utils.security.Role;
 
 /**
  * The Class AllDispatchersManager.
@@ -24,7 +28,7 @@ import ua.com.sipsoft.utils.messages.AppTitleMsg;
 @UIScope
 @SpringComponent
 @Route(value = AppURL.DISPATCHERS_ALL, layout = MainView.class)
-public class AllDispatchersManager extends AbstractSelectedUsersManager<AllDispatchersGridViewer>
+public class AllDispatchersManager extends AbstractSelectedUsersManager<UsersGridViewer>
 	implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
@@ -33,12 +37,13 @@ public class AllDispatchersManager extends AbstractSelectedUsersManager<AllDispa
     /**
      * Instantiates a new all dispatchers manager.
      *
-     * @param allDispatchersGridViewer the all dispatchers grid viewer
-     * @param userEditor               the user editor
+     * @param usersGridViewer the all dispatchers grid viewer
+     * @param userEditor      the user editor
      */
     @Autowired
-    public AllDispatchersManager(AllDispatchersGridViewer allDispatchersGridViewer, UserEditor userEditor) {
-	super(allDispatchersGridViewer, userEditor);
+    public AllDispatchersManager(UsersGridViewer usersGridViewer, UserEditor userEditor) {
+	super(usersGridViewer, userEditor);
+	usersGridViewer.setFilterRoles(Arrays.asList(Role.ROLE_DISPATCHER));
     }
 
     /**
