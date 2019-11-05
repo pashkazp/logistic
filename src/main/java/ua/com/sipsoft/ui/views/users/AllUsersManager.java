@@ -2,8 +2,6 @@ package ua.com.sipsoft.ui.views.users;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
@@ -29,7 +27,7 @@ import ua.com.sipsoft.utils.security.Role;
 @UIScope
 @SpringComponent
 @Route(value = AppURL.USERS_ALL, layout = MainView.class)
-public class AllUsersManager extends AbstractSelectedUsersManager<UsersGridViewer> implements HasDynamicTitle {
+public class AllUsersManager extends AbstractSelectedUsersManager implements HasDynamicTitle {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3356617930255862777L;
 
@@ -37,9 +35,8 @@ public class AllUsersManager extends AbstractSelectedUsersManager<UsersGridViewe
      * Instantiates a new all users manager.
      *
      * @param usersGridViewer the all users grid viewer
-     * @param userEditor         the user editor
+     * @param userEditor      the user editor
      */
-    @Autowired
     public AllUsersManager(UsersGridViewer usersGridViewer, UserEditor<User> userEditor) {
 	super(usersGridViewer, userEditor);
 	usersGridViewer.setFilterRoles(Arrays.asList(Role.values()));

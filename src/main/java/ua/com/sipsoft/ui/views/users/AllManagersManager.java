@@ -2,14 +2,13 @@ package ua.com.sipsoft.ui.views.users;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
 import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
@@ -28,7 +27,7 @@ import ua.com.sipsoft.utils.security.Role;
 @UIScope
 @SpringComponent
 @Route(value = AppURL.MANAGERS_ALL, layout = MainView.class)
-public class AllManagersManager extends AbstractSelectedUsersManager<UsersGridViewer> implements HasDynamicTitle {
+public class AllManagersManager extends AbstractSelectedUsersManager implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -259169370614225170L;
@@ -39,8 +38,7 @@ public class AllManagersManager extends AbstractSelectedUsersManager<UsersGridVi
      * @param usersGridViewer the all managers grid viewer
      * @param userEditor      the user editor
      */
-    @Autowired
-    public AllManagersManager(UsersGridViewer usersGridViewer, UserEditor userEditor) {
+    public AllManagersManager(UsersGridViewer usersGridViewer, UserEditor<User> userEditor) {
 	super(usersGridViewer, userEditor);
 	usersGridViewer.setFilterRoles(Arrays.asList(Role.ROLE_MANAGER));
     }
