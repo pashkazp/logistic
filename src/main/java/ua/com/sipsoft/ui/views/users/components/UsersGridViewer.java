@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -24,7 +24,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
-import com.vaadin.flow.spring.annotation.UIScope;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -47,15 +46,16 @@ import ua.com.sipsoft.utils.security.Role;
  */
 
 @Log4j2
-@UIScope
+@Scope(value = "prototype")
+//@UIScope
 @SpringComponent
-public abstract class UsersGridViewer extends VerticalLayout implements TooltippedComponent {
+public class UsersGridViewer extends VerticalLayout implements TooltippedComponent {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5662619402901561707L;
 
     /** The users service. */
-    private transient UsersService usersService;
+    private final transient UsersService usersService;
 
     /**
      * Gets the users grid.
@@ -80,7 +80,6 @@ public abstract class UsersGridViewer extends VerticalLayout implements Tooltipp
      * @param usersService the users service
      * @param filterRoles  the filter roles
      */
-    @Autowired
     public UsersGridViewer(UsersService usersService) {
 
 	log.debug("Create Selected Users Grid Viewer for roles: " + filterRoles.toString());

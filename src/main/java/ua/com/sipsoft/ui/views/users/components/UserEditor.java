@@ -1,6 +1,5 @@
 package ua.com.sipsoft.ui.views.users.components;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -38,25 +37,25 @@ import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
  * @author Pavlo Degtyaryev
  */
 
-@Scope("prototype")
+@Scope(value = "prototype")
 @SpringComponent
 //@Tag("user-editor-form")
 
 /** The Constant log. */
 @Slf4j
-public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
+public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
 	implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2209381064166335239L;
 
     /** The users service. */
-    private UsersService usersService;
+    private final UsersService usersService;
 
     /** The roles presenter. */
-    private RolesPresenter rolesPresenter;
+    private final RolesPresenter rolesPresenter;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     /** The id. */
     private final TextField id = new TextField();
@@ -111,7 +110,7 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
      * @param changeHandler the new change handler
      */
     @Setter
-    private ChangeHandler<User> changeHandler;
+    private ChangeHandler<T> changeHandler;
 
     /**
      * Instantiates a new user editor.
@@ -119,7 +118,6 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
      * @param usersService   the users service
      * @param rolesPresenter the roles presenter
      */
-    @Autowired
     public UserEditor(UsersService usersService, RolesPresenter rolesPresenter, PasswordEncoder passwordEncoder) {
 	log.debug("UserEditor constructor");
 
@@ -256,7 +254,7 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
      */
     private void saveUser() {
 	if (isValidOperationData()) {
-	    operationData = usersService.saveUser(operationData);
+	    operationData = (T) usersService.saveUser(operationData);
 	    if (changeHandler != null) {
 		changeHandler.onChange(operationData);
 	    }
@@ -273,7 +271,7 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<User>
      *
      * @param user the user
      */
-    public void editUser(User user) {
+    public void editUser(T user) {
 	log.debug("UserEditor edit user: {}", user);
 	if (user == null) {
 	    setVisible(false);
