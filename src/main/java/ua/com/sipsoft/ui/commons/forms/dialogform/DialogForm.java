@@ -1,4 +1,4 @@
-package ua.com.sipsoft.ui.commons.dialogform;
+package ua.com.sipsoft.ui.commons.forms.dialogform;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,13 +13,15 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.utils.ButtonPreparer;
 
 /**
@@ -27,11 +29,8 @@ import ua.com.sipsoft.utils.ButtonPreparer;
  * {@link Dialog}
  *
  * @author Pavlo Degtyaryev
- * @param <T> the generic type
  */
 @Scope("prototype")
-
-/** The Constant log. */
 @Slf4j
 @SpringComponent
 public class DialogForm extends Dialog {
@@ -42,15 +41,16 @@ public class DialogForm extends Dialog {
     /** The btn panel. */
     private HorizontalLayout btnPanel;
 
-    /** The completition mode. */
-
-    private Modality completitionMode;
+    /** The completion mode. */
+    private Modality completionMode;
 
     /** The data editor. */
     private transient Component dataEditor;
 
     /** The modalities. */
     private Set<Modality> modalities;
+
+    /** The listeners. */
     private Map<Modality, ComponentEventListener<ClickEvent<Button>>> listeners;
 
     /**
@@ -62,8 +62,7 @@ public class DialogForm extends Dialog {
 	    private static final long serialVersionUID = 5482617395448455112L;
 	    {
 		put(Modality.MR_CANCEL, event -> {
-		    completitionMode = Modality.MR_CANCEL;
-		    close();
+		    closeWithResult(Modality.MR_CANCEL);
 		});
 	    }
 	};
@@ -94,6 +93,12 @@ public class DialogForm extends Dialog {
 	}
     }
 
+    /**
+     * Adds the modality.
+     *
+     * @param modality the modality
+     * @param listener the listener
+     */
     public void addModality(Modality modality, ComponentEventListener<ClickEvent<Button>> listener) {
 	if (modality != null) {
 	    this.modalities.add(modality);
@@ -104,16 +109,21 @@ public class DialogForm extends Dialog {
     }
 
     /**
-     * Gets the completition mode.
+     * Gets the completion mode.
      *
-     * @return the completition mode
+     * @return the completion mode
      */
-    public Modality getCompletitionMode() {
-	return completitionMode;
+    public Modality getCompletionMode() {
+	return completionMode;
     }
 
-    public void setCompletitionMode(Modality mode) {
-	completitionMode = mode;
+    /**
+     * Sets the completion mode.
+     *
+     * @param mode the new completion mode
+     */
+    public void setCompletionMode(Modality mode) {
+	completionMode = mode;
     }
 
     /**
@@ -121,30 +131,38 @@ public class DialogForm extends Dialog {
      *
      * @return the editor
      */
-    public FormLayout getEditor() {
-	return getEditor();
+    public Component getDataEditor() {
+	return dataEditor;
     }
 
     /** The on close handler. */
-    private DialogFormCloseHandler<DialogForm> onCloseHandler;
 
     /**
      * Gets the on close handler.
      *
      * @return the on close handler
      */
-    public DialogFormCloseHandler<DialogForm> getOnCloseHandler() {
-	return onCloseHandler;
-    }
+
+    /**
+     * Gets the on close handler.
+     *
+     * @return the on close handler
+     */
+    @Getter
 
     /**
      * Sets the on close handler.
      *
-     * @param onCloseHandler the on close handler
+     * @param onCloseHandler the new on close handler
      */
-    public void setOnCloseHandler(DialogFormCloseHandler<DialogForm> onCloseHandler) {
-	this.onCloseHandler = onCloseHandler;
-    }
+
+    /**
+     * Sets the on close handler.
+     *
+     * @param onCloseHandler the new on close handler
+     */
+    @Setter
+    private DialogFormCloseHandler<DialogForm> onCloseHandler;
 
     /**
      * Open.
@@ -155,7 +173,7 @@ public class DialogForm extends Dialog {
 	    if (modalities.contains(modality)) {
 		ComponentEventListener<ClickEvent<Button>> listener;
 		listener = listeners.getOrDefault(modality, event -> {
-		    completitionMode = modality;
+		    completionMode = modality;
 		    close();
 		});
 		Button button = ButtonPreparer
@@ -178,7 +196,7 @@ public class DialogForm extends Dialog {
 	if (event != null && !event.isOpened() && getOnCloseHandler() != null) {
 	    DialogFormCloseEvent<DialogForm> closeEvent = new DialogFormCloseEvent<>(this,
 		    event.isFromClient());
-	    closeEvent.setCloseMode(getCompletitionMode());
+	    closeEvent.setCloseMode(getCompletionMode());
 	    getOnCloseHandler().onClose(closeEvent);
 	}
     }
@@ -186,10 +204,9 @@ public class DialogForm extends Dialog {
     /**
      * Sets the data editor.
      *
-     * @param <F>    the generic type
      * @param editor the new data editor
      */
-    public <F extends Component> void setDataEditor(F editor) {
+    public void setDataEditor(Component editor) {
 	this.dataEditor = editor;
 	if (editor != null) {
 	    // this.dataEditor.setWidth(getWidth());
@@ -205,7 +222,7 @@ public class DialogForm extends Dialog {
      */
     @Override
     public String toString() {
-	return "DialogForm [btnPanel=" + btnPanel + ", completitionMode=" + completitionMode
+	return "DialogForm [btnPanel=" + btnPanel + ", completionMode=" + completionMode
 		+ ", [dataEditor=" + dataEditor + "], modalities=" + modalities + ", onCloseHandler=" + onCloseHandler
 		+ ", toString()=" + super.toString() + "]";
     }
@@ -222,7 +239,7 @@ public class DialogForm extends Dialog {
     }
 
     /**
-     * With close on outside click.
+     * Set close on outside click.
      *
      * @param value the value
      * @return the dialog form
@@ -233,61 +250,18 @@ public class DialogForm extends Dialog {
     }
 
     /**
-     * With completition mode.
+     * Set data editor.
      *
-     * @param completitionMode the completition mode
-     * @return the dialog form
-     */
-    public DialogForm withCompletitionMode(Modality completitionMode) {
-	this.completitionMode = completitionMode;
-	return this;
-    }
-
-    /**
-     * With components.
-     *
-     * @param components the components
-     * @return the dialog form
-     */
-    public DialogForm withComponents(Component... components) {
-	if (components != null) {
-	    for (Component component : components) {
-		add(component);
-	    }
-	}
-	return this;
-    }
-
-    /**
-     * With data editor.
-     *
-     * @param <S>    the generic type
      * @param editor the editor
      * @return the dialog form
      */
-    public <S extends Component> DialogForm withDataEditor(
-	    S editor) {
+    public DialogForm withDataEditor(Component editor) {
 	setDataEditor(editor);
 	return this;
     }
 
     /**
-     * With data editor.
-     *
-     * @param <S>          the generic type
-     * @param editor       the editor
-     * @param readOnlyMode the read only mode
-     * @return the dialog form
-     */
-    public <S extends Component> DialogForm withDataEditor(
-	    S editor,
-	    boolean readOnlyMode) {
-	setDataEditor(editor);
-	return this;
-    }
-
-    /**
-     * With height.
+     * Set height.
      *
      * @param value the value
      * @return the dialog form
@@ -298,7 +272,7 @@ public class DialogForm extends Dialog {
     }
 
     /**
-     * With modality.
+     * Set modalitys.
      *
      * @param modality the modality
      * @return the dialog form
@@ -308,13 +282,20 @@ public class DialogForm extends Dialog {
 	return this;
     }
 
+    /**
+     * Set modality and its event listener
+     *
+     * @param modality the modality
+     * @param listener the listener
+     * @return the dialog form
+     */
     public DialogForm withModality(Modality modality, ComponentEventListener<ClickEvent<Button>> listener) {
 	addModality(modality, listener);
 	return this;
     }
 
     /**
-     * With on close handler.
+     * Set dialog close handler.
      *
      * @param onCloseHandler the on close handler
      * @return the dialog form
@@ -326,36 +307,35 @@ public class DialogForm extends Dialog {
     }
 
     /**
-     * With header.
+     * With dialog header.
      *
      * @param header the header
      * @return the dialog form
      */
     public DialogForm withHeader(String header) {
 	addComponentAsFirst(new H4(header));
-//	if (dataEditor != null) {
-//	    dataEditor.addComponentAsFirst(new H4(header));
-//	}
 	return this;
     }
 
     /**
-     * With width.
+     * Set dialog width.
      *
      * @param value the value
      * @return the dialog form
      */
     public DialogForm withWidth(String value) {
 	setWidth(value);
-	if (dataEditor != null) {
-	    // dataEditor.setWidth(value);
-	    // TODO specify whether the editor should be resized
-	}
 	return this;
     }
 
+    /**
+     * Set modality result and close.
+     *
+     * @param modality the modality
+     */
     public void closeWithResult(Modality modality) {
-	setCompletitionMode(modality);
+	setCompletionMode(modality);
 	close();
     }
+
 }

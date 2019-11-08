@@ -8,8 +8,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.ui.MainView;
+import ua.com.sipsoft.ui.commons.forms.viewform.ViewForm;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
 import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.ui.views.users.prototype.AbstractSelectedUsersManager;
@@ -23,7 +25,7 @@ import ua.com.sipsoft.utils.security.Role;
  * @author Pavlo Degtyaryev
  */
 
-//@Slf4j
+@Slf4j
 @UIScope
 @SpringComponent
 @Route(value = AppURL.DISPATCHERS_ALL, layout = MainView.class)
@@ -39,8 +41,10 @@ public class AllDispatchersManager extends AbstractSelectedUsersManager
      * @param usersGridViewer the all dispatchers grid viewer
      * @param userEditor      the user editor
      */
-    public AllDispatchersManager(UsersGridViewer usersGridViewer, UserEditor<User> userEditor) {
-	super(usersGridViewer, userEditor);
+    public AllDispatchersManager(UsersGridViewer usersGridViewer, ViewForm viewForm,
+	    UserEditor<User> userEditor) {
+	super(usersGridViewer, viewForm, userEditor);
+	log.info("Create All dispatchers users manager");
 	usersGridViewer.setFilterRoles(Arrays.asList(Role.ROLE_DISPATCHER));
     }
 

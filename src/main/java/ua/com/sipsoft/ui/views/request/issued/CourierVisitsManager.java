@@ -50,8 +50,8 @@ import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetFilter;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
-import ua.com.sipsoft.ui.commons.dialogform.Modality;
+import ua.com.sipsoft.ui.commons.forms.Modality;
+import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.CourierVisitState;
@@ -67,11 +67,14 @@ import ua.com.sipsoft.utils.messages.HistoryEventMsg;
 import ua.com.sipsoft.utils.messages.IssuedRouteSheetMsg;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class CourierVisitsManager.
  *
  * @author Pavlo Degtyaryev
  */
+
+/** The Constant log. */
 
 /** The Constant log. */
 @Slf4j
@@ -83,49 +86,49 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7539108063492609494L;
 
-    /** The btn issued sheet print. */
+    /** The button issued sheet print. */
     private Button btnIssuedSheetPrint;
 
-    /** The btn active issued sheet done. */
+    /** The button active issued sheet done. */
     private Button btnActiveIssuedSheetDone;
 
-    /** The btn active issued sheet cancel. */
+    /** The button active issued sheet cancel. */
     private Button btnActiveIssuedSheetCancel;
 
-    /** The btn inactive issued sheet move to archive. */
+    /** The button inactive issued sheet move to archive. */
     private Button btnInactiveIssuedSheetMoveToArchive;
 
-    /** The btn issued sheet grid reset. */
+    /** The button issued sheet grid reset. */
     private Button btnIssuedSheetGridReset;
 
-    /** The btn inactive sheet visits recreate. */
+    /** The button inactive sheet visits recreate. */
     private Button btnInactiveSheetVisitsRecreate;
 
-    /** The btn active sheet visits done. */
+    /** The button active sheet visits done. */
     private Button btnActiveSheetVisitsDone;
 
-    /** The btn active sheet visits cancel. */
+    /** The button active sheet visits cancel. */
     private Button btnActiveSheetVisitsCancel;
 
-    /** The btn sheet visit edt. */
+    /** The button sheet visit edt. */
     private Button btnSheetVisitEdt;
 
-    /** The btn sheet visits grid reset. */
+    /** The button sheet visits grid reset. */
     private Button btnSheetVisitsGridReset;
 
-    /** The btn inactive visits recreate. */
+    /** The button inactive visits recreate. */
     private Button btnInactiveVisitsRecreate;
 
-    /** The btn active visits cancel. */
+    /** The button active visits cancel. */
     private Button btnActiveVisitsCancel;
 
-    /** The btn active visits done. */
+    /** The button active visits done. */
     private Button btnActiveVisitsDone;
 
-    /** The btn visit edt. */
+    /** The button visit edit. */
     private Button btnVisitEdt;
 
-    /** The btn visits grid reset. */
+    /** The button visits grid reset. */
     private Button btnVisitsGridReset;
 
     /** The issued sheets grid. */
@@ -509,7 +512,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 
 	issuedSheetsGrid.setColumnReorderingAllowed(true);
 	issuedSheetsGrid.addSelectionListener(event -> {
-	    issuedRouteSheetSeletcionEventProcessor(event.getFirstSelectedItem().orElse(null));
+	    issuedRouteSheetSelectionEventProcessor(event.getFirstSelectedItem().orElse(null));
 
 	});
 
@@ -520,7 +523,12 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	btnIssuedSheetGridReset.addClickListener(e -> routeSheetsDataProvider.refreshAll());
     }
 
-    private void issuedRouteSheetSeletcionEventProcessor(IssuedRouteSheet issuedRouteSheet) {
+    /**
+     * Issued route sheet selection event processor.
+     *
+     * @param issuedRouteSheet the issued route sheet
+     */
+    private void issuedRouteSheetSelectionEventProcessor(IssuedRouteSheet issuedRouteSheet) {
 
 	selectedCourierVisitsGrid.getSelectionModel().deselectAll();
 	selectedCourierVisitDataProvider.refreshAll();
@@ -819,9 +827,15 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	return null;
     }
 
+    /**
+     * Gets the dialog form.
+     *
+     * @return the dialog form
+     */
     @Lookup
     DialogForm getDialogForm() {
-	return null;    }
+	return null;
+    }
 
     /**
      * Issued sheet done unfinished.

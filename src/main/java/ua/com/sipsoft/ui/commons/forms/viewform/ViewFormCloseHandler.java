@@ -1,4 +1,4 @@
-package ua.com.sipsoft.ui.commons.dialogform;
+package ua.com.sipsoft.ui.commons.forms.viewform;
 
 /**
  * The Interface DialogFormCloseHandler.
@@ -6,12 +6,12 @@ package ua.com.sipsoft.ui.commons.dialogform;
  * @param <S> the generic type
  * @param <T> the generic type
  */
-public interface DialogFormCloseHandler<S extends DialogForm> {
+public interface ViewFormCloseHandler<S extends ViewForm> {
 
     /**
      * On close.
      *
      * @param event the event
      */
-    void onClose(DialogFormCloseEvent<S> event);
+    void onClose(ViewFormCloseEvent<S> event);
 }

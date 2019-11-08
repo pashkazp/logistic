@@ -1,8 +1,10 @@
-package ua.com.sipsoft.ui.commons.dialogform;
+package ua.com.sipsoft.ui.commons.forms.dialogform;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+
+import ua.com.sipsoft.ui.commons.forms.Modality;
 
 /**
  * The Class DialogFormCloseEvent.

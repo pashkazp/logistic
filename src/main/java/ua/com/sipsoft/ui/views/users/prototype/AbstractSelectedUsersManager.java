@@ -4,54 +4,85 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.data.selection.SelectionEvent;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.ui.commons.AppNotificator;
+import ua.com.sipsoft.ui.commons.forms.Modality;
+import ua.com.sipsoft.ui.commons.forms.viewform.ViewForm;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
 import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.utils.Props;
+import ua.com.sipsoft.utils.messages.AppNotifyMsg;
 
 /**
  * The Class AbstractSelectedUsersManager.
  *
  * @author Pavlo Degtyaryev
- * @param <T> the generic type
  */
-
-/** The Constant log. */
 @Slf4j
+@SpringComponent
 public abstract class AbstractSelectedUsersManager extends VerticalLayout {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3120440143379685008L;
 
-    /** The background. */
-    private SplitLayout background;
-
     /** The user editor. */
     private final UserEditor<User> userEditor;
 
-    /** The selected users grid viewer. */
-    private final UsersGridViewer usersGridViewer;
+    /** The view form. */
+    private final ViewForm viewForm;
+
+    /**
+     * Sets the change handler.
+     *
+     */
+    private ChangeHandler<User> changeHandler;
 
     /**
      * Instantiates a new abstract selected users manager.
      *
      * @param usersGridViewer the selected users grid viewer
+     * @param viewForm        the view form
      * @param userEditor      the user editor
      */
-    public AbstractSelectedUsersManager(UsersGridViewer usersGridViewer, UserEditor<User> userEditor) {
+    public AbstractSelectedUsersManager(UsersGridViewer usersGridViewer, ViewForm viewForm,
+	    UserEditor<User> userEditor) {
 	this.userEditor = userEditor;
-	this.usersGridViewer = usersGridViewer;
-	background = new SplitLayout();
+	this.viewForm = viewForm;
 
-	this.usersGridViewer.getUsersGrid().addSelectionListener(
+	viewForm.setDataEditor(userEditor);
+	viewForm.addModality(Modality.MR_SAVE, event -> {
+	    if (userEditor.isValidOperationData()) {
+		User operationData = usersGridViewer.getUsersService().saveUser(userEditor.getOperationData());
+		if (changeHandler != null) {
+		    changeHandler.onChange(operationData);
+		}
+		AppNotificator.notify(getTranslation(AppNotifyMsg.USER_SAVED));
+
+	    } else {
+		AppNotificator.notify(getTranslation(AppNotifyMsg.USER_NOT_SAVED));
+
+	    }
+	});
+	viewForm.addModality(Modality.MR_REFRESH, event -> {
+	    userEditor.resetOperationData();
+	});
+
+	viewForm.setWidth(Props.EM_30);
+	viewForm.setMinWidth(Props.EM_22);
+	viewForm.setMaxWidth(Props.EM_40);
+
+	SplitLayout background = new SplitLayout();
+
+	usersGridViewer.getUsersGrid().addSelectionListener(
 		event -> this.showDetails(event));
-	userEditor.setChangeHandler(this.usersGridViewer.getRefreshChangeHandler());
-	userEditor.setVisible(false);
+	changeHandler = usersGridViewer.getRefreshChangeHandler();
+	viewForm.setVisible(false);
 
-	background.addToPrimary(this.usersGridViewer);
-	background.addToSecondary(userEditor);
+	background.addToPrimary(usersGridViewer);
+	background.addToSecondary(viewForm);
 
 	background.getStyle().set(Props.MARGIN, Props.EM_0_5);
 	background.getStyle().set("padding", null);
@@ -75,9 +106,9 @@ public abstract class AbstractSelectedUsersManager extends VerticalLayout {
 	User user = event.getFirstSelectedItem().stream().findFirst().orElse(null);
 	if (user != null) {
 	    userEditor.setOperationData(user);
-	    userEditor.setVisible(true);
+	    viewForm.setVisible(true);
 	} else {
-	    userEditor.setVisible(false);
+	    viewForm.setVisible(false);
 	}
     }
 }

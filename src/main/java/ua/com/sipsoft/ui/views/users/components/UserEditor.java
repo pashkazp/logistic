@@ -3,10 +3,7 @@ package ua.com.sipsoft.ui.views.users.components;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -14,17 +11,10 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
-import ua.com.sipsoft.services.users.UsersService;
-import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.entityedit.AbstractBindedEntityEditor;
-import ua.com.sipsoft.ui.views.users.prototype.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
-import ua.com.sipsoft.utils.UIIcon;
-import ua.com.sipsoft.utils.messages.AppNotifyMsg;
-import ua.com.sipsoft.utils.messages.ButtonMsg;
 import ua.com.sipsoft.utils.messages.UserEntityCheckMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.AgreedEmailCheck;
@@ -35,13 +25,11 @@ import ua.com.sipsoft.utils.security.AgreedUsernameCheck;
  * The Class UserEditor.
  *
  * @author Pavlo Degtyaryev
+ * @param <T> the generic type
  */
 
 @Scope(value = "prototype")
 @SpringComponent
-//@Tag("user-editor-form")
-
-/** The Constant log. */
 @Slf4j
 public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
 	implements AgreedPasswordCheck, AgreedEmailCheck, AgreedUsernameCheck {
@@ -49,12 +37,10 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2209381064166335239L;
 
-    /** The users service. */
-    private final UsersService usersService;
-
     /** The roles presenter. */
     private final RolesPresenter rolesPresenter;
 
+    /** The password encoder. */
     private final PasswordEncoder passwordEncoder;
 
     /** The id. */
@@ -87,41 +73,15 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
     /** The verified cb. */
     private final Checkbox verifiedCb = new Checkbox();
 
-    /** The save btn. */
-    // @Getter
-    private Button saveBtn = new Button(getTranslation(ButtonMsg.BTN_SAVE), UIIcon.BTN_PUT.createIcon());
-
-    /** The reset btn. */
-    // @Getter
-    private Button resetBtn = new Button(getTranslation(ButtonMsg.BTN_REFRESH),
-	    UIIcon.BTN_REFRESH.createIcon());
-
-    /** The cancel btn. */
-    // @Getter
-    private Button cancelBtn = new Button(getTranslation(ButtonMsg.BTN_CANCEL),
-	    UIIcon.BTN_CANCEL.createIcon());
-
-    /** The buttons. */
-    private HorizontalLayout buttons = new HorizontalLayout(saveBtn, resetBtn, cancelBtn);
-
-    /**
-     * Sets the change handler.
-     *
-     * @param changeHandler the new change handler
-     */
-    @Setter
-    private ChangeHandler<T> changeHandler;
-
     /**
      * Instantiates a new user editor.
      *
-     * @param usersService   the users service
-     * @param rolesPresenter the roles presenter
+     * @param rolesPresenter  the roles presenter
+     * @param passwordEncoder the password encoder
      */
-    public UserEditor(UsersService usersService, RolesPresenter rolesPresenter, PasswordEncoder passwordEncoder) {
+    public UserEditor(RolesPresenter rolesPresenter, PasswordEncoder passwordEncoder) {
 	log.debug("UserEditor constructor");
 
-	this.usersService = usersService;
 	this.rolesPresenter = rolesPresenter;
 	this.passwordEncoder = passwordEncoder;
 
@@ -168,30 +128,10 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
 
 	addFormItem(rolesPresenter, getTranslation(UserEntityMsg.ROLES));
 
-	setSizeFull();
-	setMinWidth(Props.EM_21);
-	setMaxWidth(Props.EM_40);
-	setWidth(Props.EM_30);
+	setSizeUndefined();
 	getStyle().set(Props.MARGIN, Props.EM_0_5);
 	bindFields();
 
-	saveBtn.addClickListener(e -> saveUser());
-	resetBtn.addClickListener(e -> getBinder().readBean(operationData));
-	cancelBtn.addClickListener(e -> this.setVisible(false));
-
-	saveBtn.addThemeVariants(ButtonVariant.LUMO_SMALL);
-	resetBtn.addThemeVariants(ButtonVariant.LUMO_SMALL);
-	cancelBtn.addThemeVariants(ButtonVariant.LUMO_SMALL);
-	saveBtn.addClassName(Props.SIZE_XS);
-	resetBtn.addClassName(Props.SIZE_XS);
-	cancelBtn.addClassName(Props.SIZE_XS);
-	saveBtn.setWidthFull();
-	resetBtn.setWidthFull();
-	cancelBtn.setWidthFull();
-
-	buttons.add(saveBtn, resetBtn, cancelBtn);
-	buttons.setWidthFull();
-	add(buttons);
 	setResponsiveSteps(new ResponsiveStep("0", 1), new ResponsiveStep(Props.EM_06_25, 1));
     }
 
@@ -250,37 +190,15 @@ public class UserEditor<T extends User> extends AbstractBindedEntityEditor<T>
     }
 
     /**
-     * Save user.
+     * Reset operation data.
      */
-    private void saveUser() {
-	if (isValidOperationData()) {
-	    operationData = (T) usersService.saveUser(operationData);
-	    if (changeHandler != null) {
-		changeHandler.onChange(operationData);
-	    }
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.USER_SAVED));
-
-	} else {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.USER_NOT_SAVED));
-
-	}
+    public void resetOperationData() {
+	getBinder().readBean(operationData);
     }
 
     /**
-     * Edits the User.
-     *
-     * @param user the user
+     * Inits the binder.
      */
-    public void editUser(T user) {
-	log.debug("UserEditor edit user: {}", user);
-	if (user == null) {
-	    setVisible(false);
-	    return;
-	}
-	setOperationData(user);
-	username.focus();
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected void initBinder() {

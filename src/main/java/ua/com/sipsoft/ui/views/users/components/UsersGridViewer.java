@@ -45,6 +45,7 @@ import ua.com.sipsoft.utils.security.Role;
  * @author Pavlo Degtyaryev
  */
 
+/** The Constant log. */
 @Log4j2
 @Scope(value = "prototype")
 //@UIScope
@@ -55,7 +56,20 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
     private static final long serialVersionUID = 5662619402901561707L;
 
     /** The users service. */
+
+    /**
+     * Gets the users service.
+     *
+     * @return the users service
+     */
+    @Getter
     private final transient UsersService usersService;
+
+    /**
+     * Gets the users grid.
+     *
+     * @return the users grid
+     */
 
     /**
      * Gets the users grid.
@@ -71,14 +85,13 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
     /** The filter roles. */
     private Collection<Role> filterRoles = Collections.emptyList();
 
-    /** The btn users grid reset. */
+    /** The button users grid reset. */
     private Button btnUsersGridReset;
 
     /**
      * Instantiates a new abstract selected users grid viewer.
      *
      * @param usersService the users service
-     * @param filterRoles  the filter roles
      */
     public UsersGridViewer(UsersService usersService) {
 
@@ -185,6 +198,9 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
 	fieldUsersFilter.addValueChangeListener(e -> usersGrid.getDataProvider().refreshAll());
     }
 
+    /**
+     * Reset data provider.
+     */
     private void resetDataProvider() {
 	DataProvider<User, UserFilter> userDataProvider;
 	userDataProvider = DataProvider.fromFilteringCallbacks(

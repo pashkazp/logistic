@@ -50,8 +50,8 @@ import ua.com.sipsoft.services.requests.draft.DraftRouteSheetFilter;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
 import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
-import ua.com.sipsoft.ui.commons.dialogform.DialogForm;
-import ua.com.sipsoft.ui.commons.dialogform.Modality;
+import ua.com.sipsoft.ui.commons.forms.Modality;
+import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.Props;
@@ -1367,7 +1367,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 				allCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
 				linkedCourierRequestsGrid.getDataProvider().refreshItem(courierRequestOut.get());
 			    }
-			    dialogForm.setCompletitionMode(Modality.MR_SAVE);
+			    dialogForm.setCompletionMode(Modality.MR_SAVE);
 			    dialogForm.close();
 			} catch (Exception e) {
 			    AppNotificator.notify(5000, e.getMessage());

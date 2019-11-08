@@ -27,6 +27,7 @@ public class Props {
     public static final String EM_19 = "19em";
     public static final String EM_20 = "20em";
     public static final String EM_21 = "21em";
+    public static final String EM_22 = "22em";
     public static final String EM_28 = "28em";
     public static final String EM_30 = "30em";
     public static final String EM_34 = "34em";
