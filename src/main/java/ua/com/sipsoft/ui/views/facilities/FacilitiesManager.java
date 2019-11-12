@@ -773,7 +773,6 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	return null;
     }
 
-
     @Lookup
     DialogForm getDialogForm() {
 	return null;

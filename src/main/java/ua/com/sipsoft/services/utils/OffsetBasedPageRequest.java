@@ -55,7 +55,7 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
      * @param properties the properties to sort by, must not be {@literal null} or
      *                   empty.
      */
-    public OffsetBasedPageRequest(int offset, int limit, Sort.Direction direction, String... properties) {
+    public OffsetBasedPageRequest(int offset, int limit, Sort.Direction direction, String[] properties) {
 	this(offset, limit, new Sort(direction, properties));
     }
 
