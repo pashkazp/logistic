@@ -1,5 +1,7 @@
 package ua.com.sipsoft.ui;
 
+import static com.github.appreciated.app.layout.entity.Section.FOOTER;
+
 import java.util.Collection;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -8,18 +10,18 @@ import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.github.appreciated.app.layout.behaviour.Behaviour;
-import com.github.appreciated.app.layout.builder.AppLayoutBuilder;
+import com.github.appreciated.app.layout.addons.notification.DefaultNotificationHolder;
+import com.github.appreciated.app.layout.component.applayout.LeftLayouts;
+import com.github.appreciated.app.layout.component.builder.AppLayoutBuilder;
+import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder;
+import com.github.appreciated.app.layout.component.menu.left.builder.LeftSubMenuBuilder;
 import com.github.appreciated.app.layout.component.menu.left.items.LeftClickableItem;
 import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
+import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.DefaultBadgeHolder;
-import com.github.appreciated.app.layout.notification.DefaultNotificationHolder;
-import com.github.appreciated.app.layout.notification.entitiy.DefaultNotification;
-import com.github.appreciated.app.layout.router.AppLayoutRouterLayout;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
@@ -29,8 +31,6 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.com.sipsoft.ui.commons.LeftAppMenuBuilderExt;
-import ua.com.sipsoft.ui.commons.LeftSubMenuBuilderExt;
 import ua.com.sipsoft.ui.views.facilities.FacilitiesManager;
 import ua.com.sipsoft.ui.views.homeview.HomeView;
 import ua.com.sipsoft.ui.views.request.archive.ArchvedVisitsManager;
@@ -61,12 +61,12 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Route("")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @PWA(name = "SIPSoft Логістика", shortName = "SIP Логістика", startPath = "login", iconPath = "images/logo_b.png", backgroundColor = "#233348", themeColor = "#233348")
-@HtmlImport("frontend://styles/custom.html") // You can use HTML Imports to manipulate f.e. the accent color
+//@HtmlImport("frontend://styles/custom.html") // You can use HTML Imports to manipulate f.e. the accent color
 
 @Slf4j
 @UIScope
 @SpringComponent
-public class MainView extends AppLayoutRouterLayout {
+public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybridNoAppBar> {
 
     private static final long serialVersionUID = 1112777237411381510L;
 
@@ -82,15 +82,15 @@ public class MainView extends AppLayoutRouterLayout {
 	notifications = new DefaultNotificationHolder(newStatus -> {
 	});
 	badge = new DefaultBadgeHolder(5);
-	for (int i = 1; i < 6; i++) {
-	    notifications.addNotification(new DefaultNotification("Тестовий заголовок" + i,
-		    "Досить довгий тестовий опис ..............." + i));
-	}
+//	for (int i = 1; i < 6; i++) {
+//	    notifications.addNotification(new DefaultNotification("Тестовий заголовок" + i,
+//		    "Досить довгий тестовий опис ..............." + i));
+//	}
 //		LeftNavigationItem menuEntry = new LeftNavigationItem("Меню", VaadinIcon.MENU.create(), View6.class);
 //		badge.bind(menuEntry.getBadge());
 
-	init(AppLayoutBuilder.get(
-		Behaviour.LEFT_RESPONSIVE_HYBRID_NO_APP_BAR)
+	init(AppLayoutBuilder.get(LeftLayouts.LeftResponsiveHybridNoAppBar.class)
+
 		.withIcon("images/logo_b.png")
 		.withTitle(getTranslation(MainMenuMsg.APP_BAR_TITLE))
 //				.withAppBar(
@@ -99,7 +99,7 @@ public class MainView extends AppLayoutRouterLayout {
 //						.add(new AppBarNotificationButton<>(VaadinIcon.BELL, notifications))
 //								.build())
 		.withAppMenu(
-			LeftAppMenuBuilderExt.get()
+			LeftAppMenuBuilder.get()
 //						.addToSection( new LeftHeaderItem("Menu-Header", "APP_LAYOUT_VERSION", "images/logo_b.png"),
 //										com.github.appreciated.app.layout.entity.Section.HEADER)
 //						.addToSection( new LeftClickableItem("Clickable Entry", VaadinIcon.COG.create(),
@@ -132,7 +132,7 @@ public class MainView extends AppLayoutRouterLayout {
 						VaadinIcon.OFFICE.create(), FacilitiesManager.class),
 					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
 					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(LeftSubMenuBuilderExt
+				.add(getElementOrNull(LeftSubMenuBuilder
 					.get(getTranslation(MainMenuMsg.MENU_USERS),
 						UIIcon.USERS.createIcon())
 					.add(getElementOrNull(new LeftNavigationItem(
@@ -176,11 +176,10 @@ public class MainView extends AppLayoutRouterLayout {
 					.build(),
 					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
 					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.addToSection(
+				.addToSection(FOOTER,
 					new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
 						UIIcon.SIGN_OUT.createIcon(),
-						clickEvent -> confirmLogout()),
-					com.github.appreciated.app.layout.entity.Section.FOOTER)
+						clickEvent -> confirmLogout()))
 //								.addToSection(
 //										new LeftClickableItem("",
 //												UIIcon.THEME_PAINTER.createIcon(),
