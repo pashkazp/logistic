@@ -7,7 +7,6 @@ import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.appreciated.app.layout.addons.notification.DefaultNotificationHolder;
@@ -19,7 +18,6 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftClickable
 import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.DefaultBadgeHolder;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -29,6 +27,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.ui.views.facilities.FacilitiesManager;
@@ -62,7 +62,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @PWA(name = "SIPSoft Логістика", shortName = "SIP Логістика", startPath = "login", iconPath = "images/logo_b.png", backgroundColor = "#233348", themeColor = "#233348")
 //@HtmlImport("frontend://styles/custom.html") // You can use HTML Imports to manipulate f.e. the accent color
-
+@Theme(value = Lumo.class, variant = Lumo.DARK)
 @Slf4j
 @UIScope
 @SpringComponent
@@ -240,29 +240,4 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		.open();
     }
 
-    /**
-     * Parameter in application.properties that make application Theme 'light' or
-     * 'dark'
-     */
-    @Value("${application.theme.style}")
-    private String logisticThemeStyle;
-
-    /**
-     * Trick for fully pain Application interface.
-     *
-     * @param attachEvent the attach event
-     */
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-	super.onAttach(attachEvent);
-	log.info("Change MainView application theme");
-	/**
-	 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
-	 * which will appear in the wrong color making them seemingly invisible. Instead
-	 * do it the following way as long as the issue is not solved
-	 * (https://github.com/vaadin/flow/issues/4765)
-	 */
-	getUI().ifPresent(ui -> ui.getPage()
-		.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")"));
-    }
 }

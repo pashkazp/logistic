@@ -5,10 +5,8 @@ import java.time.LocalDateTime;
 import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -230,28 +228,6 @@ public class RememberPasswordView extends VerticalLayout
 			ButtonOption.caption(getTranslation(ButtonMsg.BTN_CANCEL)),
 			ButtonOption.icon(UIIcon.BTN_NO.getIcon()))
 		.open();
-    }
-
-    /** The logistic theme style. */
-    @Value("${application.theme.style}")
-    private String logisticThemeStyle;
-
-    /**
-     * On attach.
-     *
-     * @param attachEvent the attach event
-     */
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-	super.onAttach(attachEvent);
-	/**
-	 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
-	 * which will appear in the wrong color making them seemingly invisible. Instead
-	 * do it the following way as long as the issue is not solved
-	 * (https://github.com/vaadin/flow/issues/4765)
-	 */
-	getUI().get().getPage()
-		.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")");
     }
 
     @Override

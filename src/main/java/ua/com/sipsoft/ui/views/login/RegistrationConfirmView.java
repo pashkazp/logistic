@@ -3,10 +3,8 @@ package ua.com.sipsoft.ui.views.login;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -129,28 +127,6 @@ public class RegistrationConfirmView extends VerticalLayout
 	infoPanel.addComponentAsFirst(span);
 	dialog.add(infoPanel);
 	dialog.open();
-    }
-
-    /** The logistic theme style. */
-    @Value("${application.theme.style}")
-    private String logisticThemeStyle;
-
-    /**
-     * On attach.
-     *
-     * @param attachEvent the attach event
-     */
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-	super.onAttach(attachEvent);
-	/**
-	 * Using the @Theme Annotation to set the Dark Theme causes issues with shadows
-	 * which will appear in the wrong color making them seemingly invisible. Instead
-	 * do it the following way as long as the issue is not solved
-	 * (https://github.com/vaadin/flow/issues/4765)
-	 */
-	getUI().get().getPage()
-		.executeJavaScript("document.documentElement.setAttribute(\"theme\",\"" + logisticThemeStyle + "\")");
     }
 
     @Override
