@@ -359,7 +359,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
 
 	btnSheetPrint.setEnabled(false);
 
-	fieldSheetFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldSheetFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldSheetFilter.addValueChangeListener(e -> {
 	    archivedSheetGrid.getSelectionModel().deselectAll();
 	    archivedSheetGrid.getDataProvider().refreshAll();
@@ -537,7 +537,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
 
 	btnSheetsVisitsRecreate.setEnabled(false);
 
-	fieldSheetsVisitsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldSheetsVisitsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldSheetsVisitsFilter
 		.addValueChangeListener(e -> {
 		    sheetsVisitsGrid.getSelectionModel().deselectAll();
@@ -634,7 +634,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
 
 	btnVisitsRecreate.setEnabled(false);
 
-	fieldVisitsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldVisitsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldVisitsFilter.addValueChangeListener(e -> {
 	    visitsGrid.getSelectionModel().deselectAll();
 	    visitsGrid.getDataProvider().refreshAll();

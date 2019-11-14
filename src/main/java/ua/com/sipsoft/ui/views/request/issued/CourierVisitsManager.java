@@ -447,7 +447,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	btnInactiveIssuedSheetMoveToArchive.setEnabled(false);
 	btnActiveIssuedSheetDone.setEnabled(false);
 
-	fieldIssuedSheetFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldIssuedSheetFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldIssuedSheetFilter.addValueChangeListener(e -> {
 	    issuedSheetsGrid.getSelectionModel().deselectAll();
 	    issuedSheetsGrid.getDataProvider().refreshAll();
@@ -643,7 +643,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	btnActiveSheetVisitsCancel.setEnabled(false);
 	btnInactiveSheetVisitsRecreate.setEnabled(false);
 
-	fieldSelectedVisitsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldSelectedVisitsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldSelectedVisitsFilter
 		.addValueChangeListener(e -> {
 		    selectedCourierVisitsGrid.getSelectionModel().deselectAll();
@@ -760,7 +760,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	btnInactiveVisitsRecreate.setEnabled(false);
 	btnVisitEdt.setEnabled(false);
 
-	fieldVisitsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldVisitsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldVisitsFilter.addValueChangeListener(e -> {
 	    courierVisitsGrid.getSelectionModel().deselectAll();
 	    courierVisitsGrid.getDataProvider().refreshAll();

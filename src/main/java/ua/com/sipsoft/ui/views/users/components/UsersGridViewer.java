@@ -145,7 +145,7 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
      */
     private void prepare() {
 
-	fieldUsersFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldUsersFilter.setValueChangeMode(ValueChangeMode.LAZY);
 
 	usersGrid.removeAllColumns();
 
@@ -188,7 +188,6 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
 		    column.setResizable(true);
 		    column.setSortable(true);
 		});
-
 	usersGrid.setColumnReorderingAllowed(true);
 	usersGrid.setMultiSort(true);
 

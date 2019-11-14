@@ -466,7 +466,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	btnDraftSheetDel.setEnabled(false);
 	btnDraftSheetIssue.setEnabled(false);
 
-	fieldDraftSheetFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldDraftSheetFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldDraftSheetFilter.addValueChangeListener(e -> {
 	    draftSheetsGrid.getSelectionModel().deselectAll();
 	    draftSheetsGrid.getDataProvider().refreshAll();
@@ -619,7 +619,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	btnSheetRequestDel.setEnabled(false);
 	btnRequestsFromSheet.setEnabled(false);
 
-	fieldLinkedRequestsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldLinkedRequestsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldLinkedRequestsFilter
 		.addValueChangeListener(e -> {
 		    linkedCourierRequestsGrid.getSelectionModel().deselectAll();
@@ -722,7 +722,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	btnRequestEdt.setEnabled(false);
 	btnRequestToSheet.setEnabled(false);
 
-	fieldAllRequestsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldAllRequestsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldAllRequestsFilter.addValueChangeListener(e -> {
 	    allCourierRequestsGrid.getSelectionModel().deselectAll();
 	    allCourierRequestsGrid.getDataProvider().refreshAll();
@@ -774,7 +774,8 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
     @Lookup
     DialogForm getDialogForm() {
-	return null;}
+	return null;
+    }
 
     /**
      * Draft sheet add.

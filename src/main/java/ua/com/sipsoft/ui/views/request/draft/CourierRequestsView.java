@@ -211,7 +211,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	btnDraftSheetMake
 		.addClickListener(e -> draftSheetMake());
 
-	fieldRequestsFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldRequestsFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldRequestsFilter.addValueChangeListener(e -> {
 	    requestsGrid.getSelectionModel().deselectAll();
 	    requestsGrid.getDataProvider().refreshAll();

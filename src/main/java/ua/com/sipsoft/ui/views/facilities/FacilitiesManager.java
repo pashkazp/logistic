@@ -414,7 +414,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	btnFacilitiesEdt.setEnabled(false);
 	btnFacilitiesDel.setEnabled(false);
 
-	fieldFacilitiesFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldFacilitiesFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	facilitiesGrid.setColumnReorderingAllowed(true);
 
 	facilitiesGrid.removeAllColumns();
@@ -510,7 +510,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	btnFacilityAddrrEdt.setEnabled(false);
 	btnFacilityAddrrDel.setEnabled(false);
 
-	fieldFacilitiesAddrFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldFacilitiesAddrFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldFacilitiesAddrFilter
 		.addValueChangeListener(e -> {
 		    facilityAddrGrid.getSelectionModel().deselectAll();
@@ -628,7 +628,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	btnUsersAdd.setEnabled(false);
 	btnUsersDel.setEnabled(false);
 
-	fieldUsersFilter.setValueChangeMode(ValueChangeMode.EAGER);
+	fieldUsersFilter.setValueChangeMode(ValueChangeMode.LAZY);
 	fieldUsersFilter
 		.addValueChangeListener(e -> {
 		    usersGrid.getSelectionModel().deselectAll();
