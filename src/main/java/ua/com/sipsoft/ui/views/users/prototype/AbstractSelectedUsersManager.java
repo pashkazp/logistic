@@ -62,7 +62,7 @@ public abstract class AbstractSelectedUsersManager extends VerticalLayout {
 		AppNotificator.notify(getTranslation(AppNotifyMsg.USER_SAVED));
 
 	    } else {
-		AppNotificator.notify(getTranslation(AppNotifyMsg.USER_NOT_SAVED));
+		AppNotificator.notifyError(getTranslation(AppNotifyMsg.USER_NOT_SAVED));
 
 	    }
 	});

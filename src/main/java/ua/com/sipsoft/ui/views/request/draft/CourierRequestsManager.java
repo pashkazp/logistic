@@ -809,7 +809,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withSaveButton(() -> {
 		    try {
 			if (description.isInvalid()) {
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
+			    AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			    return;
 			}
 			log.info("Perform to add Draft Route Sheet");
@@ -832,7 +832,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			    AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_CREATED));
 			}
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
@@ -853,7 +853,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	}
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 
@@ -883,7 +883,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			return;
 		    }
 		    try {
@@ -907,7 +907,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			    AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_SAVED));
 			}
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
@@ -928,7 +928,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	}
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 
@@ -957,7 +957,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withSaveButton(() -> {
 		    try {
 			if (description.isInvalid()) {
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
+			    AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			    return;
 			}
 
@@ -967,7 +967,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_DELETED));
 
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_DELETE)),
@@ -987,7 +987,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	}
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
@@ -1016,7 +1016,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withSaveButton(() -> {
 		    try {
 			if (description.isInvalid()) {
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
+			    AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			    return;
 			}
 
@@ -1030,7 +1030,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 			AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_ISSUED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_YES)),
@@ -1050,7 +1050,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	}
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
@@ -1069,13 +1069,13 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<DraftRouteSheet> draftSheetInR = draftRouteSheetService
 				    .fetchById(draftRouteSheetIn.getId());
 			    if (!draftSheetInR.isPresent()) {
-				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+				AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 				return;
 			    }
 
@@ -1093,7 +1093,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 				dialogForm.closeWithResult(Modality.MR_SAVE);
 			    }
 			} catch (Exception e) {
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1122,14 +1122,14 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
 
 	requestInO = courierRequestService.fetchById(requestInO.get().getId());
 	if (!requestInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 	    return;
 	}
 	CourierRequest courierRequestIn = requestInO.get();
@@ -1147,19 +1147,19 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<DraftRouteSheet> draftSheetInR = draftRouteSheetService
 				    .fetchById(draftRouteSheetIn.getId());
 			    if (!draftSheetInR.isPresent()) {
-				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+				AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 				return;
 			    }
 			    Optional<CourierRequest> requestInOO = courierRequestService
 				    .fetchById(courierRequestIn.getId());
 			    if (!requestInOO.isPresent()) {
-				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+				AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 				return;
 			    }
 
@@ -1174,7 +1174,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1203,7 +1203,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
@@ -1215,7 +1215,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.map(Optional<CourierRequest>::get)
 		.collect(Collectors.toSet());
 	if (requestInO.isEmpty()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 	    return;
 	}
 	try {
@@ -1234,7 +1234,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	    linkedCourierRequestsGrid.getDataProvider().refreshAll();
 	} catch (Exception e) {
 	    log.error(e.getMessage() + " " + e);
-	    AppNotificator.notify(5000, e.getMessage());
+	    AppNotificator.notifyError(5000, e.getMessage());
 	}
     }
 
@@ -1256,7 +1256,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<CourierRequest> courierRequestOut = courierRequestService
@@ -1266,7 +1266,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 				dialogForm.closeWithResult(Modality.MR_SAVE);
 			    }
 			} catch (Exception e) {
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1295,7 +1295,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
 	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
 	    return;
 	}
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
@@ -1307,7 +1307,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.map(Optional<CourierRequest>::get)
 		.collect(Collectors.toSet());
 	if (requestInO.isEmpty()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 	    return;
 	}
 
@@ -1326,7 +1326,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	    }
 	} catch (Exception e) {
 	    log.error(e.getMessage() + " " + e);
-	    AppNotificator.notify(5000, e.getMessage());
+	    AppNotificator.notifyError(5000, e.getMessage());
 	}
     }
 
@@ -1340,7 +1340,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	}
 	courierRequestInO = courierRequestService.fetchById(courierRequestInO.get().getId());
 	if (!courierRequestInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 	    return;
 	}
 	CourierRequest courierRequestIn = courierRequestInO.get();
@@ -1357,7 +1357,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<CourierRequest> courierRequestOut = courierRequestService.registerChangesAndSave(
@@ -1371,7 +1371,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			    dialogForm.setCompletionMode(Modality.MR_SAVE);
 			    dialogForm.close();
 			} catch (Exception e) {
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1423,7 +1423,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(5000,
+			AppNotificator.notifyError(5000,
 				getTranslation(AppNotifyMsg.COURIER_REQ_SMALL_REASON));
 			return;
 		    }
@@ -1437,7 +1437,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 			linkedCourierRequestsGrid.getDataProvider().refreshAll();
 			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_DELETED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_DELETE)),

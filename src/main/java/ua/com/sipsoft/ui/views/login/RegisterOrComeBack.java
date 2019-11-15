@@ -347,17 +347,17 @@ public class RegisterOrComeBack extends VerticalLayout
 	    return;
 	}
 	if (usersService.fetchByEmail(user.getEmail()).isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(LoginMsg.SIGNUP_EMAIL_TAKEN));
+	    AppNotificator.notifyError(5000, getTranslation(LoginMsg.SIGNUP_EMAIL_TAKEN));
 	    return;
 	}
 	if (usersService.fetchByUsername(user.getUsername()).isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(LoginMsg.SIGNUP_USERNAME_TAKEN));
+	    AppNotificator.notifyError(5000, getTranslation(LoginMsg.SIGNUP_USERNAME_TAKEN));
 	    return;
 	}
 	user.getRoles().add(Role.ROLE_REGISTERED);
 	Optional<User> registered = usersService.registerNewUser(user);
 	if (!registered.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(LoginMsg.SIGNUP_FAILED));
+	    AppNotificator.notifyError(5000, getTranslation(LoginMsg.SIGNUP_FAILED));
 	    return;
 	}
 	eventPublisher.publishEvent(

@@ -728,7 +728,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(5000,
+			AppNotificator.notifyError(5000,
 				getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			return;
 		    }
@@ -740,7 +740,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
 
 			AppNotificator.notify(getTranslation(AppNotifyMsg.VISITS_WERE_REDRAFTS));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_YES)),

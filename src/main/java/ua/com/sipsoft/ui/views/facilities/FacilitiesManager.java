@@ -795,7 +795,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_21)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<Facility> facilityOut = facilitiesService.save(editor.getOperationData());
@@ -807,7 +807,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    }
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -831,7 +831,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
@@ -847,7 +847,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_21)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_CHK_FAIL));
 		    } else {
 			try {
 			    Optional<Facility> facilityOut = facilitiesService.save(editor.getOperationData());
@@ -858,7 +858,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -882,7 +882,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
@@ -906,7 +906,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			dialogForm.closeWithResult(Modality.MR_DELETE);
 		    } catch (Exception e) {
 			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 		})
 		.withModality(Modality.MR_CANCEL)
@@ -930,7 +930,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	}
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
@@ -949,14 +949,14 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_34)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
 		    } else {
 
 			try {
 			    Optional<Facility> facilityInR = facilitiesService
 				    .fetchById(facilityIn.getId());
 			    if (!facilityInR.isPresent()) {
-				AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+				AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 				return;
 			    }
 
@@ -969,7 +969,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    }
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -999,14 +999,14 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
 
 	facilityAddrInO = facilityAdrrService.fetchById(facilityAddrInO.get().getId());
 	if (!facilityAddrInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
 	    return;
 	}
 	FacilityAddress facilityAddressIn = facilityAddrInO.get();
@@ -1023,20 +1023,20 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_34)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITYADDR_CHK_FAIL));
 		    } else {
 
 			try {
 			    Optional<Facility> facilityInR = facilitiesService
 				    .fetchById(facilityIn.getId());
 			    if (!facilityInR.isPresent()) {
-				AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+				AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 				return;
 			    }
 			    Optional<FacilityAddress> facilityAdrrInO = facilityAdrrService
 				    .fetchById(facilityAddressIn.getId());
 			    if (!facilityAdrrInO.isPresent()) {
-				AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
+				AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
 				return;
 			    }
 			    Optional<FacilityAddress> facilityAdrrOut = facilityAdrrService
@@ -1048,7 +1048,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1077,20 +1077,20 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
 
 	facilityAddrInO = facilityAdrrService.fetchById(facilityAddrInO.get().getId());
 	if (!facilityAddrInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.FACILITYADDR_NOT_FOUND));
 	    return;
 	}
 	FacilityAddress facilityAddressIn = facilityAddrInO.get();
 
 	if (facilityAddressIn.getFacility().getFacilityAddresses().size() < 2) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.FACILITYADDR_LASTDEL_FAIL));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.FACILITYADDR_LASTDEL_FAIL));
 	    return;
 	}
 
@@ -1107,7 +1107,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_34)
 		.withModality(Modality.MR_DELETE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITYADDR_DEL_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITYADDR_DEL_FAIL));
 		    } else {
 			try {
 			    Optional<Facility> facilityOut = facilitiesService.delAddrFromFacility(facilityIn,
@@ -1121,7 +1121,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    dialogForm.closeWithResult(Modality.MR_DELETE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1147,7 +1147,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
@@ -1164,7 +1164,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 		.withWidth(Props.EM_56)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_USR_ADD_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_USR_ADD_CHK_FAIL));
 		    } else {
 			try {
 
@@ -1177,7 +1177,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -1206,7 +1206,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 
 	facilityInO = facilitiesService.fetchById(facilityInO.get().getId());
 	if (!facilityInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.FACILITY_NOT_FOUND));
 	    return;
 	}
 	Facility facilityIn = facilityInO.get();
@@ -1228,7 +1228,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 			    AppNotificator.notify(getTranslation(AppNotifyMsg.FACILITY_USR_DELETED));
 			}
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 			log.debug(
 				"Users connections to objects are not dropped due to an error.. Exception is thrown. "
 					+ e.getMessage());

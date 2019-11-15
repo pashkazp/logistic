@@ -366,7 +366,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    log.info("Perform to add Courier Request");
@@ -377,7 +377,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
 			    log.error(e.getMessage() + " " + e);
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -403,7 +403,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 	}
 	courierRequestInO = courierRequestService.fetchById(courierRequestInO.get().getId());
 	if (!courierRequestInO.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.REQUEST_NOT_FOUND));
 	    return;
 	}
 	CourierRequest courierRequestIn = courierRequestInO.get();
@@ -420,7 +420,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 		    } else {
 			try {
 			    log.info("Perform to save Courier Request");
@@ -432,7 +432,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 			    }
 			    dialogForm.closeWithResult(Modality.MR_SAVE);
 			} catch (Exception e) {
-			    AppNotificator.notify(5000, e.getMessage());
+			    AppNotificator.notifyError(5000, e.getMessage());
 			}
 		    }
 		})
@@ -484,7 +484,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(5000, getTranslation(AppNotifyMsg.COURIER_REQ_SMALL_REASON));
+			AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.COURIER_REQ_SMALL_REASON));
 			return;
 		    }
 		    try {
@@ -494,7 +494,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 			requestsGrid.getDataProvider().refreshAll();
 			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_DELETED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_DELETE)),
@@ -511,7 +511,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
     private void draftSheetMake() {
 	log.info("Try to create Draft Route Sheet using selected Requests");
 	if (!SecurityUtils.isMethodAccessGranted()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.NOT_ENOUGH_RIGHT));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.NOT_ENOUGH_RIGHT));
 	    log.info("Insufficent right for operation for User '{}'", SecurityUtils.getUser().getUsername());
 	    return;
 	}
@@ -549,7 +549,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			return;
 		    }
 		    try {
@@ -557,7 +557,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 				SecurityUtils.getUser());
 			AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_CREATED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),

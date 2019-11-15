@@ -847,7 +847,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	}
 	issuedSheetInO = issuedRouteSheetService.fetchById(issuedSheetInO.get().getId());
 	if (!issuedSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
 	    return;
 	}
 	Map<Boolean, List<CourierVisit>> visitsByStates = issuedSheetInO.get().getRequests()
@@ -858,7 +858,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.collect(Collectors.partitioningBy(CourierVisit::isActive));
 
 	if (visitsByStates.get(true).isEmpty()) {
-	    AppNotificator.notify(5000,
+	    AppNotificator.notifyError(5000,
 		    getTranslation(AppNotifyMsg.ISSUED_SHEET_HAVE_NO_UNFINISHED));
 	    return;
 	}
@@ -887,7 +887,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 			}
 		    } catch (Exception e) {
 			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
@@ -907,7 +907,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	}
 	issuedSheetInO = issuedRouteSheetService.fetchById(issuedSheetInO.get().getId());
 	if (!issuedSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
 	    return;
 	}
 	Map<Boolean, List<CourierVisit>> inactiveActive = issuedSheetInO.get().getRequests()
@@ -918,7 +918,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.collect(Collectors.partitioningBy(CourierVisit::isActive));
 
 	if (inactiveActive.get(true).isEmpty()) {
-	    AppNotificator.notify(5000,
+	    AppNotificator.notifyError(5000,
 		    getTranslation(AppNotifyMsg.ISSUED_SHEET_HAVE_NO_UNFINISHED));
 	    return;
 	}
@@ -957,7 +957,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 			}
 		    } catch (Exception e) {
 			log.error(e.getMessage() + " " + e);
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
@@ -999,7 +999,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	}
 	issuedSheetInO = issuedRouteSheetService.fetchById(issuedSheetInO.get().getId());
 	if (!issuedSheetInO.isPresent()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.ISSUED_SHEET_NOT_FOUND));
 	    return;
 	}
 	Map<Boolean, List<CourierVisit>> inactiveActive = issuedSheetInO.get().getRequests()
@@ -1010,7 +1010,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.collect(Collectors.partitioningBy(CourierVisit::isActive));
 
 	if (!inactiveActive.get(true).isEmpty()) {
-	    AppNotificator.notify(5000, getTranslation(AppNotifyMsg.ISSUED_IS_UNFINISHED));
+	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.ISSUED_IS_UNFINISHED));
 	    return;
 	}
 	VerticalLayout panel = new VerticalLayout(
@@ -1039,7 +1039,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 			courierVisitDataProvider.refreshAll();
 			AppNotificator.notify(getTranslation(AppNotifyMsg.ISSUED_IS_ARCHIVED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
@@ -1063,7 +1063,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 	courierVisitsIn = issuedCourierVisitService.fetchById(courierVisitsIn.get().getId());
 
 	if (!courierVisitsIn.isPresent()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.NOTHING_TO_EDIT));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.NOTHING_TO_EDIT));
 	    return;
 	}
 	CourierVisitSnapshot visitSnapshot = new CourierVisitSnapshot(courierVisitsIn.get());
@@ -1077,7 +1077,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.withWidth(Props.EM_28)
 		.withModality(Modality.MR_SAVE, event -> {
 		    if (!editor.isValidOperationData()) {
-			AppNotificator.notify(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
+			AppNotificator.notifyError(getTranslation(AppNotifyMsg.COURIER_REQ_CHK_FAIL));
 			return;
 		    }
 		    try {
@@ -1091,7 +1091,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 			}
 			dialogForm.closeWithResult(Modality.MR_SAVE);
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		})
@@ -1153,7 +1153,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(5000,
+			AppNotificator.notifyError(5000,
 				getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			return;
 		    }
@@ -1165,7 +1165,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 
 			AppNotificator.notify(getTranslation(AppNotifyMsg.VISITS_WERE_REDRAFTS));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_YES)),
@@ -1195,7 +1195,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.collect(Collectors.toList());
 
 	if (courierVisitsInL.isEmpty()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.NOTHING_TO_CANCEL));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.NOTHING_TO_CANCEL));
 	    return;
 	}
 	TextField description = new TextField();
@@ -1222,7 +1222,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.withMessage(panel)
 		.withSaveButton(() -> {
 		    if (description.isInvalid()) {
-			AppNotificator.notify(5000,
+			AppNotificator.notifyError(5000,
 				getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
 			return;
 		    }
@@ -1240,7 +1240,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 			});
 			AppNotificator.notify(getTranslation(AppNotifyMsg.VISITS_MARKS_AS_CANCELLED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_YES)),
@@ -1270,7 +1270,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 		.collect(Collectors.toList());
 
 	if (courierVisitsInL.isEmpty()) {
-	    AppNotificator.notify(getTranslation(AppNotifyMsg.NOTHING_TO_COMPLETE));
+	    AppNotificator.notifyError(getTranslation(AppNotifyMsg.NOTHING_TO_COMPLETE));
 	    return;
 	}
 
@@ -1292,7 +1292,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
 
 			AppNotificator.notify(getTranslation(AppNotifyMsg.VISITS_MARKS_AS_COMPLETED));
 		    } catch (Exception e) {
-			AppNotificator.notify(5000, e.getMessage());
+			AppNotificator.notifyError(5000, e.getMessage());
 		    }
 
 		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_YES)),

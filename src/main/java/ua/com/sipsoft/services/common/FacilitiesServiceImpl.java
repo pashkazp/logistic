@@ -71,7 +71,7 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
 	try {
 	    return save(facility);
 	} catch (ObjectOptimisticLockingFailureException e) {
-	    AppNotificator.notify("ObjectOptimisticLockingFailureException");
+	    AppNotificator.notifyError("ObjectOptimisticLockingFailureException");
 	    return Optional.of(null);
 	}
     }
@@ -96,7 +96,7 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
 	try {
 	    return save(facility);
 	} catch (Exception e) {
-	    AppNotificator.notify(e.toString());
+	    AppNotificator.notifyError(e.toString());
 	    return Optional.of(null);
 	}
     }
@@ -131,7 +131,7 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
 	try {
 	    dao.delete(facility);
 	} catch (Exception e) {
-	    AppNotificator.notify(e.toString());
+	    AppNotificator.notifyError(e.toString());
 	}
     }
 
@@ -154,7 +154,7 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
 	try {
 	    return save(facility);
 	} catch (Exception e) {
-	    AppNotificator.notify(e.toString());
+	    AppNotificator.notifyError(e.toString());
 	    return Optional.of(null);
 	}
     }
@@ -177,7 +177,7 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
 	try {
 	    return save(facility);
 	} catch (Exception e) {
-	    AppNotificator.notify(e.toString());
+	    AppNotificator.notifyError(e.toString());
 	    return Optional.of(null);
 	}
     }
