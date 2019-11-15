@@ -23,6 +23,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
+import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -180,18 +181,17 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 					new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
 						UIIcon.SIGN_OUT.createIcon(),
 						clickEvent -> confirmLogout()))
-//								.addToSection(
-//										new LeftClickableItem("",
-//												UIIcon.THEME_PAINTER.createIcon(),
-//												clickEvent -> {
-//
-//													if (themeList.contains(Lumo.DARK)) { //
-//														themeList.remove(Lumo.DARK);
-//													} else {
-//														themeList.add(Lumo.DARK);
-//													}
-//												}),
-//										com.github.appreciated.app.layout.entity.Section.FOOTER)
+				.addToSection(FOOTER,
+					new LeftClickableItem("",
+						UIIcon.THEME_PAINTER.createIcon(),
+						clickEvent -> {
+						    ThemeList themeList = UI.getCurrent().getElement().getThemeList();
+						    if (themeList.contains(Lumo.DARK)) { //
+							themeList.remove(Lumo.DARK);
+						    } else {
+							themeList.add(Lumo.DARK);
+						    }
+						}))
 				.build())
 		.build());
     }
