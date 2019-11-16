@@ -2,7 +2,9 @@ package ua.com.sipsoft.ui;
 
 import static com.github.appreciated.app.layout.entity.Section.FOOTER;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.claspina.confirmdialog.ButtonOption;
@@ -18,7 +20,6 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftClickable
 import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.DefaultBadgeHolder;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.Push;
@@ -80,6 +81,7 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
      */
     public MainView() {
 	log.info("Create Main View");
+
 	notifications = new DefaultNotificationHolder(newStatus -> {
 	});
 	badge = new DefaultBadgeHolder(5);
@@ -99,124 +101,195 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 //						.add(new AppBarNotificationButton<>(VaadinIcon.BELL, notifications))
 //						.add(new AppBarNotificationButton<>(VaadinIcon.BELL, notifications))
 //								.build())
-		.withAppMenu(
-			LeftAppMenuBuilder.get()
-//						.addToSection( new LeftHeaderItem("Menu-Header", "APP_LAYOUT_VERSION", "images/logo_b.png"),
-//										com.github.appreciated.app.layout.entity.Section.HEADER)
-//						.addToSection( new LeftClickableItem("Clickable Entry", VaadinIcon.COG.create(),
-//										clickEvent -> Notification.show("onClick ...")),
-//										com.github.appreciated.app.layout.entity.Section.HEADER)
-				.add((new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_HOME),
-					UIIcon.HOME.createIcon(), HomeView.class)))
-				.add(getElementOrNull(
-					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_REQ),
-						UIIcon.PHONE.createIcon(), CourierRequestsView.class),
-					Role.ROLE_ADMIN, Role.ROLE_CLIENT, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(
-					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_DRAFT),
-						UIIcon.SHEET_DRAFT.createIcon(), CourierRequestsManager.class),
-					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(
-					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ISSUED),
-						UIIcon.SHEET_ISSUED.createIcon(), CourierVisitsManager.class),
-					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(
-					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ARCHIVED),
-						UIIcon.SHEET_ARCHIVE.createIcon(), ArchvedVisitsManager.class),
-					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(
-					new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_FACILITIES),
-						VaadinIcon.OFFICE.create(), FacilitiesManager.class),
-					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.add(getElementOrNull(LeftSubMenuBuilder
-					.get(getTranslation(MainMenuMsg.MENU_USERS),
-						UIIcon.USERS.createIcon())
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_REGISTERED),
-						RoleIcon.USER.createIcon(), AllRegisteredManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_CLIENTS),
-						RoleIcon.CLIENT.createIcon(), AllClientsManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_COURIERS),
-						RoleIcon.COURIER.createIcon(), AllCouriersManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_MANAGERS),
-						RoleIcon.MANAGER.createIcon(), AllManagersManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_PRODUCTOPERS),
-						RoleIcon.PRODUCTOPER.createIcon(), AllProductOpersManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_DISPATCHERS),
-						RoleIcon.DISPATCHER.createIcon(), AllDispatchersManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.add(getElementOrNull(
-						new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ADMINS),
-							RoleIcon.ADMIN.createIcon(), AllAdminsManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.add(getElementOrNull(new LeftNavigationItem(
-						getTranslation(MainMenuMsg.MENU_ALLUSERS),
-						UIIcon.GROUP.createIcon(), AllUsersManager.class),
-						Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
-						Role.ROLE_PRODUCTOPER))
-					.build(),
-					Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
-					Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER))
-				.addToSection(FOOTER,
-					new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
-						UIIcon.SIGN_OUT.createIcon(),
-						clickEvent -> confirmLogout()))
-				.addToSection(FOOTER,
-					new LeftClickableItem("",
-						UIIcon.THEME_PAINTER.createIcon(),
-						clickEvent -> {
-						    ThemeList themeList = UI.getCurrent().getElement().getThemeList();
-						    if (themeList.contains(Lumo.DARK)) { //
-							themeList.remove(Lumo.DARK);
-						    } else {
-							themeList.add(Lumo.DARK);
-						    }
-						}))
-				.build())
+		.withAppMenu(getLeftAppMenu().build())
+
 		.build());
     }
 
-    /**
-     * Return component menu if roles is null or if roles match Security Utils roles
-     * for this Component
-     *
-     * @param element the element
-     * @param roles   the roles
-     * @return the element or null
-     */
-    private Component getElementOrNull(Component element, Role... roles) {
-	log.info("Check roles {} for Component {}", roles, element);
-	if (roles == null) {
-	    return element;
+    private LeftAppMenuBuilder getLeftAppMenu() {
+	LeftAppMenuBuilder menu = LeftAppMenuBuilder.get();
+	log.info("Build Main menu that is granted for the user \"{}\"", SecurityUtils.getUsername(),
+		SecurityUtils.getUsername());
+
+	if (isGrantedFor()) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    HomeView.class.getName());
+	    menu.add((new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_HOME),
+		    UIIcon.HOME.createIcon(), HomeView.class)));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_CLIENT, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    CourierRequestsView.class.getName());
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_REQ),
+		    UIIcon.PHONE.createIcon(), CourierRequestsView.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    CourierRequestsManager.class.getName());
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_DRAFT),
+		    UIIcon.SHEET_DRAFT.createIcon(), CourierRequestsManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    CourierVisitsManager.class.getName());
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ISSUED),
+		    UIIcon.SHEET_ISSUED.createIcon(), CourierVisitsManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    ArchvedVisitsManager.class.getName());
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ARCHIVED),
+		    UIIcon.SHEET_ARCHIVE.createIcon(), ArchvedVisitsManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_COURIER, Role.ROLE_DISPATCHER,
+		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    FacilitiesManager.class.getName());
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_FACILITIES),
+		    VaadinIcon.OFFICE.create(), FacilitiesManager.class));
+	}
+
+	Optional<LeftSubMenuBuilder> subMenu = getLeftUsersSubmenu();
+	if (subMenu.isPresent()) {
+	    log.info("Build User submenu is granted for the user \"{}\"", SecurityUtils.getUsername(),
+		    SecurityUtils.getUsername());
+	    menu.add(subMenu.get().build());
+	} else {
+	    log.info("Build User submenu is not granted for the user \"{}\"", SecurityUtils.getUsername(),
+		    SecurityUtils.getUsername());
+	}
+
+	log.info("Added Logout menu item for the user \"{}\"", SecurityUtils.getUsername());
+	menu.addToSection(FOOTER,
+		new LeftClickableItem(getTranslation(MainMenuMsg.MENU_LOGOUT),
+			UIIcon.SIGN_OUT.createIcon(),
+			clickEvent -> confirmLogout()));
+
+	log.info("Added Theme Repaint menu item for the user \"{}\"", SecurityUtils.getUsername());
+	menu.addToSection(FOOTER,
+		new LeftClickableItem("",
+			UIIcon.THEME_PAINTER.createIcon(),
+			clickEvent -> {
+			    ThemeList themeList = UI.getCurrent().getElement().getThemeList();
+			    if (themeList.contains(Lumo.DARK)) { //
+				themeList.remove(Lumo.DARK);
+			    } else {
+				themeList.add(Lumo.DARK);
+			    }
+			}));
+	return menu;
+    }
+
+    private Optional<LeftSubMenuBuilder> getLeftUsersSubmenu() {
+	boolean isEmpty = true;
+	LeftSubMenuBuilder menu = LeftSubMenuBuilder.get(getTranslation(MainMenuMsg.MENU_USERS),
+		UIIcon.USERS.createIcon());
+
+	log.info("Build Users submenu for the user \"{}\"", SecurityUtils.getUsername(),
+		SecurityUtils.getUsername());
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllRegisteredManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_REGISTERED),
+		    RoleIcon.USER.createIcon(), AllRegisteredManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllClientsManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_CLIENTS),
+		    RoleIcon.CLIENT.createIcon(), AllClientsManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllCouriersManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIERS),
+		    RoleIcon.COURIER.createIcon(), AllCouriersManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllManagersManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_MANAGERS),
+		    RoleIcon.MANAGER.createIcon(), AllManagersManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllProductOpersManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_PRODUCTOPERS),
+		    RoleIcon.PRODUCTOPER.createIcon(), AllProductOpersManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllDispatchersManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_DISPATCHERS),
+		    RoleIcon.DISPATCHER.createIcon(), AllDispatchersManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllAdminsManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ADMINS),
+		    RoleIcon.ADMIN.createIcon(), AllAdminsManager.class));
+	}
+
+	if (isGrantedFor(Role.ROLE_ADMIN, Role.ROLE_DISPATCHER, Role.ROLE_MANAGER,
+		Role.ROLE_PRODUCTOPER)) {
+	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
+		    AllUsersManager.class.getName());
+	    isEmpty = false;
+	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ALLUSERS),
+		    UIIcon.GROUP.createIcon(), AllUsersManager.class));
+//	    RouteConfiguration.forSessionScope().setAnnotatedRoute(AllUsersManager.class);
+	}
+
+	if (isEmpty) {
+	    return Optional.ofNullable(null);
+	} else {
+	    return Optional.of(menu);
+	}
+    }
+
+    private boolean isGrantedFor(Role... roles) {
+	if (roles == null || roles.length == 0) {
+	    log.info("Restriction roles set is absent. Acces granted.");
+	    return true;
 	}
 	Collection<Role> sRoles = SecurityUtils.getUserRoles();
-	log.debug("Check for SecurityUtils roles {}", sRoles);
+	String user = SecurityUtils.getUsername();
 	if (CollectionUtils.containsAny(sRoles, roles)) {
-	    log.debug("Access to component granted");
-	    return element;
+	    log.info("\"{}\"`s roles intersect with Restriction roles set in \"{}\"", user,
+		    CollectionUtils.intersection(sRoles, Arrays.asList(roles)),
+		    Arrays.deepToString(roles));
+	    return true;
 	}
-	log.debug("Access to component denied");
-	return null;
+	log.info("\"{}\"`s roles is not intersect with restriction roles set. Access denied.", user);
+	return false;
     }
 
     /**
