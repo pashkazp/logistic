@@ -1,7 +1,6 @@
 package ua.com.sipsoft.ui.views.common;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -30,10 +29,10 @@ public class AccessDenied extends VerticalLayout implements HasDynamicTitle {
      * Instantiates a new access denied.
      */
     public AccessDenied() {
-	H1 h1 = new H1("ACCESS DENIED");
-	add(h1);
+//	H1 h1 = new H1("ACCESS DENIED");
+//	add(h1);
 	setAlignItems(Alignment.CENTER);
-	Image titleComponent = new Image("frontend/images/access-denied.png", "access denied image");
+	Image titleComponent = new Image("img/access-denied.png", "access denied image");
 	add(titleComponent);
 
     }
