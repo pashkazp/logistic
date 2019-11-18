@@ -26,6 +26,8 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -47,6 +49,7 @@ import ua.com.sipsoft.ui.views.users.AllManagersManager;
 import ua.com.sipsoft.ui.views.users.AllProductOpersManager;
 import ua.com.sipsoft.ui.views.users.AllRegisteredManager;
 import ua.com.sipsoft.ui.views.users.AllUsersManager;
+import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.RoleIcon;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.messages.ButtonMsg;
@@ -68,7 +71,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybridNoAppBar> {
+public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybridNoAppBar> implements RouterLayout {
 
     private static final long serialVersionUID = 1112777237411381510L;
 
@@ -114,6 +117,7 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	if (isGrantedFor()) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    HomeView.class.getName());
+//	    RouteConfiguration.forSessionScope().setRoute(AppURL.HOME_URL, HomeView.class, MainView.class);
 	    menu.add((new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_HOME),
 		    UIIcon.HOME.createIcon(), HomeView.class)));
 	}
@@ -122,6 +126,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    CourierRequestsView.class.getName());
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.REQUESTS_ALL, CourierRequestsView.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_REQ),
 		    UIIcon.PHONE.createIcon(), CourierRequestsView.class));
 	}
@@ -130,6 +136,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    CourierRequestsManager.class.getName());
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.DRAFT_SHEETS, CourierRequestsManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_DRAFT),
 		    UIIcon.SHEET_DRAFT.createIcon(), CourierRequestsManager.class));
 	}
@@ -138,6 +146,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    CourierVisitsManager.class.getName());
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.ISSUED, CourierVisitsManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ISSUED),
 		    UIIcon.SHEET_ISSUED.createIcon(), CourierVisitsManager.class));
 	}
@@ -146,6 +156,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    ArchvedVisitsManager.class.getName());
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.ARCHIVE, ArchvedVisitsManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIER_ARCHIVED),
 		    UIIcon.SHEET_ARCHIVE.createIcon(), ArchvedVisitsManager.class));
 	}
@@ -154,6 +166,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    FacilitiesManager.class.getName());
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.FACILITIES_ALL, FacilitiesManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_FACILITIES),
 		    VaadinIcon.OFFICE.create(), FacilitiesManager.class));
 	}
@@ -201,6 +215,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllRegisteredManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.REGISTERED_ALL, AllRegisteredManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_REGISTERED),
 		    RoleIcon.USER.createIcon(), AllRegisteredManager.class));
 	}
@@ -209,6 +225,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllClientsManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.CLIENTS_ALL, AllClientsManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_CLIENTS),
 		    RoleIcon.CLIENT.createIcon(), AllClientsManager.class));
 	}
@@ -218,6 +236,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllCouriersManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.COURIERS_ALL, AllCouriersManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_COURIERS),
 		    RoleIcon.COURIER.createIcon(), AllCouriersManager.class));
 	}
@@ -227,6 +247,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllManagersManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.MANAGERS_ALL, AllManagersManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_MANAGERS),
 		    RoleIcon.MANAGER.createIcon(), AllManagersManager.class));
 	}
@@ -236,6 +258,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllProductOpersManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.PRODUCTOPERS_ALL, AllProductOpersManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_PRODUCTOPERS),
 		    RoleIcon.PRODUCTOPER.createIcon(), AllProductOpersManager.class));
 	}
@@ -245,6 +269,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllDispatchersManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.DISPATCHERS_ALL, AllDispatchersManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_DISPATCHERS),
 		    RoleIcon.DISPATCHER.createIcon(), AllDispatchersManager.class));
 	}
@@ -254,6 +280,8 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllAdminsManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.ADMINS_ALL, AllAdminsManager.class,
+		    MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ADMINS),
 		    RoleIcon.ADMIN.createIcon(), AllAdminsManager.class));
 	}
@@ -263,11 +291,10 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
 		    AllUsersManager.class.getName());
 	    isEmpty = false;
+	    RouteConfiguration.forSessionScope().setRoute(AppURL.USERS_ALL, AllUsersManager.class, MainView.class);
 	    menu.add(new LeftNavigationItem(getTranslation(MainMenuMsg.MENU_ALLUSERS),
 		    UIIcon.GROUP.createIcon(), AllUsersManager.class));
-//	    RouteConfiguration.forSessionScope().setAnnotatedRoute(AllUsersManager.class);
 	}
-
 	if (isEmpty) {
 	    return Optional.ofNullable(null);
 	} else {

@@ -33,7 +33,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
@@ -44,12 +43,10 @@ import ua.com.sipsoft.services.common.FacilitiesService;
 import ua.com.sipsoft.services.requests.draft.CourierRequestFilter;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
-import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
 import ua.com.sipsoft.ui.views.common.AccessDenied;
-import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -68,7 +65,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-@Route(value = AppURL.REQUESTS_ALL, layout = MainView.class)
+//@Route(value = AppURL.REQUESTS_ALL, layout = MainView.class)
 @AllowedFor(value = { RoleName.ROLE_ADMIN, RoleName.ROLE_CLIENT, RoleName.ROLE_COURIER, RoleName.ROLE_DISPATCHER,
 	RoleName.ROLE_MANAGER, RoleName.ROLE_PRODUCTOPER })
 public class CourierRequestsView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {

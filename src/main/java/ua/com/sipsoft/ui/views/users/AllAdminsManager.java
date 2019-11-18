@@ -4,18 +4,15 @@ import java.util.Arrays;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
-import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.forms.viewform.ViewForm;
 import ua.com.sipsoft.ui.views.users.components.UserEditor;
 import ua.com.sipsoft.ui.views.users.components.UsersGridViewer;
 import ua.com.sipsoft.ui.views.users.prototype.AbstractSelectedUsersManager;
-import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.messages.AppTitleMsg;
 import ua.com.sipsoft.utils.security.Role;
 
@@ -28,7 +25,7 @@ import ua.com.sipsoft.utils.security.Role;
 @Slf4j
 @UIScope
 @SpringComponent
-@Route(value = AppURL.ADMINS_ALL, layout = MainView.class)
+//@Route(value = AppURL.ADMINS_ALL, layout = MainView.class)
 public class AllAdminsManager extends AbstractSelectedUsersManager implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */

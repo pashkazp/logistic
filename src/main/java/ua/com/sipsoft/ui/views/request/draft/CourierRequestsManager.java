@@ -35,7 +35,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 
@@ -48,12 +47,10 @@ import ua.com.sipsoft.services.requests.draft.CourierRequestFilter;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetFilter;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
-import ua.com.sipsoft.ui.MainView;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
-import ua.com.sipsoft.utils.AppURL;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -76,7 +73,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-@Route(value = AppURL.DRAFT_SHEETS, layout = MainView.class)
+//@Route(value = AppURL.DRAFT_SHEETS, layout = MainView.class)
 public class CourierRequestsManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant W_44EM. */
