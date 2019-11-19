@@ -36,7 +36,7 @@ import com.vaadin.flow.theme.lumo.Lumo;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.ui.views.facilities.FacilitiesManager;
 import ua.com.sipsoft.ui.views.homeview.HomeView;
-import ua.com.sipsoft.ui.views.request.archive.ArchvedVisitsManager;
+import ua.com.sipsoft.ui.views.request.archive.ArchivedVisitsManager;
 import ua.com.sipsoft.ui.views.request.draft.CourierRequestsManager;
 import ua.com.sipsoft.ui.views.request.draft.CourierRequestsView;
 import ua.com.sipsoft.ui.views.request.issued.CourierVisitsManager;
@@ -165,12 +165,12 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 		Role.ROLE_MANAGER, Role.ROLE_PRODUCTOPER)) {
 
 	    log.info("Access for the user \"{}\" is granted for view: {}", SecurityUtils.getUsername(),
-		    ArchvedVisitsManager.class.getName());
+		    ArchivedVisitsManager.class.getName());
 
 	    menu.add(new LeftNavigationItemBuilder()
 		    .withMenuItem(getTranslation(MainMenuMsg.MENU_COURIER_ARCHIVED))
 		    .withMenuIcon(UIIcon.SHEET_ARCHIVE.createIcon())
-		    .withRouteTarget(ArchvedVisitsManager.class)
+		    .withRouteTarget(ArchivedVisitsManager.class)
 		    .withRoute().withRoutePath(AppURL.ARCHIVE).withRouteLayout(MainView.class).store()
 		    .build());
 	}

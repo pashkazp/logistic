@@ -57,7 +57,7 @@ import ua.com.sipsoft.utils.messages.HistoryEventMsg;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
 /**
- * The Class ArchvedVisitsManager.
+ * The Class ArchivedVisitsManager.
  *
  * @author Pavlo Degtyaryev
  */
@@ -67,7 +67,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @UIScope
 @SpringComponent
 //@Route(value = AppURL.ARCHIVE, layout = MainView.class)
-public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTitle {
+public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7818254835132131885L;
@@ -129,7 +129,7 @@ public class ArchvedVisitsManager extends VerticalLayout implements HasDynamicTi
      * @param sheetsService the archived route sheet service
      * @param visitsService the archived courier visit service
      */
-    public ArchvedVisitsManager(ArchivedSheetsService sheetsService,
+    public ArchivedVisitsManager(ArchivedSheetsService sheetsService,
 	    ArchivedVisitsService visitsService) {
 	super();
 	this.visitsService = visitsService;
