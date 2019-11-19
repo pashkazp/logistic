@@ -66,7 +66,6 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.ARCHIVE, layout = MainView.class)
 public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */

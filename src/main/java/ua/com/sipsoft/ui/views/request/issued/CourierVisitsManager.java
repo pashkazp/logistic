@@ -77,7 +77,6 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.ISSUED, layout = MainView.class)
 public class CourierVisitsManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */

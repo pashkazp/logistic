@@ -25,7 +25,6 @@ import ua.com.sipsoft.utils.security.Role;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.CLIENTS_ALL, layout = MainView.class)
 public class AllClientsManager extends AbstractSelectedUsersManager implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */

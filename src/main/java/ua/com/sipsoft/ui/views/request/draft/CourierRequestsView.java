@@ -65,7 +65,6 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.REQUESTS_ALL, layout = MainView.class)
 @AllowedFor(value = { RoleName.ROLE_ADMIN, RoleName.ROLE_CLIENT, RoleName.ROLE_COURIER, RoleName.ROLE_DISPATCHER,
 	RoleName.ROLE_MANAGER, RoleName.ROLE_PRODUCTOPER })
 public class CourierRequestsView extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {

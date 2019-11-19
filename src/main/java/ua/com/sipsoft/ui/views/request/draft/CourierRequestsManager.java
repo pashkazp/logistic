@@ -73,7 +73,6 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.DRAFT_SHEETS, layout = MainView.class)
 public class CourierRequestsManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant W_44EM. */

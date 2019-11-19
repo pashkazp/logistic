@@ -25,7 +25,6 @@ import ua.com.sipsoft.utils.security.Role;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.REGISTERED_ALL, layout = MainView.class)
 public class AllRegisteredManager extends AbstractSelectedUsersManager
 	implements HasDynamicTitle {
 

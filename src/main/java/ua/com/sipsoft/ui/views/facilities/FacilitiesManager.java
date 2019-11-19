@@ -71,7 +71,6 @@ import ua.com.sipsoft.utils.security.Role;
 @Slf4j
 @UIScope
 @SpringComponent
-//@Route(value = AppURL.FACILITIES_ALL, layout = MainView.class)
 public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle {
 
     /** The Constant serialVersionUID. */
