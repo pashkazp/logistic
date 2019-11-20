@@ -45,12 +45,12 @@ public class HomeView extends VerticalLayout implements HasDynamicTitle {
 	log.info("Construct HomeView");
 	Component homeViewPresenter = new VerticalLayout(new Paragraph("NOTHING THERE"));
 
-	if (SecurityUtils.getUserRoles().contains(Role.ROLE_REGISTERED)) {
+	if (SecurityUtils.getHighestUserRole().equals(Role.ROLE_REGISTERED)) {
 	    homeViewPresenter = applicationContext.getBean(HomeViewPresenterRegistered.class);
 	    log.info("Prepare HomeView information section for Registered Users");
 	}
 
-	if (SecurityUtils.getUserRoles().contains(Role.ROLE_ADMIN)) {
+	if (SecurityUtils.getHighestUserRole().equals(Role.ROLE_ADMIN)) {
 	    homeViewPresenter = applicationContext.getBean(HomeViewPresenterAdmin.class);
 	    log.info("Prepare HomeView information section for Admin Users");
 	}
