@@ -64,7 +64,6 @@ import ua.com.sipsoft.utils.messages.HistoryEventMsg;
 import ua.com.sipsoft.utils.messages.IssuedRouteSheetMsg;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CourierVisitsManager.
  *
