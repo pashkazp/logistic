@@ -51,6 +51,7 @@ import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.presenter.toolbar.PresenterToolbar;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
@@ -82,20 +83,14 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -497333939332082677L;
 
-    /** The btn draft sheet add. */
-    private Button btnDraftSheetAdd;
-
-    /** The btn draft sheet issue. */
-    private Button btnDraftSheetIssue;
-
-    /** The btn draft sheet edt. */
-    private Button btnDraftSheetEdt;
-
-    /** The btn draft sheet del. */
-    private Button btnDraftSheetDel;
-
-    /** The btn draft sheet grid reset. */
-    private Button btnDraftSheetGridReset;
+//    /** The btn draft sheet issue. */
+//    private Button btnDraftSheetIssue;
+//
+//    /** The btn draft sheet edt. */
+//    private Button btnDraftSheetEdt;
+//
+//    /** The btn draft sheet del. */
+//    private Button btnDraftSheetDel;
 
     /** The btn request create and add. */
     private Button btnRequestCreateAndAdd;
@@ -136,8 +131,8 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     /** The courier requests grid. */
     private Grid<CourierRequest> allCourierRequestsGrid;
 
-    /** The field draft sheet filter. */
-    private TextField fieldDraftSheetFilter;
+//    /** The field draft sheet filter. */
+//    private TextField fieldDraftSheetFilter;
 
     /** The field linked requests filter. */
     private TextField fieldLinkedRequestsFilter;
@@ -215,39 +210,75 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      */
     private Component getPanelDraftSheetGrigPresenter() {
 	log.info("Instantiates Draft Sheet Grid Presenter");
-	btnDraftSheetAdd = new Button(UIIcon.BTN_ADD.createIcon());
-	btnDraftSheetDel = new Button(UIIcon.BTN_NO.createIcon());
-	btnDraftSheetEdt = new Button(UIIcon.BTN_EDIT.createIcon());
-	btnDraftSheetIssue = new Button(UIIcon.SHEET_ISSUED.createIcon());
-	btnDraftSheetGridReset = new Button(UIIcon.BTN_REFRESH.createIcon());
 
-	fieldDraftSheetFilter = new TextField("", getTranslation(GridToolMsg.SEARCH_FIELD));
-	fieldDraftSheetFilter.setPrefixComponent(UIIcon.SEARCH.createIcon());
+	HorizontalLayout panelSheetsToolbar = PresenterToolbar.builder()
+		.withPresenterFilter()
+		.withLabel("")
+		.withPalceHolder(getTranslation(GridToolMsg.SEARCH_FIELD))
+		.withPrefixComponent(UIIcon.SEARCH.createIcon())
+		.withValueChangeMode(ValueChangeMode.LAZY)
+		.withValueChangeListener(e -> draftSheetsGrid.getDataProvider().refreshAll())
+		.done()
+		.withPresenterButtonsList()
+		.withPresenterButton().withIcon(UIIcon.BTN_ADD.createIcon())
+		.withClickListener(e -> draftSheetAdd())
+		.done()
+		.withPresenterButton().withIcon(UIIcon.BTN_NO.createIcon())
+		.withClickListener(e -> draftSheetDel())
+		.withEnabled(false)
+		.done()
+		.withPresenterButton()
+		.withIcon(UIIcon.BTN_EDIT.createIcon())
+		.withClickListener(e -> draftSheetEdit())
+		.withEnabled(false)
+		.done()
+		.withPresenterButton()
+		.withIcon(UIIcon.SHEET_ISSUED.createIcon())
+		.withClickListener(e -> draftSheetIssue())
+		.withEnabled(false)
+		.done()
+		.withPresenterButton()
+		.withIcon(UIIcon.BTN_REFRESH.createIcon())
+		.withClickListener(e -> refreshRouteSheetGrid())
+		.done()
+		.done()
+		.build();
 
-	btnDraftSheetAdd.setSizeUndefined();
-	btnDraftSheetEdt.setSizeUndefined();
-	btnDraftSheetDel.setSizeUndefined();
-	btnDraftSheetIssue.setSizeUndefined();
-	btnDraftSheetGridReset.setSizeUndefined();
-	btnDraftSheetAdd.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
-	btnDraftSheetEdt.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
-	btnDraftSheetDel.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
-	btnDraftSheetIssue.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
-	btnDraftSheetGridReset.getStyle().set(Props.MARGIN_LEFT, Props.EM_0_2);
-	btnDraftSheetGridReset.getStyle().set(Props.MARGIN_RIGHT, Props.EM_0_2);
-
-	HorizontalLayout panelSheetsToolbar = new HorizontalLayout(fieldDraftSheetFilter, btnDraftSheetAdd,
-		btnDraftSheetDel, btnDraftSheetEdt, btnDraftSheetIssue, btnDraftSheetGridReset);
-	panelSheetsToolbar.setDefaultVerticalComponentAlignment(Alignment.STRETCH);
-	panelSheetsToolbar.setFlexGrow(0, btnDraftSheetAdd);
-	panelSheetsToolbar.setFlexGrow(0, btnDraftSheetEdt);
-	panelSheetsToolbar.setFlexGrow(0, btnDraftSheetDel);
-	panelSheetsToolbar.setFlexGrow(0, btnDraftSheetIssue);
-	panelSheetsToolbar.setFlexGrow(0, btnDraftSheetGridReset);
-	panelSheetsToolbar.setFlexGrow(1, fieldDraftSheetFilter);
-	panelSheetsToolbar.setMargin(false);
-	panelSheetsToolbar.setPadding(false);
-	panelSheetsToolbar.setSpacing(true);
+//		.withFilter(PresenterFilterBuilder.builder()
+//			.withLabel("")
+//			.withPalceHolder(getTranslation(GridToolMsg.SEARCH_FIELD))
+//			.withPrefixComponent(UIIcon.SEARCH.createIcon())
+//			.withValueChangeMode(ValueChangeMode.LAZY)
+//			.withValueChangeListener(e -> draftSheetsGrid.getDataProvider().refreshAll())
+//			.build())
+//		.withButtons()
+//		.withButton().withIcon(UIIcon.BTN_ADD.createIcon())
+//		.withClickListener(e -> draftSheetAdd())
+//		.addButtonToList()
+//		.build();
+//		.build();
+//		.withButton().withIcon(UIIcon.BTN_ADD.createIcon())
+//		.withClickListener(e -> draftSheetAdd())
+//		.addToList()
+//		.withButton().withIcon(UIIcon.BTN_NO.createIcon())
+//		.withClickListener(e -> draftSheetDel())
+//		.withEnabled(false)
+//		.addToList()
+//		.withButton()
+//		.withIcon(UIIcon.BTN_EDIT.createIcon())
+//		.withClickListener(e -> draftSheetEdit())
+//		.withEnabled(false)
+//		.addToList()
+//		.withButton()
+//		.withIcon(UIIcon.SHEET_ISSUED.createIcon())
+//		.withClickListener(e -> draftSheetIssue())
+//		.withEnabled(false)
+//		.addToList()
+//		.withButton().withIcon(UIIcon.BTN_REFRESH.createIcon())
+//		.withClickListener(e -> refreshRouteSheetGrid())
+//		.addToList()
+//		.addButtons()
+//		.build();
 
 	draftSheetsGrid = new Grid<>(DraftRouteSheet.class);
 	draftSheetsGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
@@ -264,11 +295,6 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	panelDraftSheetsManage.setMargin(false);
 	panelDraftSheetsManage.setPadding(false);
 	panelDraftSheetsManage.setSpacing(false);
-
-	btnDraftSheetAdd.addClickListener(e -> draftSheetAdd());
-	btnDraftSheetDel.addClickListener(e -> draftSheetDel());
-	btnDraftSheetEdt.addClickListener(e -> draftSheetEdit());
-	btnDraftSheetIssue.addClickListener(e -> draftSheetIssue());
 
 	return panelDraftSheetsGrigPresenter;
     }
@@ -450,7 +476,9 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      */
     private String getSanitizedDraftSheetFilter() {
 	log.info("Gets the sanitized draft sheet filter");
-	return StringUtils.truncate(fieldDraftSheetFilter.getValue(), 100);
+	// TODO
+	// return StringUtils.truncate(fieldDraftSheetFilter.getValue(), 100);
+	return "";
     }
 
     /**
@@ -462,16 +490,6 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		this::getFilteredDraftRouteSheetQuery,
 		this::getFilteredDraftRouteSheetQueryCount);
 	draftSheetsGrid.setDataProvider(routeSheetsDataProvider.withConfigurableFilter());
-
-	btnDraftSheetEdt.setEnabled(false);
-	btnDraftSheetDel.setEnabled(false);
-	btnDraftSheetIssue.setEnabled(false);
-
-	fieldDraftSheetFilter.setValueChangeMode(ValueChangeMode.LAZY);
-	fieldDraftSheetFilter.addValueChangeListener(e -> {
-	    draftSheetsGrid.getSelectionModel().deselectAll();
-	    draftSheetsGrid.getDataProvider().refreshAll();
-	});
 
 	draftSheetsGrid.removeAllColumns();
 
@@ -534,25 +552,25 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	    btnRequestCreateAndAdd.setEnabled(!event.getAllSelectedItems().isEmpty());
 
 	    if (draftRouteSheet == null) {
-		btnDraftSheetEdt.setEnabled(false);
-		btnDraftSheetDel.setEnabled(false);
-		btnDraftSheetIssue.setEnabled(false);
+		// TODO
+//		btnDraftSheetEdt.setEnabled(false);
+//		btnDraftSheetDel.setEnabled(false);
+//		btnDraftSheetIssue.setEnabled(false);
 
 		btnRequestToSheet.setEnabled(false);
 
 	    } else {
-		btnDraftSheetEdt.setEnabled(true);
-		btnDraftSheetDel.setEnabled(true);
-		btnDraftSheetIssue.setEnabled(!draftRouteSheet.getRequests().isEmpty());
+		// TODO
+//		btnDraftSheetEdt.setEnabled(true);
+//		btnDraftSheetDel.setEnabled(true);
+//		btnDraftSheetIssue.setEnabled(!draftRouteSheet.getRequests().isEmpty());
 
 		btnRequestToSheet.setEnabled(!allCourierRequestsGrid.getSelectionModel().getSelectedItems().isEmpty());
 	    }
 
 	});
 
-	fieldDraftSheetFilter.addValueChangeListener(e -> draftSheetsGrid.getDataProvider().refreshAll());
 	draftSheetsGrid.setMultiSort(true);
-	btnDraftSheetGridReset.addClickListener(e -> refreshRouteSheetGrid());
     }
 
     /**
