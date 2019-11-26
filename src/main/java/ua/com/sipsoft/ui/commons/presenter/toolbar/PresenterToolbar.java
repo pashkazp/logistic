@@ -6,6 +6,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+import ua.com.sipsoft.ui.commons.presenter.button.PresenterButtonsList;
+import ua.com.sipsoft.ui.commons.presenter.filter.PresenterFilter;
 import ua.com.sipsoft.utils.Props;
 
 public final class PresenterToolbar extends HorizontalLayout {
@@ -14,13 +16,13 @@ public final class PresenterToolbar extends HorizontalLayout {
 
     private PresenterToolbar(PresenterToolbarBuilder builder) {
 
-	if (builder.getFilterBuilder() != null) {
-	    TextField field = builder.getFilterBuilder().build();
+	if (builder.filterBuilder != null) {
+	    TextField field = builder.filterBuilder.build();
 	    add(field);
 	    setFlexGrow(1, field);
 	}
 
-	List<Button> buttons = builder.getButtonsBuilder().getButtons();
+	List<Button> buttons = builder.buttonList.getButtons();
 	for (int i = 0; i < buttons.size(); i++) {
 	    Button button = buttons.get(i);
 	    button.setSizeUndefined();
@@ -37,11 +39,49 @@ public final class PresenterToolbar extends HorizontalLayout {
     }
 
     public static PresenterToolbarBuilder builder() {
-	return PresenterToolbarBuilder.builder();
+	return new PresenterToolbarBuilder();
     }
 
     public static PresenterToolbar build(PresenterToolbarBuilder builder) {
 	return new PresenterToolbar(builder);
+    }
+
+    public static final class PresenterToolbarBuilder {
+
+	private PresenterFilter presenterFilter;
+	private PresenterFilter.PresenterFilterBuilder filterBuilder = PresenterFilter.builder()
+		.withParentBuilder(this);
+
+	private PresenterButtonsList buttonList;
+	private PresenterButtonsList.PresenterButtonsListBuilder listBuilder = PresenterButtonsList.builder()
+		.withParentBuilder(this);
+
+	private PresenterToolbarBuilder() {
+
+	}
+
+	public PresenterToolbarBuilder withPresenterFilter(PresenterFilter presenterFilter) {
+	    this.presenterFilter = presenterFilter;
+	    return this;
+	}
+
+	public PresenterFilter.PresenterFilterBuilder withPresenterFilter() {
+	    return this.filterBuilder;
+	}
+
+	public PresenterToolbarBuilder withPresenterButtonsList(PresenterButtonsList buttonList) {
+	    this.buttonList = buttonList;
+	    return this;
+	}
+
+	public PresenterButtonsList.PresenterButtonsListBuilder withPresenterButtonsList() {
+	    return this.listBuilder;
+	}
+
+	public PresenterToolbar build() {
+	    return new PresenterToolbar(this);
+	}
+
     }
 
 }
