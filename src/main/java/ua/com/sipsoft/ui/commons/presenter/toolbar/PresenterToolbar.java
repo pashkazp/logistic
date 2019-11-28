@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+import lombok.Getter;
 import ua.com.sipsoft.ui.commons.presenter.button.PresenterButtonsList;
 import ua.com.sipsoft.ui.commons.presenter.filter.PresenterFilter;
 import ua.com.sipsoft.utils.Props;
@@ -14,11 +15,15 @@ public final class PresenterToolbar extends HorizontalLayout {
 
     private static final long serialVersionUID = -6379304136135669075L;
 
+    @Getter
+    private TextField filter;
+
     private PresenterToolbar(PresenterToolbarBuilder builder) {
 
 	if (builder.filterBuilder != null) {
 	    TextField field = builder.filterBuilder.build();
 	    add(field);
+	    filter = field;
 	    setFlexGrow(1, field);
 	}
 

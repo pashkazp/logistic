@@ -220,7 +220,8 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withValueChangeListener(e -> draftSheetsGrid.getDataProvider().refreshAll())
 		.done()
 		.withPresenterButtonsList()
-		.withPresenterButton().withIcon(UIIcon.BTN_ADD.createIcon())
+		.withPresenterButton()
+		.withIcon(UIIcon.BTN_ADD.createIcon())
 		.withClickListener(e -> draftSheetAdd())
 		.done()
 		.withPresenterButton().withIcon(UIIcon.BTN_NO.createIcon())
@@ -243,42 +244,6 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.done()
 		.done()
 		.build();
-
-//		.withFilter(PresenterFilterBuilder.builder()
-//			.withLabel("")
-//			.withPalceHolder(getTranslation(GridToolMsg.SEARCH_FIELD))
-//			.withPrefixComponent(UIIcon.SEARCH.createIcon())
-//			.withValueChangeMode(ValueChangeMode.LAZY)
-//			.withValueChangeListener(e -> draftSheetsGrid.getDataProvider().refreshAll())
-//			.build())
-//		.withButtons()
-//		.withButton().withIcon(UIIcon.BTN_ADD.createIcon())
-//		.withClickListener(e -> draftSheetAdd())
-//		.addButtonToList()
-//		.build();
-//		.build();
-//		.withButton().withIcon(UIIcon.BTN_ADD.createIcon())
-//		.withClickListener(e -> draftSheetAdd())
-//		.addToList()
-//		.withButton().withIcon(UIIcon.BTN_NO.createIcon())
-//		.withClickListener(e -> draftSheetDel())
-//		.withEnabled(false)
-//		.addToList()
-//		.withButton()
-//		.withIcon(UIIcon.BTN_EDIT.createIcon())
-//		.withClickListener(e -> draftSheetEdit())
-//		.withEnabled(false)
-//		.addToList()
-//		.withButton()
-//		.withIcon(UIIcon.SHEET_ISSUED.createIcon())
-//		.withClickListener(e -> draftSheetIssue())
-//		.withEnabled(false)
-//		.addToList()
-//		.withButton().withIcon(UIIcon.BTN_REFRESH.createIcon())
-//		.withClickListener(e -> refreshRouteSheetGrid())
-//		.addToList()
-//		.addButtons()
-//		.build();
 
 	draftSheetsGrid = new Grid<>(DraftRouteSheet.class);
 	draftSheetsGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
@@ -476,6 +441,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      */
     private String getSanitizedDraftSheetFilter() {
 	log.info("Gets the sanitized draft sheet filter");
+
 	// TODO
 	// return StringUtils.truncate(fieldDraftSheetFilter.getValue(), 100);
 	return "";
