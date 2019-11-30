@@ -19,10 +19,15 @@ import ua.com.sipsoft.model.entity.requests.issued.IssuedRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.issued.IssuedRouteSheetRepository;
 import ua.com.sipsoft.services.requests.arcive.ArchivedSheetsService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.services.utils.OffsetBasedPageRequest;
 
-/** The Constant log. */
+/**
+ * The Interface IssuedRouteSheetServiceImpl.
+ * 
+ * @author Pavlo Degtyaryev
+ */
 @Slf4j
 @Service
 @Transactional
@@ -159,39 +164,24 @@ public class IssuedRouteSheetServiceImpl implements IssuedRouteSheetService, Has
     }
 
     /**
-     * Checks if is entity pass filter.
-     *
-     * @param entity the entity
-     * @param filter the filter
-     * @return true, if is entity pass filter
-     */
-    private boolean isEntityPassFilter(IssuedRouteSheet entity, IssuedRouteSheetFilter filter) {
-	return entity.getDescription()
-		.toLowerCase()
-		.contains(filter.getDescription() == null ? "" : filter.getDescription().toLowerCase());
-    }
-
-    /**
      * Gets the queried issued route sheets by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried issued route sheets by filter
      */
     @Override
     public Stream<IssuedRouteSheet> getQueriedIssuedRouteSheetsByFilter(
-	    Query<IssuedRouteSheet, IssuedRouteSheetFilter> query,
-	    IssuedRouteSheetFilter filter) {
+	    Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query) {
 	log.debug("Get requested page Issued Route Sheets with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter());
+	if (query == null || query.getFilter().isEmpty()) {
 	    log.debug("Get Issued Route Sheets is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
 	    return dao.findAll(queryToSort(query))
 		    .stream()
-		    .filter(entity -> isEntityPassFilter(entity, filter))
+		    .filter(entity -> query.getFilter().get().isPass(entity))
 		    .skip(query.getOffset())
 		    .limit(query.getLimit());
 	} catch (Exception e) {
@@ -203,14 +193,13 @@ public class IssuedRouteSheetServiceImpl implements IssuedRouteSheetService, Has
     /**
      * Gets the queried issued route sheets by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried issued route sheets by filter count
      */
     @Override
-    public int getQueriedIssuedRouteSheetsByFilterCount(Query<IssuedRouteSheet, IssuedRouteSheetFilter> query,
-	    IssuedRouteSheetFilter filter) {
-	return (int) getQueriedIssuedRouteSheetsByFilter(query, filter).count();
+    public int getQueriedIssuedRouteSheetsByFilterCount(Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query) {
+	log.debug("Get requested size Issued Route Sheets  with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedIssuedRouteSheetsByFilter(query).count();
     }
 
     /**

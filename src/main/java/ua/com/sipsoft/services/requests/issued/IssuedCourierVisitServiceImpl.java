@@ -21,12 +21,18 @@ import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.issued.CourierVisitRepository;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.services.utils.OffsetBasedPageRequest;
 import ua.com.sipsoft.utils.CourierVisitState;
 import ua.com.sipsoft.utils.history.CourierVisitSnapshot;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
+/**
+ * The Interface IssuedCourierVisitServiceImpl.
+ * 
+ * @author Pavlo Degtyaryev
+ */
 @Slf4j
 @Service
 @Transactional
@@ -163,49 +169,26 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
     }
 
     /**
-     * Checks if is entity pass filter.
-     *
-     * @param entity the entity
-     * @param filter the filter
-     * @return true, if is entity pass filter
-     */
-    private boolean isEntityPassFilter(CourierVisit entity, CourierVisitFilter filter) {
-	return entity.getDescription()
-		.toLowerCase()
-		.contains(filter.getDescription() == null ? "" : filter.getDescription().toLowerCase());
-    }
-
-    /**
      * Gets the queried courier visits by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier visits by filter
      */
     @Override
-    public Stream<CourierVisit> getQueriedCourierVisitsByFilter(Query<CourierVisit, CourierVisitFilter> query,
-	    CourierVisitFilter filter) {
+    public Stream<CourierVisit> getQueriedCourierVisitsByFilter(Query<CourierVisit, EntityFilter<CourierVisit>> query) {
 	log.debug(
 		"Get requested page Courier Visits By Sheet ID with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
 	    log.debug("Get ourier Visits is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
-	    if (filter.getSheetId() == null) {
-		return dao.findAll(queryToSort(query))
-			.stream()
-			.filter(entity -> isEntityPassFilter(entity, filter))
-			.skip(query.getOffset())
-			.limit(query.getLimit());
-	    } else {
-		return dao.getCourierVisitByIssuedRouteSheetId(filter.getSheetId(), queryToSort(query))
-			.stream()
-			.filter(entity -> isEntityPassFilter(entity, filter))
-			.skip(query.getOffset())
-			.limit(query.getLimit());
-	    }
+	    return dao.findAll(queryToSort(query))
+		    .stream()
+		    .filter(entity -> query.getFilter().get().isPass(entity))
+		    .skip(query.getOffset())
+		    .limit(query.getLimit());
 	} catch (Exception e) {
 	    log.error("The Courier Visits list was not received for a reason: {}", e.getMessage());
 	}
@@ -215,15 +198,56 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
     /**
      * Gets the queried courier visits by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier visits by filter count
      */
     @Override
-    public int getQueriedCourierVisitsByFilterCount(Query<CourierVisit, CourierVisitFilter> query,
-	    CourierVisitFilter filter) {
-	log.debug("Get requested size Courier Visits with filter '{}'", filter.toString());
-	return (int) getQueriedCourierVisitsByFilter(query, filter).count();
+    public int getQueriedCourierVisitsByFilterCount(Query<CourierVisit, EntityFilter<CourierVisit>> query) {
+	log.debug("Get requested size Courier Visits with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedCourierVisitsByFilter(query).count();
+    }
+
+    /**
+     * Gets the queried courier visits by filter.
+     *
+     * @param query   the query
+     * @param sheetId the sheet id
+     * @return the queried courier visits by filter
+     */
+    @Override
+    public Stream<CourierVisit> getQueriedCourierVisitsByFilterBySheetId(
+	    Query<CourierVisit, EntityFilter<CourierVisit>> query, Long sheetId) {
+	log.debug(
+		"Get requested page Courier Visits By Sheet ID with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
+	    log.debug("Get ourier Visits is impossible. Miss some data.");
+	    return Stream.empty();
+	}
+	try {
+	    return dao.getCourierVisitByIssuedRouteSheetId(sheetId, queryToSort(query))
+		    .stream()
+		    .filter(entity -> query.getFilter().get().isPass(entity))
+		    .skip(query.getOffset())
+		    .limit(query.getLimit());
+	} catch (Exception e) {
+	    log.error("The Courier Visits list was not received for a reason: {}", e.getMessage());
+	}
+	return Stream.empty();
+    }
+
+    /**
+     * Gets the queried courier visits by filter count.
+     *
+     * @param query   the query
+     * @param sheetId the sheet id
+     * @return the queried courier visits by filter count
+     */
+    @Override
+    public int getQueriedCourierVisitsByFilterBySheetIdCount(Query<CourierVisit, EntityFilter<CourierVisit>> query,
+	    Long sheetId) {
+	log.debug("Get requested size Courier Visits with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedCourierVisitsByFilterBySheetId(query, sheetId).count();
     }
 
     /**

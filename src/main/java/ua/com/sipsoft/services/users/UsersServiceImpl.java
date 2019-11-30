@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import com.vaadin.flow.data.provider.Query;
 
@@ -19,17 +17,18 @@ import ua.com.sipsoft.model.entity.common.VerificationToken;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.user.UserRepository;
 import ua.com.sipsoft.services.security.VerificationTokenService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.utils.security.Role;
 import ua.com.sipsoft.utils.security.VerificationTokenType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UsersServiceImpl.
  *
  * @author Pavlo Degtyaryev
  */
 
-/** The Constant log. */
 @Slf4j
 @Service
 @Transactional
@@ -38,6 +37,8 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
     /** The dao. */
     @Autowired
     private UserRepository dao;
+
+    /** The verification token service. */
     @Autowired
     private VerificationTokenService verificationTokenService;
 
@@ -137,53 +138,22 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
     }
 
     /**
-     * Checks if is entity pass filter.
-     *
-     * @param entity the entity
-     * @param filter the filter
-     * @return true, if is entity pass filter
-     */
-    private boolean isEntityPassFilter(User entity, UserFilter filter) {
-	if (!(filter.getRoles() == null || CollectionUtils.containsAny(entity.getRoles(), filter.getRoles()))) {
-	    return false;
-	}
-	if (!StringUtils.containsIgnoreCase(entity
-		.getUsername().concat(entity.getFirstName())
-		.concat(entity.getLastName())
-		.concat(entity.getPatronymic())
-		.concat(entity.getEmail()), filter.getUsername())) {
-	    return false;
-	}
-	return true;
-    }
-
-    /**
      * Gets the queried usersby filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried usersby filter
      */
     @Override
-    public Stream<User> getQueriedUsersbyFilter(Query<User, UserFilter> query,
-	    UserFilter filter) {
+    public Stream<User> getQueriedUsersbyFilter(Query<User, EntityFilter<User>> query) {
 	log.debug(
 		"Get requested page Users with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
 	try {
-	    if (filter.getFacilityId() == null) {
-		return dao.findAll(queryToSort(query))
-			.stream()
-			.filter(entity -> isEntityPassFilter(entity, filter))
-			.skip(query.getOffset())
-			.limit(query.getLimit());
-	    } else {
-		return dao.getCourierRequestByDratRouetSheetId(filter.getFacilityId(), queryToSort(query))
-			.stream()
-			.filter(entity -> isEntityPassFilter(entity, filter))
-			.skip(query.getOffset())
-			.limit(query.getLimit());
-	    }
+	    return dao.findAll(queryToSort(query))
+		    .stream()
+		    .filter(entity -> query.getFilter().get().isPass(entity))
+		    .skip(query.getOffset())
+		    .limit(query.getLimit());
 	} catch (Exception e) {
 	    log.error("The Courier Requests list was not received for a reason: {}", e.getMessage());
 	}
@@ -193,17 +163,58 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
     /**
      * Gets the queried users by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried users by filter count
      */
     @Override
-    public int getQueriedUsersByFilterCount(Query<User, UserFilter> query,
-	    UserFilter filter) {
-	log.debug("Get requested size Users with filter '{}'", filter);
-	return (int) getQueriedUsersbyFilter(query, filter).count();
+    public int getQueriedUsersByFilterCount(Query<User, EntityFilter<User>> query) {
+	log.debug("Get requested size Users with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedUsersbyFilter(query).count();
     }
 
+    /**
+     * Gets the queried usersby filter.
+     *
+     * @param query      the query
+     * @param facilityId the facility id
+     * @return the queried usersby filter
+     */
+    @Override
+    public Stream<User> getQueriedUsersByFacilityIdByFilter(Query<User, EntityFilter<User>> query, Long facilityId) {
+	log.debug(
+		"Get requested page Users with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	try {
+	    return dao.getUsersByFasilityId(facilityId, queryToSort(query))
+		    .stream()
+		    .filter(entity -> query.getFilter().get().isPass(entity))
+		    .skip(query.getOffset())
+		    .limit(query.getLimit());
+	} catch (Exception e) {
+	    log.error("The Courier Requests list was not received for a reason: {}", e.getMessage());
+	}
+	return Stream.empty();
+    }
+
+    /**
+     * Gets the queried users by filter count.
+     *
+     * @param query      the query
+     * @param facilityId the facility id
+     * @return the queried users by filter count
+     */
+    @Override
+    public int getQueriedUsersByFacilityIdByFilterCount(Query<User, EntityFilter<User>> query, Long facilityId) {
+	log.debug("Get requested size Users with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedUsersByFacilityIdByFilter(query, facilityId).count();
+    }
+
+    /**
+     * Fetch by email.
+     *
+     * @param email the email
+     * @return the optional
+     */
     @Override
     public Optional<User> fetchByEmail(String email) {
 	if (email == null) {
@@ -216,6 +227,12 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
 	}
     }
 
+    /**
+     * Fetch by username.
+     *
+     * @param username the username
+     * @return the optional
+     */
     @Override
     public Optional<User> fetchByUsername(String username) {
 	if (username == null) {
@@ -228,6 +245,12 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
 	}
     }
 
+    /**
+     * Register new user.
+     *
+     * @param userDTO the user DTO
+     * @return the optional
+     */
     @Override
     public Optional<User> registerNewUser(User userDTO) {
 	log.info("Register new User \"{}\"", userDTO);
@@ -245,6 +268,14 @@ public class UsersServiceImpl implements UsersService, HasQueryToSortConvertor {
 	}
     }
 
+    /**
+     * Creates the verification token.
+     *
+     * @param user      the user
+     * @param token     the token
+     * @param tokenType the token type
+     * @return the verification token
+     */
     @Override
     public VerificationToken createVerificationToken(User user, String token, VerificationTokenType tokenType) {
 	log.info("Creation verification token \"{}\" for new user: \"{}\"", token, user);

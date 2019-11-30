@@ -21,9 +21,14 @@ import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.requests.draft.DraftRouteSheetRepository;
 import ua.com.sipsoft.services.requests.arcive.ArchivedSheetsService;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 
-/** The Constant log. */
+/**
+ * The Class DraftRouteSheetServiceImpl.
+ *
+ * @author Pavlo Degtyaryev
+ */
 @Slf4j
 @Service
 @Transactional
@@ -277,23 +282,22 @@ public class DraftRouteSheetServiceImpl implements DraftRouteSheetService, HasQu
     /**
      * Gets the queried draft route sheets.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried draft route sheets
      */
     @Override
-    public Stream<DraftRouteSheet> getQueriedDraftRouteSheets(Query<DraftRouteSheet, DraftRouteSheetFilter> query,
-	    DraftRouteSheetFilter filter) {
+    public Stream<DraftRouteSheet> getQueriedDraftRouteSheets(
+	    Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query) {
 	log.debug("Get requested page Drafr Route Sheets with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
 	    log.debug("Get Drafr Route Sheets is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
 	    return dao.findAll(queryToSort(query))
 		    .stream()
-		    .filter(entity -> isEntityPassFilter(entity, filter))
+		    .filter(entity -> query.getFilter().get().isPass(entity))
 		    .skip(query.getOffset())
 		    .limit(query.getLimit());
 	} catch (Exception e) {
@@ -305,14 +309,12 @@ public class DraftRouteSheetServiceImpl implements DraftRouteSheetService, HasQu
     /**
      * Gets the queried draft route sheets count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried draft route sheets count
      */
     @Override
-    public int getQueriedDraftRouteSheetsCount(Query<DraftRouteSheet, DraftRouteSheetFilter> query,
-	    DraftRouteSheetFilter filter) {
-	log.debug("Get requested size Drafr Route Sheets  with filter '{}'", filter);
-	return (int) getQueriedDraftRouteSheets(query, filter).count();
+    public int getQueriedDraftRouteSheetsCount(Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query) {
+	log.debug("Get requested size Drafr Route Sheets  with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedDraftRouteSheets(query).count();
     }
 }

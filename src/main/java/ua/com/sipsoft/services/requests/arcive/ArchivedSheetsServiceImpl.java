@@ -12,11 +12,14 @@ import com.vaadin.flow.data.provider.Query;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.requests.archive.ArchivedRouteSheet;
 import ua.com.sipsoft.model.repository.requests.archive.ArchivedRouteSheetRepository;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 
-/** The Constant log. */
-
-/** The Constant log. */
+/**
+ * The Interface ArchivedSheetsServiceImpl.
+ *
+ * @author Pavlo Degtyaryev
+ */
 @Slf4j
 @Service
 @Transactional
@@ -43,38 +46,24 @@ public class ArchivedSheetsServiceImpl implements ArchivedSheetsService, HasQuer
     }
 
     /**
-     * Checks if is entity pass filter.
-     *
-     * @param entity the entity
-     * @param filter the filter
-     * @return true, if is entity pass filter
-     */
-    private boolean isEntityPassFilter(ArchivedRouteSheet entity, ArchivedSheetFilter filter) {
-	return entity.getDescription()
-		.toLowerCase()
-		.contains(filter.getDescription() == null ? "" : filter.getDescription().toLowerCase());
-    }
-
-    /**
      * Gets the queried archived sheets by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried archived sheets by filter
      */
     @Override
     public Stream<ArchivedRouteSheet> getQueriedArchivedSheetsByFilter(
-	    Query<ArchivedRouteSheet, ArchivedSheetFilter> query, ArchivedSheetFilter filter) {
+	    Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> query) {
 	log.debug("Get requested page Archived Route Sheets with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
-	    log.debug("Get Фксршмув Route Sheets is impossible. Miss some data.");
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
+	    log.debug("Get Archived Route Sheets is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
 	    return dao.findAll(queryToSort(query))
 		    .stream()
-		    .filter(entity -> isEntityPassFilter(entity, filter))
+		    .filter(entity -> query.getFilter().get().isPass(entity))
 		    .skip(query.getOffset())
 		    .limit(query.getLimit());
 	} catch (Exception e) {
@@ -86,13 +75,13 @@ public class ArchivedSheetsServiceImpl implements ArchivedSheetsService, HasQuer
     /**
      * Gget queried archived sheets by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the int
      */
     @Override
-    public int ggetQueriedArchivedSheetsByFilterCount(Query<ArchivedRouteSheet, ArchivedSheetFilter> query,
-	    ArchivedSheetFilter filter) {
-	return (int) getQueriedArchivedSheetsByFilter(query, filter).count();
+    public int getQueriedArchivedSheetsByFilterCount(
+	    Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> query) {
+	log.debug("Get requested size Archived Route Sheet with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedArchivedSheetsByFilter(query).count();
     }
 }

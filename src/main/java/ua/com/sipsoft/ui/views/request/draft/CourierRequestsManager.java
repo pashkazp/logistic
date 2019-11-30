@@ -47,6 +47,7 @@ import ua.com.sipsoft.services.requests.draft.CourierRequestFilter;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetFilter;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
@@ -161,13 +162,13 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     private transient CourierRequestService courierRequestService;
 
     /** The route sheets data provider. */
-    private DataProvider<DraftRouteSheet, DraftRouteSheetFilter> routeSheetsDataProvider;
+    private DataProvider<DraftRouteSheet, EntityFilter<DraftRouteSheet>> routeSheetsDataProvider;
 
     /** The selected courier request data provider. */
-    private DataProvider<CourierRequest, CourierRequestFilter> linkedCourierRequestDataProvider;
+    private DataProvider<CourierRequest, EntityFilter<CourierRequest>> linkedCourierRequestDataProvider;
 
     /** The courier request data provider. */
-    private DataProvider<CourierRequest, CourierRequestFilter> allCourierRequestDataProvider;
+    private DataProvider<CourierRequest, EntityFilter<CourierRequest>> allCourierRequestDataProvider;
 
     /**
      * Instantiates a new courier requests manager.
@@ -407,10 +408,12 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      * @return the filtered draft route sheet query
      */
     private Stream<DraftRouteSheet> getFilteredDraftRouteSheetQuery(
-	    Query<DraftRouteSheet, DraftRouteSheetFilter> query) {
+	    Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query) {
 	log.info("Gets the filtered draft route sheet query");
-	return draftRouteSheetService.getQueriedDraftRouteSheets(
-		query, getDraftRouteSheetFilter());
+	Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getDraftRouteSheetFilter());
+	return draftRouteSheetService.getQueriedDraftRouteSheets(filteredQuery);
     }
 
     /**
@@ -420,10 +423,12 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      * @return the filtered draft route sheet query count
      */
     private int getFilteredDraftRouteSheetQueryCount(
-	    Query<DraftRouteSheet, DraftRouteSheetFilter> query) {
+	    Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query) {
 	log.info("Gets the filtered draft route sheet query count");
-	return draftRouteSheetService.getQueriedDraftRouteSheetsCount(
-		query, getDraftRouteSheetFilter());
+	Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getDraftRouteSheetFilter());
+	return draftRouteSheetService.getQueriedDraftRouteSheetsCount(filteredQuery);
     }
 
     /**
@@ -431,7 +436,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      *
      * @return the draft route sheet filter
      */
-    private DraftRouteSheetFilter getDraftRouteSheetFilter() {
+    private EntityFilter<DraftRouteSheet> getDraftRouteSheetFilter() {
 	log.info("Gets the draft route sheet filter");
 	return DraftRouteSheetFilter.builder()
 		.description(getSanitizedDraftSheetFilter())
@@ -557,23 +562,33 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      * @return the filtered linked courier request query count
      */
     private int getLinkedCourierRequestQueryCount(
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Gets the linked selected courier request query count");
-	return courierRequestService.getQueriedCourierRequestsByFilterCount(
-		query, getLinkedCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> queryWithFilter = new Query<>(query.getOffset(),
+		query.getLimit(),
+		query.getSortOrders(), query.getInMemorySorting(),
+		getLinkedCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilterBySheetIdCount(
+		queryWithFilter, draftSheetsGrid.getSelectionModel().getFirstSelectedItem()
+			.map(DraftRouteSheet::getId).orElse(-1L));
     }
 
     /**
-     * Gets the linked linked courier request query.
+     * Gets the linked courier request query.
      *
      * @param query the query
      * @return the filtered linked courier request query
      */
     private Stream<CourierRequest> getLinkedCourierRequestQuery(
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Gets the linked courier request query");
-	return courierRequestService.getQueriedCourierRequestsByFilter(
-		query, getLinkedCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> queryWithFilter = new Query<>(query.getOffset(),
+		query.getLimit(),
+		query.getSortOrders(), query.getInMemorySorting(),
+		getLinkedCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilterBySheetId(
+		queryWithFilter, draftSheetsGrid.getSelectionModel().getFirstSelectedItem()
+			.map(DraftRouteSheet::getId).orElse(-1L));
     }
 
     /**
@@ -581,11 +596,9 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      *
      * @return the linked courier request filter
      */
-    private CourierRequestFilter getLinkedCourierRequestFilter() {
+    private EntityFilter<CourierRequest> getLinkedCourierRequestFilter() {
 	log.info("Gets filter for linked courier requests");
 	return CourierRequestFilter.builder()
-		.sheetId(draftSheetsGrid.getSelectionModel().getFirstSelectedItem()
-			.map(DraftRouteSheet::getId).orElse(-1L))
 		.description(getSanitizedLinkedRequestFilter())
 		.build();
     }
@@ -662,10 +675,13 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      * @return the filtered courier request query count
      */
     private int getFilteredCourierRequestQueryCount(
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Gets the filtered courier request query count");
-	return courierRequestService.getQueriedCourierRequestsByFilterCount(
-		query, getCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> queryWithFilter = new Query<>(query.getOffset(),
+		query.getLimit(),
+		query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilterCount(queryWithFilter);
     }
 
     /**
@@ -675,10 +691,13 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      * @return the filtered courier request query
      */
     private Stream<CourierRequest> getFilteredCourierRequestQuery(
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Gets the filtered courier request query");
-	return courierRequestService.getQueriedCourierRequestsByFilter(
-		query, getCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> queryWithFilter = new Query<>(query.getOffset(),
+		query.getLimit(),
+		query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilter(queryWithFilter);
     }
 
     /**
@@ -686,7 +705,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      *
      * @return the courier request filter
      */
-    private CourierRequestFilter getCourierRequestFilter() {
+    private EntityFilter<CourierRequest> getCourierRequestFilter() {
 	log.info("Gets the courier request filter");
 	return CourierRequestFilter.builder()
 		.description(getSanitizedCourierRequestFilter())

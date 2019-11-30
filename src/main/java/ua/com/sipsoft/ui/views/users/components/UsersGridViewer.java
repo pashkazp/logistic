@@ -21,6 +21,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -30,6 +31,7 @@ import lombok.extern.log4j.Log4j2;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.views.users.prototype.ChangeHandler;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.TooltippedComponent;
@@ -39,23 +41,20 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.Role;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UsersGridViewer.
  *
  * @author Pavlo Degtyaryev
  */
 
-/** The Constant log. */
 @Log4j2
 @Scope(value = "prototype")
-//@UIScope
 @SpringComponent
 public class UsersGridViewer extends VerticalLayout implements TooltippedComponent {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5662619402901561707L;
-
-    /** The users service. */
 
     /**
      * Gets the users service.
@@ -64,12 +63,6 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
      */
     @Getter
     private final transient UsersService usersService;
-
-    /**
-     * Gets the users grid.
-     *
-     * @return the users grid
-     */
 
     /**
      * Gets the users grid.
@@ -201,16 +194,17 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
      * Reset data provider.
      */
     private void resetDataProvider() {
-	DataProvider<User, UserFilter> userDataProvider;
+	DataProvider<User, EntityFilter<User>> userDataProvider;
 	userDataProvider = DataProvider.fromFilteringCallbacks(
-		query -> this.usersService.getQueriedUsersbyFilter(query,
+		query -> this.usersService.getQueriedUsersbyFilter(new Query<>(query.getOffset(),
+			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(), UserFilter.builder()
+				.roles(filterRoles)
+				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build())),
+		query -> this.usersService.getQueriedUsersByFilterCount(new Query<>(query.getOffset(),
+			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
 			UserFilter.builder()
 				.roles(filterRoles)
-				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build()),
-		query -> this.usersService.getQueriedUsersByFilterCount(query,
-			UserFilter.builder()
-				.roles(filterRoles)
-				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build()));
+				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build())));
 
 	usersGrid.setDataProvider(userDataProvider.withConfigurableFilter());
     }

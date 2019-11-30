@@ -43,6 +43,7 @@ import ua.com.sipsoft.services.common.FacilitiesService;
 import ua.com.sipsoft.services.requests.draft.CourierRequestFilter;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
@@ -117,10 +118,10 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
     private final transient FacilitiesService facilitiesService;
 
     /** The courier request data provider. */
-    private DataProvider<CourierRequest, CourierRequestFilter> courierRequestDataProvider;
+    private DataProvider<CourierRequest, EntityFilter<CourierRequest>> courierRequestDataProvider;
 
     /** The courier reques configurable filtert DP. */
-    private ConfigurableFilterDataProvider<CourierRequest, Void, CourierRequestFilter> courierRequesConfigurableFiltertDP;
+    private ConfigurableFilterDataProvider<CourierRequest, Void, EntityFilter<CourierRequest>> courierRequesConfigurableFiltertDP;
 
     /**
      * Instantiates a new courier requests view.
@@ -228,10 +229,12 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
      * @return the filtered courier request query
      */
     private Stream<CourierRequest> getFilteredCourierRequestQuery(CourierRequestService courierRequestService,
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Get filtered courier request query.");
-	return courierRequestService
-		.getQueriedCourierRequestsByFilter(query, getCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilter(filteredQuery);
     }
 
     /**
@@ -242,10 +245,12 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
      * @return the filtered courier request query count
      */
     private int getFilteredCourierRequestQueryCount(CourierRequestService courierRequestService,
-	    Query<CourierRequest, CourierRequestFilter> query) {
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query) {
 	log.info("Get filtered courier request query count.");
-	return courierRequestService
-		.getQueriedCourierRequestsByFilterCount(query, getCourierRequestFilter());
+	Query<CourierRequest, EntityFilter<CourierRequest>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return courierRequestService.getQueriedCourierRequestsByFilterCount(filteredQuery);
     }
 
     /**
@@ -253,7 +258,7 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
      *
      * @return the courier request filter
      */
-    private CourierRequestFilter getCourierRequestFilter() {
+    private EntityFilter<CourierRequest> getCourierRequestFilter() {
 	log.info("Create CourierRequestFilter");
 	User author = null;
 	if (CollectionUtils.containsAny(Set.of(Role.ROLE_CLIENT, Role.ROLE_PRODUCTOPER),

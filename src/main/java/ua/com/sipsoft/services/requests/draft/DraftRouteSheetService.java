@@ -11,9 +11,12 @@ import com.vaadin.flow.data.provider.Query;
 import ua.com.sipsoft.model.entity.requests.draft.CourierRequest;
 import ua.com.sipsoft.model.entity.requests.draft.DraftRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 
 /**
- * The Interface DraftRouteSheetService.
+ * The Class DraftRouteSheetService.
+ *
+ * @author Pavlo Degtyaryev
  */
 @Service
 public interface DraftRouteSheetService {
@@ -97,22 +100,18 @@ public interface DraftRouteSheetService {
     /**
      * Gets the queried draft route sheets.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried draft route sheets
      */
-    Stream<DraftRouteSheet> getQueriedDraftRouteSheets(Query<DraftRouteSheet, DraftRouteSheetFilter> query,
-	    DraftRouteSheetFilter filter);
+    Stream<DraftRouteSheet> getQueriedDraftRouteSheets(Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query);
 
     /**
      * Gets the queried draft route sheets count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried draft route sheets count
      */
-    int getQueriedDraftRouteSheetsCount(Query<DraftRouteSheet, DraftRouteSheetFilter> query,
-	    DraftRouteSheetFilter filter);
+    int getQueriedDraftRouteSheetsCount(Query<DraftRouteSheet, EntityFilter<DraftRouteSheet>> query);
 
     /**
      * Fetch by id.

@@ -11,10 +11,13 @@ import com.vaadin.flow.data.provider.Query;
 
 import ua.com.sipsoft.model.entity.requests.draft.CourierRequest;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
 
 /**
- * The Interface CourierRequestService.
+ * The Class CourierRequestService.
+ *
+ * @author Pavlo Degtyaryev
  */
 @Service
 public interface CourierRequestService {
@@ -74,21 +77,37 @@ public interface CourierRequestService {
     /**
      * Gets the queried courier requests by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier requests by filter
      */
-    Stream<CourierRequest> getQueriedCourierRequestsByFilter(Query<CourierRequest, CourierRequestFilter> query,
-	    CourierRequestFilter filter);
+    Stream<CourierRequest> getQueriedCourierRequestsByFilter(Query<CourierRequest, EntityFilter<CourierRequest>> query);
 
     /**
      * Gets the queried courier requests by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier requests by filter count
      */
-    int getQueriedCourierRequestsByFilterCount(Query<CourierRequest, CourierRequestFilter> query,
-	    CourierRequestFilter filter);
+    int getQueriedCourierRequestsByFilterCount(Query<CourierRequest, EntityFilter<CourierRequest>> query);
+
+    /**
+     * Gets the queried courier requests by filter.
+     *
+     * @param query   the query
+     * @param SheetId the sheet id
+     * @return the queried courier requests by filter
+     */
+    Stream<CourierRequest> getQueriedCourierRequestsByFilterBySheetId(
+	    Query<CourierRequest, EntityFilter<CourierRequest>> query, Long SheetId);
+
+    /**
+     * Gets the queried courier requests by filter count.
+     *
+     * @param query   the query
+     * @param SheetId the sheet id
+     * @return the queried courier requests by filter count
+     */
+    int getQueriedCourierRequestsByFilterBySheetIdCount(Query<CourierRequest, EntityFilter<CourierRequest>> query,
+	    Long SheetId);
 
 }

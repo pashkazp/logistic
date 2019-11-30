@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.repository.common.FacilityAddressRepository;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 
 /**
@@ -21,8 +22,6 @@ import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
  * @author Pavlo Degtyaryev
  */
 @Service
-
-/** The Constant log. */
 @Slf4j
 public class FacilityAddrServiceImpl implements FacilityAddrService, HasQueryToSortConvertor {
 
@@ -93,26 +92,23 @@ public class FacilityAddrServiceImpl implements FacilityAddrService, HasQueryToS
     /**
      * Gets the queried facility addr by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query      the query
+     * @param facilityId the facility id
      * @return the queried facility addr by filter
      */
     @Override
-    public Stream<FacilityAddress> getQueriedFacilityAddrByFilter(Query<FacilityAddress, FacilityAddressFilter> query,
-	    FacilityAddressFilter filter) {
+    public Stream<FacilityAddress> getQueriedFacilityAddrByFilter(
+	    Query<FacilityAddress, EntityFilter<FacilityAddress>> query, Long facilityId) {
 	log.debug("Get requested page Facility Addresses with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
 	    log.debug("Get Drafr Facility Addresses is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
-	    if (filter.getFacilityId() == null) {
-		return Stream.empty();
-	    }
-	    return dao.getByFacilityId(filter.getFacilityId(), queryToSort(query))
+	    return dao.getByFacilityId(facilityId, queryToSort(query))
 		    .stream()
-		    .filter(entity -> isEntityPassFilter(entity, filter))
+		    .filter(entity -> query.getFilter().get().isPass(entity))
 		    .skip(query.getOffset())
 		    .limit(query.getLimit());
 	} catch (Exception e) {
@@ -124,15 +120,15 @@ public class FacilityAddrServiceImpl implements FacilityAddrService, HasQueryToS
     /**
      * Gets the queried facility addr by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query     the query
+     * @param faciliyId the faciliy id
      * @return the queried facility addr by filter count
      */
     @Override
-    public int getQueriedFacilityAddrByFilterCount(Query<FacilityAddress, FacilityAddressFilter> query,
-	    FacilityAddressFilter filter) {
-	log.debug("Get requested size Facility Addresses  with filter '{}'", filter);
-	return (int) getQueriedFacilityAddrByFilter(query, filter).count();
+    public int getQueriedFacilityAddrByFilterCount(Query<FacilityAddress, EntityFilter<FacilityAddress>> query,
+	    Long faciliyId) {
+	log.debug("Get requested size Facility Addresses  with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedFacilityAddrByFilter(query, faciliyId).count();
     }
 
 }

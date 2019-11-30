@@ -12,12 +12,14 @@ import com.vaadin.flow.data.provider.Query;
 import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 
 /**
- * The Interface FacilitiesService.
+ * The Class FacilitiesService.
  *
  * @author Pavlo Degtyaryev
  */
+
 @Service
 public interface FacilitiesService {
 
@@ -127,21 +129,17 @@ public interface FacilitiesService {
     /**
      * Gets the queried facilities.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried facilities
      */
-    Stream<Facility> getQueriedFacilities(Query<Facility, FacilitiesFilter> query,
-	    FacilitiesFilter filter);
+    Stream<Facility> getQueriedFacilities(Query<Facility, EntityFilter<Facility>> query);
 
     /**
      * Gets the queried facilities count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried facilities count
      */
-    int getQueriedFacilitiesCount(Query<Facility, FacilitiesFilter> query,
-	    FacilitiesFilter filter);
+    int getQueriedFacilitiesCount(Query<Facility, EntityFilter<Facility>> query);
 
 }

@@ -11,10 +11,13 @@ import com.vaadin.flow.data.provider.Query;
 
 import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.utils.history.CourierVisitSnapshot;
 
 /**
  * The Interface IssuedCourierVisitService.
+ * 
+ * @author Pavlo Degtyaryev
  */
 @Service
 public interface IssuedCourierVisitService {
@@ -97,21 +100,37 @@ public interface IssuedCourierVisitService {
     /**
      * Gets the queried courier visits by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier visits by filter
      */
-    Stream<CourierVisit> getQueriedCourierVisitsByFilter(Query<CourierVisit, CourierVisitFilter> query,
-	    CourierVisitFilter filter);
+    Stream<CourierVisit> getQueriedCourierVisitsByFilter(Query<CourierVisit, EntityFilter<CourierVisit>> query);
 
     /**
      * Gets the queried courier visits by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried courier visits by filter count
      */
-    int getQueriedCourierVisitsByFilterCount(Query<CourierVisit, CourierVisitFilter> query,
-	    CourierVisitFilter filter);
+    int getQueriedCourierVisitsByFilterCount(Query<CourierVisit, EntityFilter<CourierVisit>> query);
+
+    /**
+     * Gets the queried courier visits by filter.
+     *
+     * @param query   the query
+     * @param sheetId the sheet id
+     * @return the queried courier visits by filter
+     */
+    Stream<CourierVisit> getQueriedCourierVisitsByFilterBySheetId(Query<CourierVisit, EntityFilter<CourierVisit>> query,
+	    Long sheetId);
+
+    /**
+     * Gets the queried courier visits by filter count.
+     *
+     * @param query   the query
+     * @param sheetId the sheet id
+     * @return the queried courier visits by filter count
+     */
+    int getQueriedCourierVisitsByFilterBySheetIdCount(Query<CourierVisit, EntityFilter<CourierVisit>> query,
+	    Long sheetId);
 
 }

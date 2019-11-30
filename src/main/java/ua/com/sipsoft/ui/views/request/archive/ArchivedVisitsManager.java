@@ -42,6 +42,7 @@ import ua.com.sipsoft.services.requests.arcive.ArchivedSheetFilter;
 import ua.com.sipsoft.services.requests.arcive.ArchivedSheetsService;
 import ua.com.sipsoft.services.requests.arcive.ArchivedVisitsFilter;
 import ua.com.sipsoft.services.requests.arcive.ArchivedVisitsService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
 import ua.com.sipsoft.utils.CourierVisitState;
@@ -56,13 +57,13 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.HistoryEventMsg;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ArchivedVisitsManager.
  *
  * @author Pavlo Degtyaryev
  */
 
-/** The Constant log. */
 @Slf4j
 @UIScope
 @SpringComponent
@@ -114,13 +115,13 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
     private final transient ArchivedVisitsService visitsService;
 
     /** The route sheets data provider. */
-    private DataProvider<ArchivedRouteSheet, ArchivedSheetFilter> sheetsDataProvider;
+    private DataProvider<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> sheetsDataProvider;
 
     /** The selected courier visit data provider. */
-    private DataProvider<ArchivedCourierVisit, ArchivedVisitsFilter> sheetsVisitsDataProvider;
+    private DataProvider<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> sheetsVisitsDataProvider;
 
     /** The courier visit data provider. */
-    private DataProvider<ArchivedCourierVisit, ArchivedVisitsFilter> visitsDataProvider;
+    private DataProvider<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> visitsDataProvider;
 
     /**
      * Instantiates a new courier visits manager.
@@ -307,9 +308,12 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the filtered {@link Stream}<{@link ArchivedRouteSheet}>
      */
     private Stream<ArchivedRouteSheet> getFilteredArchivedRouteSheetQuery(
-	    Query<ArchivedRouteSheet, ArchivedSheetFilter> query) {
+	    Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> query) {
+	Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getArchivedSheetFilter());
 	return sheetsService.getQueriedArchivedSheetsByFilter(
-		query, getArchivedSheetFilter());
+		filteredQuery);
     }
 
     /**
@@ -319,17 +323,19 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the filtered {@link Stream}<{@link ArchivedRouteSheet}> records count
      */
     private int getFilteredArchivedRouteSheetQueryCount(
-	    Query<ArchivedRouteSheet, ArchivedSheetFilter> query) {
-	return sheetsService.ggetQueriedArchivedSheetsByFilterCount(
-		query, getArchivedSheetFilter());
+	    Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> query) {
+	Query<ArchivedRouteSheet, EntityFilter<ArchivedRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getArchivedSheetFilter());
+	return sheetsService.getQueriedArchivedSheetsByFilterCount(filteredQuery);
     }
 
     /**
      * Gets the archived route sheet filter.
      *
-     * @return the {@link ArchivedSheetFilter} filter
+     * @return the EntityFilter<ArchivedRouteSheet> filter
      */
-    private ArchivedSheetFilter getArchivedSheetFilter() {
+    private EntityFilter<ArchivedRouteSheet> getArchivedSheetFilter() {
 	return ArchivedSheetFilter.builder()
 		.description(getSanitizedSheetFilter())
 		.build();
@@ -482,9 +488,13 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the filtered selected visit query count
      */
     private int getFilteredSelectedVisitQueryCount(
-	    Query<ArchivedCourierVisit, ArchivedVisitsFilter> query) {
-	return visitsService.getQueriedCourierVisitsByFilterCount(
-		query, getSheetVisitsRequestFilter());
+	    Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> query) {
+	Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getSheetVisitsRequestFilter());
+	return visitsService.getQueriedCourierVisitsByFilterBySheetIdCount(
+		filteredQuery, archivedSheetGrid.getSelectionModel().getFirstSelectedItem()
+			.map(ArchivedRouteSheet::getId).orElse(-1L));
     }
 
     /**
@@ -494,9 +504,13 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the queried courier visits by filter
      */
     private Stream<ArchivedCourierVisit> getQueriedCourierVisitsByFilter(
-	    Query<ArchivedCourierVisit, ArchivedVisitsFilter> query) {
-	return visitsService.getQueriedCourierVisitsByFilter(
-		query, getSheetVisitsRequestFilter());
+	    Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> query) {
+	Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getSheetVisitsRequestFilter());
+	return visitsService.getQueriedCourierVisitsByFilterBySheetId(
+		filteredQuery, archivedSheetGrid.getSelectionModel().getFirstSelectedItem()
+			.map(ArchivedRouteSheet::getId).orElse(-1L));
     }
 
     /**
@@ -504,10 +518,8 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      *
      * @return the selected visit request filter
      */
-    private ArchivedVisitsFilter getSheetVisitsRequestFilter() {
+    private EntityFilter<ArchivedCourierVisit> getSheetVisitsRequestFilter() {
 	return ArchivedVisitsFilter.builder()
-		.sheetId(archivedSheetGrid.getSelectionModel().getFirstSelectedItem()
-			.map(ArchivedRouteSheet::getId).orElse(-1L))
 		.description(getSanitizedSheetVisitsFilter())
 		.build();
     }
@@ -581,9 +593,11 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the filtered courier visit queryy count
      */
     private int getFilteredCourierVisitQueryCount(
-	    Query<ArchivedCourierVisit, ArchivedVisitsFilter> query) {
-	return visitsService.getQueriedCourierVisitsByFilterCount(
-		query, getCourierRequestFilter());
+	    Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> query) {
+	Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return visitsService.getQueriedCourierVisitsByFilterCount(filteredQuery);
     }
 
     /**
@@ -593,9 +607,11 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      * @return the filtered courier visit query
      */
     private Stream<ArchivedCourierVisit> getFilteredCourierVisitQuery(
-	    Query<ArchivedCourierVisit, ArchivedVisitsFilter> query) {
-	return visitsService.getQueriedCourierVisitsByFilter(
-		query, getCourierRequestFilter());
+	    Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> query) {
+	Query<ArchivedCourierVisit, EntityFilter<ArchivedCourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return visitsService.getQueriedCourierVisitsByFilter(filteredQuery);
     }
 
     /**
@@ -603,7 +619,7 @@ public class ArchivedVisitsManager extends VerticalLayout implements HasDynamicT
      *
      * @return the courier request filter
      */
-    private ArchivedVisitsFilter getCourierRequestFilter() {
+    private EntityFilter<ArchivedCourierVisit> getCourierRequestFilter() {
 	return ArchivedVisitsFilter.builder()
 		.description(getSanitizadVisitFilter())
 		.build();

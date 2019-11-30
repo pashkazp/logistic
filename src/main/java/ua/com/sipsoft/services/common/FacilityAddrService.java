@@ -10,6 +10,7 @@ import com.vaadin.flow.data.provider.Query;
 
 import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
+import ua.com.sipsoft.services.utils.EntityFilter;
 
 /**
  * The Interface FacilityAddrService.
@@ -46,21 +47,21 @@ public interface FacilityAddrService {
     /**
      * Gets the queried facility addr by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query      the query
+     * @param facilityId the facility id
      * @return the queried facility addr by filter
      */
-    Stream<FacilityAddress> getQueriedFacilityAddrByFilter(Query<FacilityAddress, FacilityAddressFilter> query,
-	    FacilityAddressFilter filter);
+    Stream<FacilityAddress> getQueriedFacilityAddrByFilter(Query<FacilityAddress, EntityFilter<FacilityAddress>> query,
+	    Long facilityId);
 
     /**
      * Gets the queried facility addr by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query      the query
+     * @param facilityId the facility id
      * @return the queried facility addr by filter count
      */
-    int getQueriedFacilityAddrByFilterCount(Query<FacilityAddress, FacilityAddressFilter> query,
-	    FacilityAddressFilter filter);
+    int getQueriedFacilityAddrByFilterCount(Query<FacilityAddress, EntityFilter<FacilityAddress>> query,
+	    Long facilityId);
 
 }

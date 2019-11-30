@@ -47,6 +47,7 @@ import ua.com.sipsoft.services.requests.issued.CourierVisitFilter;
 import ua.com.sipsoft.services.requests.issued.IssuedCourierVisitService;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetFilter;
 import ua.com.sipsoft.services.requests.issued.IssuedRouteSheetService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
@@ -151,13 +152,13 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
     private final transient IssuedCourierVisitService issuedCourierVisitService;
 
     /** The route sheets data provider. */
-    private DataProvider<IssuedRouteSheet, IssuedRouteSheetFilter> routeSheetsDataProvider;
+    private DataProvider<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> routeSheetsDataProvider;
 
     /** The selected courier visit data provider. */
-    private DataProvider<CourierVisit, CourierVisitFilter> selectedCourierVisitDataProvider;
+    private DataProvider<CourierVisit, EntityFilter<CourierVisit>> selectedCourierVisitDataProvider;
 
     /** The courier visit data provider. */
-    private DataProvider<CourierVisit, CourierVisitFilter> courierVisitDataProvider;
+    private DataProvider<CourierVisit, EntityFilter<CourierVisit>> courierVisitDataProvider;
 
     /**
      * Instantiates a new courier visits manager.
@@ -391,9 +392,11 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the filtered {@link Stream}<{@link IssuedRouteSheet}>
      */
     private Stream<IssuedRouteSheet> getFilteredIssuedRouteSheetQuery(
-	    Query<IssuedRouteSheet, IssuedRouteSheetFilter> query) {
-	return issuedRouteSheetService.getQueriedIssuedRouteSheetsByFilter(
-		query, getIssuedRouteSheetFilter());
+	    Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query) {
+	Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getIssuedRouteSheetFilter());
+	return issuedRouteSheetService.getQueriedIssuedRouteSheetsByFilter(filteredQuery);
     }
 
     /**
@@ -403,17 +406,19 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the filtered {@link Stream}<{@link IssuedRouteSheet}> records count
      */
     private int getFilteredIssuedRouteSheetQueryCount(
-	    Query<IssuedRouteSheet, IssuedRouteSheetFilter> query) {
-	return issuedRouteSheetService.getQueriedIssuedRouteSheetsByFilterCount(
-		query, getIssuedRouteSheetFilter());
+	    Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query) {
+	Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getIssuedRouteSheetFilter());
+	return issuedRouteSheetService.getQueriedIssuedRouteSheetsByFilterCount(filteredQuery);
     }
 
     /**
      * Gets the issued route sheet filter.
      *
-     * @return the {@link IssuedRouteSheetFilter} filter
+     * @return the EntityFilter<IssuedRouteSheet>filter
      */
-    private IssuedRouteSheetFilter getIssuedRouteSheetFilter() {
+    private EntityFilter<IssuedRouteSheet> getIssuedRouteSheetFilter() {
 	return IssuedRouteSheetFilter.builder()
 		.description(getSanitizedIssuedSheetFilter())
 		.build();
@@ -584,9 +589,13 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the filtered selected visit query count
      */
     private int getFilteredSelectedVisitQueryCount(
-	    Query<CourierVisit, CourierVisitFilter> query) {
-	return issuedCourierVisitService.getQueriedCourierVisitsByFilterCount(
-		query, getSelectedVisitRequestFilter());
+	    Query<CourierVisit, EntityFilter<CourierVisit>> query) {
+	Query<CourierVisit, EntityFilter<CourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getSelectedVisitRequestFilter());
+	return issuedCourierVisitService.getQueriedCourierVisitsByFilterBySheetIdCount(
+		filteredQuery, issuedSheetsGrid.getSelectionModel().getFirstSelectedItem()
+			.map(IssuedRouteSheet::getId).orElse(-1L));
     }
 
     /**
@@ -596,9 +605,13 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the queried courier visits by filter
      */
     private Stream<CourierVisit> getQueriedCourierVisitsByFilter(
-	    Query<CourierVisit, CourierVisitFilter> query) {
-	return issuedCourierVisitService.getQueriedCourierVisitsByFilter(
-		query, getSelectedVisitRequestFilter());
+	    Query<CourierVisit, EntityFilter<CourierVisit>> query) {
+	Query<CourierVisit, EntityFilter<CourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getSelectedVisitRequestFilter());
+	return issuedCourierVisitService.getQueriedCourierVisitsByFilterBySheetId(
+		filteredQuery, issuedSheetsGrid.getSelectionModel().getFirstSelectedItem()
+			.map(IssuedRouteSheet::getId).orElse(-1L));
     }
 
     /**
@@ -606,10 +619,8 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      *
      * @return the selected visit request filter
      */
-    private CourierVisitFilter getSelectedVisitRequestFilter() {
+    private EntityFilter<CourierVisit> getSelectedVisitRequestFilter() {
 	return CourierVisitFilter.builder()
-		.sheetId(issuedSheetsGrid.getSelectionModel().getFirstSelectedItem()
-			.map(IssuedRouteSheet::getId).orElse(-1L))
 		.description(getSanitizedSelectedVisitFilter())
 		.build();
     }
@@ -703,9 +714,11 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the filtered courier visit queryy count
      */
     private int getFilteredCourierVisitQueryyCount(
-	    Query<CourierVisit, CourierVisitFilter> query) {
-	return issuedCourierVisitService.getQueriedCourierVisitsByFilterCount(
-		query, getCourierRequestFilter());
+	    Query<CourierVisit, EntityFilter<CourierVisit>> query) {
+	Query<CourierVisit, EntityFilter<CourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return issuedCourierVisitService.getQueriedCourierVisitsByFilterCount(filteredQuery);
     }
 
     /**
@@ -715,9 +728,11 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      * @return the filtered courier visit query
      */
     private Stream<CourierVisit> getFilteredCourierVisitQuery(
-	    Query<CourierVisit, CourierVisitFilter> query) {
-	return issuedCourierVisitService.getQueriedCourierVisitsByFilter(
-		query, getCourierRequestFilter());
+	    Query<CourierVisit, EntityFilter<CourierVisit>> query) {
+	Query<CourierVisit, EntityFilter<CourierVisit>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getCourierRequestFilter());
+	return issuedCourierVisitService.getQueriedCourierVisitsByFilter(filteredQuery);
     }
 
     /**
@@ -725,7 +740,7 @@ public class CourierVisitsManager extends VerticalLayout implements HasDynamicTi
      *
      * @return the courier request filter
      */
-    private CourierVisitFilter getCourierRequestFilter() {
+    private EntityFilter<CourierVisit> getCourierRequestFilter() {
 	return CourierVisitFilter.builder()
 		.description(getSanitizadCourierVisitFilter())
 		.build();

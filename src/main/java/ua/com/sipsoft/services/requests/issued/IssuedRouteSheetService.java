@@ -11,6 +11,7 @@ import com.vaadin.flow.data.provider.Query;
 import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.model.entity.requests.issued.IssuedRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 
 /**
  * The Interface IssuedRouteSheetService.
@@ -97,21 +98,18 @@ public interface IssuedRouteSheetService {
     /**
      * Gets the queried issued route sheets by filter.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried issued route sheets by filter
      */
-    Stream<IssuedRouteSheet> getQueriedIssuedRouteSheetsByFilter(Query<IssuedRouteSheet, IssuedRouteSheetFilter> query,
-	    IssuedRouteSheetFilter filter);
+    Stream<IssuedRouteSheet> getQueriedIssuedRouteSheetsByFilter(
+	    Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query);
 
     /**
      * Gets the queried issued route sheets by filter count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried issued route sheets by filter count
      */
-    int getQueriedIssuedRouteSheetsByFilterCount(Query<IssuedRouteSheet, IssuedRouteSheetFilter> query,
-	    IssuedRouteSheetFilter filter);
+    int getQueriedIssuedRouteSheetsByFilterCount(Query<IssuedRouteSheet, EntityFilter<IssuedRouteSheet>> query);
 
 }

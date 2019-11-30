@@ -20,17 +20,18 @@ import ua.com.sipsoft.model.entity.common.Facility;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.model.repository.common.FacilityRepository;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.services.utils.OffsetBasedPageRequest;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FacilitiesServiceImpl.
  *
  * @author Pavlo Degtyaryev
  */
 
-/** The Constant log. */
 @Slf4j
 @Service
 @Transactional
@@ -291,23 +292,22 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
     /**
      * Gets the queried facilities.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried facilities
      */
     @Override
-    public Stream<Facility> getQueriedFacilities(Query<Facility, FacilitiesFilter> query, FacilitiesFilter filter) {
+    public Stream<Facility> getQueriedFacilities(Query<Facility, EntityFilter<Facility>> query) {
 	log.debug(
 		"Get requested page Facilities with offset '{}'; limit '{}'; sort '{}'; filter '{}'",
-		query.getOffset(), query.getLimit(), query.getSortOrders(), filter);
-	if (query == null || filter == null) {
+		query.getOffset(), query.getLimit(), query.getSortOrders(), query.getFilter().get().toString());
+	if (query == null || query.getFilter().isEmpty()) {
 	    log.debug("Get Facilities is impossible. Miss some data.");
 	    return Stream.empty();
 	}
 	try {
 	    return dao.findAll(queryToSort(query))
 		    .stream()
-		    .filter(entity -> isEntityPassFilter(entity, filter))
+		    .filter(entity -> query.getFilter().get().isPass(entity))
 		    .skip(query.getOffset())
 		    .limit(query.getLimit());
 	} catch (Exception e) {
@@ -319,14 +319,13 @@ public class FacilitiesServiceImpl implements FacilitiesService, HasQueryToSortC
     /**
      * Gets the queried facilities count.
      *
-     * @param query  the query
-     * @param filter the filter
+     * @param query the query
      * @return the queried facilities count
      */
     @Override
-    public int getQueriedFacilitiesCount(Query<Facility, FacilitiesFilter> query, FacilitiesFilter filter) {
-	log.debug("Get requested size Courier Requests with filter '{}'", filter);
-	return (int) getQueriedFacilities(query, filter).count();
+    public int getQueriedFacilitiesCount(Query<Facility, EntityFilter<Facility>> query) {
+	log.debug("Get requested size Facilities with filter '{}'", query.getFilter().get().toString());
+	return (int) getQueriedFacilities(query).count();
     }
 
 }

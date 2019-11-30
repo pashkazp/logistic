@@ -22,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.entityedit.AbstractEntityEditor;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
@@ -48,8 +50,6 @@ import ua.com.sipsoft.utils.security.Role;
  */
 @Scope("prototype")
 @Tag("facility-users-editor-form")
-
-/** The Constant log. */
 @Slf4j
 @SpringComponent
 public class FacilityUsersEditor<T extends Set<User>> extends AbstractEntityEditor<T> {
@@ -66,7 +66,7 @@ public class FacilityUsersEditor<T extends Set<User>> extends AbstractEntityEdit
     private transient UsersService usersService;
 
     /** The user data provider. */
-    private DataProvider<User, UserFilter> userDataProvider;
+    private DataProvider<User, EntityFilter<User>> userDataProvider;
 
     /**
      * Gets the grid.
@@ -164,14 +164,16 @@ public class FacilityUsersEditor<T extends Set<User>> extends AbstractEntityEdit
 	setMinWidth(getWidth());
 
 	userDataProvider = DataProvider.fromFilteringCallbacks(
-		query -> this.usersService.getQueriedUsersbyFilter(query,
+		query -> this.usersService.getQueriedUsersbyFilter(new Query<>(query.getOffset(),
+			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
 			UserFilter.builder()
 				.roles(filterRoles)
-				.username(filter.getValue()).build()),
-		query -> this.usersService.getQueriedUsersByFilterCount(query,
+				.username(filter.getValue()).build())),
+		query -> this.usersService.getQueriedUsersByFilterCount(new Query<>(query.getOffset(),
+			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
 			UserFilter.builder()
 				.roles(filterRoles)
-				.username(filter.getValue()).build()));
+				.username(filter.getValue()).build())));
 
 	grid.setDataProvider(userDataProvider.withConfigurableFilter());
 
@@ -260,6 +262,11 @@ public class FacilityUsersEditor<T extends Set<User>> extends AbstractEntityEdit
 	showFilteredUsers();
     }
 
+    /**
+     * Checks if is valid operation data.
+     *
+     * @return true, if is valid operation data
+     */
     @SuppressWarnings("unchecked")
     public boolean isValidOperationData() {
 	operationData = (T) grid.getSelectedItems();

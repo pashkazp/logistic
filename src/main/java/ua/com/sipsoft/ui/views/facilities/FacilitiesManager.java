@@ -46,6 +46,7 @@ import ua.com.sipsoft.services.common.FacilityAddrService;
 import ua.com.sipsoft.services.common.FacilityAddressFilter;
 import ua.com.sipsoft.services.users.UserFilter;
 import ua.com.sipsoft.services.users.UsersService;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
@@ -61,13 +62,13 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.Role;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FacilitiesManager.
  *
  * @author Pavlo Degtyaryev
  */
 
-/** The Constant log. */
 @Slf4j
 @UIScope
 @SpringComponent
@@ -137,13 +138,13 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
     private final transient UsersService usersService;
 
     /** The facillity data provider. */
-    private DataProvider<Facility, FacilitiesFilter> facillityDataProvider;
+    private DataProvider<Facility, EntityFilter<Facility>> facillityDataProvider;
 
     /** The facility address data provider. */
-    private DataProvider<FacilityAddress, FacilityAddressFilter> facilityAddressDataProvider;
+    private DataProvider<FacilityAddress, EntityFilter<FacilityAddress>> facilityAddressDataProvider;
 
     /** The user data provider. */
-    private DataProvider<User, UserFilter> userDataProvider;
+    private DataProvider<User, EntityFilter<User>> userDataProvider;
 
     /**
      * Instantiates a new facilities manager.
@@ -355,22 +356,11 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
     }
 
     /**
-     * Gets the filtered facility query.
-     *
-     * @param query the query
-     * @return the filtered facility query
-     */
-    private Stream<Facility> getFilteredFacilityQuery(Query<Facility, FacilitiesFilter> query) {
-	return facilitiesService.getQueriedFacilities(
-		query, getFacilitiyFilter());
-    }
-
-    /**
      * Gets the facilitiy filter.
      *
      * @return the facilitiy filter
      */
-    private FacilitiesFilter getFacilitiyFilter() {
+    private EntityFilter<Facility> getFacilitiyFilter() {
 	return FacilitiesFilter.builder()
 		.name(getSanitizedFacilitiyFilter())
 		.build();
@@ -391,9 +381,24 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      * @param query the query
      * @return the filtered facility query count
      */
-    private int getFilteredFacilityQueryCount(Query<Facility, FacilitiesFilter> query) {
-	return facilitiesService.getQueriedFacilitiesCount(
-		query, getFacilitiyFilter());
+    private int getFilteredFacilityQueryCount(Query<Facility, EntityFilter<Facility>> query) {
+	Query<Facility, EntityFilter<Facility>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getFacilitiyFilter());
+	return facilitiesService.getQueriedFacilitiesCount(filteredQuery);
+    }
+
+    /**
+     * Gets the filtered facility query.
+     *
+     * @param query the query
+     * @return the filtered facility query
+     */
+    private Stream<Facility> getFilteredFacilityQuery(Query<Facility, EntityFilter<Facility>> query) {
+	Query<Facility, EntityFilter<Facility>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getFacilitiyFilter());
+	return facilitiesService.getQueriedFacilities(filteredQuery);
     }
 
     /**
@@ -453,9 +458,13 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      * @param query the query
      * @return the filtered facility adrr query count
      */
-    private int getFilteredFacilityAdrrQueryCount(Query<FacilityAddress, FacilityAddressFilter> query) {
+    private int getFilteredFacilityAdrrQueryCount(Query<FacilityAddress, EntityFilter<FacilityAddress>> query) {
+	Query<FacilityAddress, EntityFilter<FacilityAddress>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getFacilityAddrFilter());
 	return facilityAdrrService.getQueriedFacilityAddrByFilterCount(
-		query, getFacilityAddrFilter());
+		filteredQuery, facilitiesGrid.getSelectionModel().getFirstSelectedItem()
+			.map(Facility::getId).orElse(-1L));
     }
 
     /**
@@ -464,9 +473,14 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      * @param query the query
      * @return the filtered facility adrr query
      */
-    private Stream<FacilityAddress> getFilteredFacilityAdrrQuery(Query<FacilityAddress, FacilityAddressFilter> query) {
+    private Stream<FacilityAddress> getFilteredFacilityAdrrQuery(
+	    Query<FacilityAddress, EntityFilter<FacilityAddress>> query) {
+	Query<FacilityAddress, EntityFilter<FacilityAddress>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getFacilityAddrFilter());
 	return facilityAdrrService.getQueriedFacilityAddrByFilter(
-		query, getFacilityAddrFilter());
+		filteredQuery, facilitiesGrid.getSelectionModel().getFirstSelectedItem()
+			.map(Facility::getId).orElse(-1L));
     }
 
     /**
@@ -474,7 +488,7 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      *
      * @return the facility addr filter
      */
-    private FacilityAddressFilter getFacilityAddrFilter() {
+    private EntityFilter<FacilityAddress> getFacilityAddrFilter() {
 	return FacilityAddressFilter.builder()
 		.facilityId(facilitiesGrid.getSelectionModel().getFirstSelectedItem()
 			.map(Facility::getId).orElse(-1L))
@@ -567,25 +581,33 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
     }
 
     /**
-     * Gets the filtered users qurey count.
-     *
-     * @param query the query
-     * @return the filtered users qurey count
-     */
-    private int getFilteredUsersQureyCount(Query<User, UserFilter> query) {
-	return usersService.getQueriedUsersByFilterCount(
-		query, getUsersFilter());
-    }
-
-    /**
      * Gets the filtered user query.
      *
      * @param query the query
      * @return the filtered user query
      */
-    private Stream<User> getFilteredUserQuery(Query<User, UserFilter> query) {
-	return usersService.getQueriedUsersbyFilter(
-		query, getUsersFilter());
+    private Stream<User> getFilteredUserQuery(Query<User, EntityFilter<User>> query) {
+	Query<User, EntityFilter<User>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getUsersFilter());
+	return usersService.getQueriedUsersByFacilityIdByFilter(filteredQuery,
+		facilitiesGrid.getSelectionModel().getFirstSelectedItem()
+			.map(Facility::getId).orElse(-1L));
+    }
+
+    /**
+     * Gets the filtered users qurey count.
+     *
+     * @param query the query
+     * @return the filtered users qurey count
+     */
+    private int getFilteredUsersQureyCount(Query<User, EntityFilter<User>> query) {
+	Query<User, EntityFilter<User>> filteredQuery = new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getUsersFilter());
+	return usersService.getQueriedUsersByFacilityIdByFilterCount(filteredQuery,
+		facilitiesGrid.getSelectionModel().getFirstSelectedItem()
+			.map(Facility::getId).orElse(-1L));
     }
 
     /**
@@ -593,10 +615,8 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
      *
      * @return the users filter
      */
-    private UserFilter getUsersFilter() {
+    private EntityFilter<User> getUsersFilter() {
 	return UserFilter.builder()
-		.facilityId(facilitiesGrid.getSelectionModel().getFirstSelectedItem()
-			.map(Facility::getId).orElse(-1L))
 		.username(getSanitizedUsersFilter())
 		.build();
     }
@@ -769,6 +789,11 @@ public class FacilitiesManager extends VerticalLayout implements HasDynamicTitle
 	return null;
     }
 
+    /**
+     * Gets the dialog form.
+     *
+     * @return the dialog form
+     */
     @Lookup
     DialogForm getDialogForm() {
 	return null;

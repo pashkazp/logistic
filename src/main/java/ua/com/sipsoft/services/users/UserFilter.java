@@ -1,6 +1,11 @@
 package ua.com.sipsoft.services.users;
 
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.util.Collection;
+
+import org.springframework.util.CollectionUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,55 +13,22 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.services.utils.EntityFilter;
 import ua.com.sipsoft.utils.security.Role;
 
 /**
- * To string.
- *
- * @return the java.lang. string
+ * The Interface UserFilter.
+ * 
+ * @author Pavlo Degtyaryev
  */
 @Builder
-
-/**
- * Instantiates a new user filter.
- */
 @NoArgsConstructor
-
-/**
- * Instantiates a new user filter.
- *
- * @param id         the id
- * @param username   the username
- * @param firstName  the first name
- * @param lastName   the last name
- * @param patronymic the patronymic
- * @param email      the email
- * @param facilityId the facility id
- * @param roles      the roles
- */
 @AllArgsConstructor
-
-/**
- * Gets the roles.
- *
- * @return the roles
- */
 @Getter
-
-/**
- * Sets the roles.
- *
- * @param roles the new roles
- */
 @Setter
-
-/**
- * Hash code.
- *
- * @return the int
- */
 @EqualsAndHashCode
-public class UserFilter {
+public class UserFilter implements EntityFilter<User> {
 
     /** The id. */
     @Builder.Default
@@ -82,24 +54,50 @@ public class UserFilter {
     @Builder.Default
     private String email = null;
 
-    /** The facility id. */
-    @Builder.Default
-    private Long facilityId = null;
-
     /** The roles. */
     @Builder.Default
     private Collection<Role> roles = null;
 
-    /**
-     * To string.
-     *
-     * @return the string
-     */
     @Override
     public String toString() {
-	return "UserFilter [id=" + id + ", username=\"" + username + "\", firstName=\"" + firstName + "\", lastName=\""
-		+ lastName + "\", patronymic=\"" + patronymic + "\", email=\"" + email + "\", facilityId=\""
-		+ facilityId + "\", roles=" + roles + "]";
+	return String.format(
+		"UserFilter [id=%s, username=\"%s\", firstName=\"%s\", lastName=\"%s\", patronymic=\"%s\", email=\"%s\", roles=%s]",
+		id, username, firstName, lastName, patronymic, email, roles);
+    }
+
+    /**
+     * Checks if is pass.
+     *
+     * @param entity the entity
+     * @return true, if is pass
+     */
+    @Override
+    public boolean isPass(User entity) {
+	if (entity == null) {
+	    return false;
+	}
+	if (id != null && !id.equals(entity.getId())) {
+	    return false;
+	}
+	if (!containsIgnoreCase(entity.getUsername(), defaultString(username))) {
+	    return false;
+	}
+	if (!containsIgnoreCase(entity.getFirstName(), defaultString(firstName))) {
+	    return false;
+	}
+	if (!containsIgnoreCase(entity.getLastName(), defaultString(lastName))) {
+	    return false;
+	}
+	if (!containsIgnoreCase(entity.getPatronymic(), defaultString(patronymic))) {
+	    return false;
+	}
+	if (!containsIgnoreCase(entity.getEmail(), defaultString(email))) {
+	    return false;
+	}
+	if (roles != null && !CollectionUtils.containsAny(roles, entity.getRoles())) {
+	    return false;
+	}
+	return true;
     }
 
 }
