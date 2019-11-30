@@ -88,6 +88,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    + " FROM Facility f "
 	    + " join f.users u "
 	    + " WHERE f.id = :facilityid ")
-    List<User> getCourierRequestByDratRouetSheetId(@Param("facilityid") Long id, Sort sort);
+    List<User> getUsersByFasilityId(@Param("facilityid") Long id, Sort sort);
 
 }
