@@ -3,6 +3,7 @@ package ua.com.sipsoft.ui.views.users.components;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -41,7 +42,6 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.Role;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UsersGridViewer.
  *
@@ -196,17 +196,27 @@ public class UsersGridViewer extends VerticalLayout implements TooltippedCompone
     private void resetDataProvider() {
 	DataProvider<User, EntityFilter<User>> userDataProvider;
 	userDataProvider = DataProvider.fromFilteringCallbacks(
-		query -> this.usersService.getQueriedUsersbyFilter(new Query<>(query.getOffset(),
-			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(), UserFilter.builder()
-				.roles(filterRoles)
-				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build())),
-		query -> this.usersService.getQueriedUsersByFilterCount(new Query<>(query.getOffset(),
-			query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
-			UserFilter.builder()
-				.roles(filterRoles)
-				.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build())));
+		this::getFilteredUserQuery,
+		this::getFilteredUserQueryCount);
 
 	usersGrid.setDataProvider(userDataProvider.withConfigurableFilter());
+    }
+
+    private int getFilteredUserQueryCount(Query<User, EntityFilter<User>> query) {
+	return this.usersService.getQueriedUsersByFilterCount(new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(),
+		getUserFilter()));
+    }
+
+    private Stream<User> getFilteredUserQuery(Query<User, EntityFilter<User>> query) {
+	return this.usersService.getQueriedUsersbyFilter(new Query<>(query.getOffset(),
+		query.getLimit(), query.getSortOrders(), query.getInMemorySorting(), getUserFilter()));
+    }
+
+    private UserFilter getUserFilter() {
+	return UserFilter.builder()
+		.roles(filterRoles)
+		.username(StringUtils.truncate(fieldUsersFilter.getValue(), 100)).build();
     }
 
     /**
