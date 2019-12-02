@@ -57,7 +57,6 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.HistoryEventMsg;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ArchivedVisitsManager.
  *

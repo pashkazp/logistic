@@ -62,7 +62,6 @@ import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.UserEntityMsg;
 import ua.com.sipsoft.utils.security.Role;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FacilitiesManager.
  *

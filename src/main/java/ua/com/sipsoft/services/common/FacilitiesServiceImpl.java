@@ -25,7 +25,6 @@ import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.services.utils.OffsetBasedPageRequest;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FacilitiesServiceImpl.
  *

@@ -24,7 +24,6 @@ import ua.com.sipsoft.utils.CourierVisitState;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CourierRequestServiceImpl.
  *

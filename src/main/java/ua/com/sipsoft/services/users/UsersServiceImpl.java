@@ -22,7 +22,6 @@ import ua.com.sipsoft.services.utils.HasQueryToSortConvertor;
 import ua.com.sipsoft.utils.security.Role;
 import ua.com.sipsoft.utils.security.VerificationTokenType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UsersServiceImpl.
  *
