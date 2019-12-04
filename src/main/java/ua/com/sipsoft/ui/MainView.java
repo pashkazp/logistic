@@ -24,6 +24,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.dom.ThemeList;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLayout;
@@ -68,6 +69,7 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 //@HtmlImport("frontend://styles/custom.html") // You can use HTML Imports to manipulate f.e. the accent color
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @Slf4j
+@PreserveOnRefresh
 @UIScope
 @SpringComponent
 public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybridNoAppBar> implements RouterLayout {
