@@ -109,7 +109,7 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
 	return courierVisits.stream()
 		.filter(CourierVisit::isActive)
 		.map(courierVisit -> {
-		    courierVisit.addHistoryEvent("Візит кур'єра маркований як виконаний", author, LocalDateTime.now());
+		    courierVisit.addHistoryEvent("Візит кур'єра маркований як виконаний", LocalDateTime.now(), author);
 		    courierVisit.setState(CourierVisitState.COMPLETED);
 		    return dao.saveAndFlush(courierVisit);
 		})
@@ -140,7 +140,7 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
 			    .append("Скасовано з причини \"")
 			    .append(description)
 			    .append("\".")
-			    .toString(), author, LocalDateTime.now());
+			    .toString(), LocalDateTime.now(), author);
 		    courierVisit.setState(CourierVisitState.CANCELLED);
 		    return (dao.saveAndFlush(courierVisit));
 		})
@@ -276,7 +276,7 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
 				.append("\". Прототип має #id ")
 				.append(persistedVisit.get().getId().toString())
 				.toString(),
-			author, LocalDateTime.now());
+			LocalDateTime.now(), author);
 		Optional<CourierRequest> newCourierRequest = courierRequestService.addRequest(courierRequest, author);
 		if (newCourierRequest.isPresent()) {
 		    persistedVisit.get().addHistoryEvent(
@@ -286,7 +286,7 @@ public class IssuedCourierVisitServiceImpl implements IssuedCourierVisitService,
 				    .append("\". Нова чернетка зареєстрована з #id: ")
 				    .append(newCourierRequest.get().getId().toString())
 				    .toString(),
-			    author, LocalDateTime.now());
+			    LocalDateTime.now(), author);
 		    dao.saveAndFlush(persistedVisit.get());
 		}
 

@@ -165,7 +165,7 @@ public class ArchivedVisitsServiceImpl implements ArchivedVisitsService, HasQuer
 				.append("\". Прототип має #id ")
 				.append(persistedVisit.get().getId().toString())
 				.toString(),
-			author, LocalDateTime.now());
+			LocalDateTime.now(), author);
 		Optional<CourierRequest> newCourierRequest = courierRequestService.addRequest(courierRequest, author);
 		if (newCourierRequest.isPresent()) {
 		    persistedVisit.get().addHistoryEvent(
@@ -175,7 +175,7 @@ public class ArchivedVisitsServiceImpl implements ArchivedVisitsService, HasQuer
 				    .append("\". Нова чернетка зареєстрована з #id: ")
 				    .append(newCourierRequest.get().getId().toString())
 				    .toString(),
-			    author, LocalDateTime.now());
+			    LocalDateTime.now(), author);
 		    dao.saveAndFlush(persistedVisit.get());
 		}
 	    }

@@ -3,15 +3,20 @@ package ua.com.sipsoft.model.entity.requests.prototype;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Version;
 
 import lombok.Getter;
@@ -20,6 +25,7 @@ import lombok.Setter;
 import lombok.ToString;
 import ua.com.sipsoft.model.entity.common.FacilityAddress;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.utils.CourierVisitState;
 
 /**
  * Simple JavaBeen object that represents Courier Request.
@@ -33,7 +39,7 @@ import ua.com.sipsoft.model.entity.user.User;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class AbstractCourierRequest implements Serializable {
+public abstract class AbstractCourierRequest<T extends AbstractHistoryEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7414770099090952575L;
@@ -70,6 +76,15 @@ public abstract class AbstractCourierRequest implements Serializable {
     @Column(nullable = false, length = 100)
     private String description = "";
 
+    /** The history events. */
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "fk_courier_req_id")
+    private Set<T> historyEvents;
+
+    /** The state. */
+    @Enumerated(EnumType.STRING)
+    private CourierVisitState state = CourierVisitState.NEW;
+
     /**
      * Instantiates a new abstract courier request.
      *
@@ -88,10 +103,27 @@ public abstract class AbstractCourierRequest implements Serializable {
      * Adds the history event.
      *
      * @param description the {@link String}
-     * @param author      the {@link User}
      * @param now         the {@link LocalDateTime}
+     * @param author      the {@link User}
      */
-    public abstract void addHistoryEvent(String description, User author, LocalDateTime now);
+    public abstract void addHistoryEvent(String description, LocalDateTime now, User author);
+
+    /**
+     * Creates the history events.
+     */
+    protected abstract void createHistoryEvents();
+
+    /**
+     * Gets the history events.
+     *
+     * @return the history events
+     */
+    public Set<T> getHistoryEvents() {
+	if (historyEvents == null) {
+	    createHistoryEvents();
+	}
+	return historyEvents;
+    }
 
     /**
      * Equals.
@@ -107,7 +139,7 @@ public abstract class AbstractCourierRequest implements Serializable {
 	if (!(obj instanceof AbstractCourierRequest)) {
 	    return false;
 	}
-	AbstractCourierRequest other = (AbstractCourierRequest) obj;
+	AbstractCourierRequest<?> other = (AbstractCourierRequest<?>) obj;
 	if (this.id == null && other.id == null) {
 	    return false;
 	}

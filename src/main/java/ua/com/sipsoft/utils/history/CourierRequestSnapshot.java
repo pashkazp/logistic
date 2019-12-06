@@ -132,7 +132,7 @@ public class CourierRequestSnapshot {
 	    stringBuilder.append(stringTo);
 	    stringBuilder.append(requestNew.getFromPoint().getFacility().getName());
 	    stringBuilder.append(stringEnd);
-	    requestNew.addHistoryEvent(stringBuilder.toString(), author, LocalDateTime.now());
+	    requestNew.addHistoryEvent(stringBuilder.toString(), LocalDateTime.now(), author);
 	}
 	if (this.getToPoint().getFacility().getId() != requestNew.getToPoint().getFacility().getId()) {
 	    stringBuilder.setLength(0);
@@ -141,7 +141,7 @@ public class CourierRequestSnapshot {
 	    stringBuilder.append(stringTo);
 	    stringBuilder.append(requestNew.getToPoint().getFacility().getName());
 	    stringBuilder.append(stringEnd);
-	    requestNew.addHistoryEvent(stringBuilder.toString(), author, LocalDateTime.now());
+	    requestNew.addHistoryEvent(stringBuilder.toString(), LocalDateTime.now(), author);
 	}
 	if (this.getFromPoint().getId() != requestNew.getFromPoint().getId()) {
 	    stringBuilder.setLength(0);
@@ -150,7 +150,7 @@ public class CourierRequestSnapshot {
 	    stringBuilder.append(stringTo);
 	    stringBuilder.append(requestNew.getFromPoint().getAddress());
 	    stringBuilder.append(stringEnd);
-	    requestNew.addHistoryEvent(stringBuilder.toString(), author, LocalDateTime.now());
+	    requestNew.addHistoryEvent(stringBuilder.toString(), LocalDateTime.now(), author);
 	}
 	if (this.getToPoint().getId() != requestNew.getToPoint().getId()) {
 	    stringBuilder.setLength(0);
@@ -159,7 +159,7 @@ public class CourierRequestSnapshot {
 	    stringBuilder.append(stringTo);
 	    stringBuilder.append(requestNew.getToPoint().getAddress());
 	    stringBuilder.append(stringEnd);
-	    requestNew.addHistoryEvent(stringBuilder.toString(), author, LocalDateTime.now());
+	    requestNew.addHistoryEvent(stringBuilder.toString(), LocalDateTime.now(), author);
 	}
 	if (!this.getDescription().equals(requestNew.getDescription())) {
 	    stringBuilder.setLength(0);
@@ -168,7 +168,7 @@ public class CourierRequestSnapshot {
 	    stringBuilder.append(stringTo);
 	    stringBuilder.append(requestNew.getDescription());
 	    stringBuilder.append(stringEnd);
-	    requestNew.addHistoryEvent(stringBuilder.toString(), author, LocalDateTime.now());
+	    requestNew.addHistoryEvent(stringBuilder.toString(), LocalDateTime.now(), author);
 	}
     }
 

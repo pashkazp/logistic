@@ -3,13 +3,8 @@ package ua.com.sipsoft.model.entity.requests.draft;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -20,6 +15,7 @@ import ua.com.sipsoft.model.entity.requests.archive.ArchivedCourierVisit;
 import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
 import ua.com.sipsoft.model.entity.requests.prototype.AbstractCourierRequest;
 import ua.com.sipsoft.model.entity.user.User;
+import ua.com.sipsoft.utils.CourierVisitState;
 
 /**
  * Simple JavaBeen object that represents Courier Request.
@@ -30,20 +26,14 @@ import ua.com.sipsoft.model.entity.user.User;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 @Table(name = "courier_requests")
 @Slf4j
-public class CourierRequest extends AbstractCourierRequest implements Serializable {
+public class CourierRequest extends AbstractCourierRequest<CourierRequestEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5842400198817694887L;
-
-    /** The history events. */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "fk_courier_request_id")
-//	@Fetch(FetchMode.SELECT)
-    private Set<CourierRequestEvent> historyEvents = new HashSet<>();
 
     /**
      * Adds the history event.
@@ -52,33 +42,51 @@ public class CourierRequest extends AbstractCourierRequest implements Serializab
      * @param author           the {@link User}
      * @param creationDateTime the creation {@link LocalDateTime}
      */
-    public void addHistoryEvent(String description, User author, LocalDateTime creationDateTime) {
+    public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
 	log.info(" Adds the history event by user '{}' {} '{}'", author.getUsername(), creationDateTime, description);
-	historyEvents.add(new CourierRequestEvent(description, creationDateTime, author));
+	getHistoryEvents().add(new CourierRequestEvent(description, creationDateTime, author));
     }
 
     /**
      * Instantiates a new courier request from the courier visit.
      *
      * @param courierVisit the {@link CourierVisit}
+     * @param author       the author
      */
     public CourierRequest(CourierVisit courierVisit, User author) {
 	super(author, courierVisit.getFromPoint(), courierVisit.getToPoint());
 	log.info("Instantiates a new courier request from the courier visit.");
+	createHistoryEvents();
+	setState(CourierVisitState.NEW);
 	setCreationDate(courierVisit.getCreationDate());
 	setDescription(courierVisit.getDescription());
 
 	courierVisit.getHistoryEvents()
-		.forEach(event -> addHistoryEvent(event.getDescription(), event.getAuthor(), event.getCreationDate()));
+		.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
     }
 
+    /**
+     * Instantiates a new courier request.
+     *
+     * @param archivedCourierVisit the archived courier visit
+     * @param author               the author
+     */
     public CourierRequest(ArchivedCourierVisit archivedCourierVisit, User author) {
 	super(author, archivedCourierVisit.getFromPoint(), archivedCourierVisit.getToPoint());
 	log.info("Instantiates a new courier request from the courier visit.");
 	setCreationDate(archivedCourierVisit.getCreationDate());
 	setDescription(archivedCourierVisit.getDescription());
+	setState(CourierVisitState.NEW);
 
 	archivedCourierVisit.getHistoryEvents()
-		.forEach(event -> addHistoryEvent(event.getDescription(), event.getAuthor(), event.getCreationDate()));
+		.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
+    }
+
+    /**
+     * Creates the history events.
+     */
+    @Override
+    protected void createHistoryEvents() {
+	setHistoryEvents(new HashSet<CourierRequestEvent>());
     }
 }

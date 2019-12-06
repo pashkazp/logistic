@@ -111,7 +111,7 @@ public class IssuedRouteSheetServiceImpl implements IssuedRouteSheetService, Has
 	ArchivedRouteSheet archivedRouteSheet = new ArchivedRouteSheet(issuedRouteSheet);
 	archivedRouteSheet.addHistoryEvent("Створено архівний запис", LocalDateTime.now(), author);
 	archivedRouteSheet.getRequests()
-		.forEach(v -> v.addHistoryEvent("Створено архівний запис", author, LocalDateTime.now()));
+		.forEach(v -> v.addHistoryEvent("Створено архівний запис", LocalDateTime.now(), author));
 	dao.delete(issuedRouteSheet);
 	archiveRouteSheetService.save(archivedRouteSheet);
     }

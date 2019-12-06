@@ -3,15 +3,8 @@ package ua.com.sipsoft.model.entity.requests.archive;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -32,23 +25,14 @@ import ua.com.sipsoft.utils.CourierVisitState;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 @Table(name = "archived_courier_visits")
 @Slf4j
-public class ArchivedCourierVisit extends AbstractCourierRequest implements Serializable {
+public class ArchivedCourierVisit extends AbstractCourierRequest<ArchivedCourierVisitEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 933190931148752876L;
-
-    /** The state. */
-    @Enumerated(EnumType.STRING)
-    private CourierVisitState state = CourierVisitState.RUNNING;
-
-    /** The history events. */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "fk_archive_courier_visit_id")
-    private Set<ArchivedCourierVisitEvent> historyEvents = new HashSet<>();
 
     /**
      * Instantiates a new archived courier visit.
@@ -61,7 +45,7 @@ public class ArchivedCourierVisit extends AbstractCourierRequest implements Seri
 	setCreationDate(request.getCreationDate());
 	setDescription(request.getDescription());
 	request.getHistoryEvents()
-		.forEach(event -> addHistoryEvent(event.getDescription(), event.getAuthor(), event.getCreationDate()));
+		.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
     }
 
     /**
@@ -71,25 +55,35 @@ public class ArchivedCourierVisit extends AbstractCourierRequest implements Seri
      */
     public ArchivedCourierVisit(CourierVisit request) {
 	super(request.getAuthor(), request.getFromPoint(), request.getToPoint());
-	log.info("Instantiates archived visit from courier visit");
+	log.info("Instantiates archived visit from courier visit '{}'", request);
+	createHistoryEvents();
+	setState(CourierVisitState.COMPLETED);
 	setCreationDate(request.getCreationDate());
 	setDescription(request.getDescription());
 	setState(request.getState());
 	request.getHistoryEvents()
-		.forEach(event -> addHistoryEvent(event.getDescription(), event.getAuthor(), event.getCreationDate()));
+		.forEach(event -> addHistoryEvent(event.getDescription(), event.getCreationDate(), event.getAuthor()));
     }
 
     /**
      * Adds the history event.
      *
      * @param description      the description
-     * @param author           the author
      * @param creationDateTime the creation date time
+     * @param author           the author
      */
     @Override
-    public void addHistoryEvent(String description, User author, LocalDateTime creationDateTime) {
+    public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
 	log.info("Add history messsage event. Author '{}' date {} description '{}'", author.getUsername(),
 		creationDateTime, description);
-	historyEvents.add(new ArchivedCourierVisitEvent(description, author, creationDateTime));
+	getHistoryEvents().add(new ArchivedCourierVisitEvent(description, author, creationDateTime));
+    }
+
+    /**
+     * Creates the history events.
+     */
+    @Override
+    protected void createHistoryEvents() {
+	setHistoryEvents(new HashSet<ArchivedCourierVisitEvent>());
     }
 }

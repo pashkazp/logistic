@@ -85,7 +85,7 @@ public class CourierVisitSnapshot extends CourierRequestSnapshot {
 	    newCourierVisit.addHistoryEvent(
 		    "Стан віклику був змінений з: " + this.state.name() + " на: "
 			    + ((CourierVisit) newCourierVisit).getState().name(),
-		    SecurityUtils.getUser(), LocalDateTime.now());
+		    LocalDateTime.now(), SecurityUtils.getUser());
 	}
 
     }

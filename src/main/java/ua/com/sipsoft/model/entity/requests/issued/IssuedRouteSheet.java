@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -25,19 +24,20 @@ import ua.com.sipsoft.model.entity.user.User;
 import ua.com.sipsoft.utils.CourierVisitState;
 
 /**
- * Simple JavaBeen object that represents Draft Route sheet of
+ * JavaBeen object that represents Draft Route sheet of
  * {@link CourierRequest}`s.
  *
  * @author Pavlo Degtyaryev
  * @version 1.0
  */
+
 @Slf4j
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "issued_route_sheets")
-public class IssuedRouteSheet extends AbstractRouteSheet implements Serializable {
+public class IssuedRouteSheet extends AbstractRouteSheet<IssuedRouteSheetEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6613770484943554708L;
@@ -45,22 +45,6 @@ public class IssuedRouteSheet extends AbstractRouteSheet implements Serializable
     /** The requests. */
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<CourierVisit> requests = new HashSet<>();
-
-    /** The history events. */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "fk_sheet_id")
-    private Set<IssuedRouteSheetEvent> historyEvents = new HashSet<>();
-
-    /**
-     * Adds the history event.
-     *
-     * @param description      the description
-     * @param creationDateTime the creation date time
-     * @param author           the author
-     */
-    public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
-	historyEvents.add(new IssuedRouteSheetEvent(description, creationDateTime, author));
-    }
 
     /**
      * Adds the courier visit.
@@ -81,11 +65,11 @@ public class IssuedRouteSheet extends AbstractRouteSheet implements Serializable
 	courierVisit.setToPoint(courierRequest.getToPoint());
 
 	courierRequest.getHistoryEvents()
-		.forEach(event -> courierVisit.addHistoryEvent(event.getDescription(), event.getAuthor(),
-			event.getCreationDate()));
+		.forEach(event -> courierVisit.addHistoryEvent(event.getDescription(), event.getCreationDate(),
+			event.getAuthor()));
 
 	courierVisit.setState(CourierVisitState.RUNNING);
-	courierVisit.addHistoryEvent("Виклик кур'єра було видано.", author, LocalDateTime.now());
+	courierVisit.addHistoryEvent("Виклик кур'єра було видано.", LocalDateTime.now(), author);
 	return requests.add(courierVisit);
     }
 
@@ -116,5 +100,26 @@ public class IssuedRouteSheet extends AbstractRouteSheet implements Serializable
 	return requests
 		.stream()
 		.anyMatch(CourierVisit::isActive);
+    }
+
+    /**
+     * Adds the history event.
+     *
+     * @param description the description
+     * @param now         the now
+     * @param author      the author
+     */
+    @Override
+    public void addHistoryEvent(String description, LocalDateTime now, User author) {
+	log.info(" Adds the history event by user '{}' {} '{}'", author.getUsername(), now, description);
+	getHistoryEvents().add(new IssuedRouteSheetEvent(description, now, author));
+    }
+
+    /**
+     * Creates the history events.
+     */
+    @Override
+    protected void createHistoryEvents() {
+	setHistoryEvents(new HashSet<IssuedRouteSheetEvent>());
     }
 }

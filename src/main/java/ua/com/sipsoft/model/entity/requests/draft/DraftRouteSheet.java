@@ -11,12 +11,12 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ua.com.sipsoft.model.entity.requests.prototype.AbstractRouteSheet;
 import ua.com.sipsoft.model.entity.user.User;
 
@@ -27,12 +27,14 @@ import ua.com.sipsoft.model.entity.user.User;
  * @author Pavlo Degtyaryev
  * @version 1.0
  */
+
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "draft_route_sheets")
-public class DraftRouteSheet extends AbstractRouteSheet implements Serializable {
+@Slf4j
+public class DraftRouteSheet extends AbstractRouteSheet<DraftRouteSheetEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6970131851588007663L;
@@ -44,19 +46,24 @@ public class DraftRouteSheet extends AbstractRouteSheet implements Serializable 
 	    inverseJoinColumns = @JoinColumn(name = "courier_request_id"))
     private Set<CourierRequest> requests = new HashSet<>();
 
-    /** The history events. */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "fk_sheet_id")
-    private Set<DraftRouteSheetEvent> historyEvents = new HashSet<>();
+    /**
+     * Adds the history event.
+     *
+     * @param description the description
+     * @param now         the now
+     * @param author      the author
+     */
+    @Override
+    public void addHistoryEvent(String description, LocalDateTime now, User author) {
+	log.info(" Adds the history event by user '{}' {} '{}'", author.getUsername(), now, description);
+	getHistoryEvents().add(new DraftRouteSheetEvent(description, now, author));
+    }
 
     /**
-     * Adds the event {@link DraftRouteSheetEvent}.
-     *
-     * @param description      the {@link String}
-     * @param creationDateTime the creation {@link LocalDateTime}
-     * @param author           the {@link User}
+     * Creates the history events.
      */
-    public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
-	historyEvents.add(new DraftRouteSheetEvent(description, creationDateTime, author));
+    @Override
+    protected void createHistoryEvents() {
+	setHistoryEvents(new HashSet<DraftRouteSheetEvent>());
     }
 }

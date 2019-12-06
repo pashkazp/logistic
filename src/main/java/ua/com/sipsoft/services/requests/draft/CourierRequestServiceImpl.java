@@ -81,8 +81,8 @@ public class CourierRequestServiceImpl implements CourierRequestService, HasQuer
 	    return Optional.of(null);
 	}
 	request.setCreationDate(LocalDateTime.now());
-	request.addHistoryEvent("Зареестровано виклик курьера.", SecurityUtils.getUser(),
-		LocalDateTime.now());
+	request.addHistoryEvent("Зареестровано виклик курьера.", LocalDateTime.now(),
+		SecurityUtils.getUser());
 	return save(request);
     }
 
@@ -131,7 +131,7 @@ public class CourierRequestServiceImpl implements CourierRequestService, HasQuer
 				.append(movingReason)
 				.append("\". Переміщено до архіву.")
 				.toString(),
-			author, LocalDateTime.now());
+			LocalDateTime.now(), author);
 		archivedCourierVisitService.save(archivedRequest);
 		dao.deleteById(persistedRequest.get().getId());
 	    }

@@ -17,6 +17,7 @@ import ua.com.sipsoft.model.entity.requests.issued.CourierVisit;
  * @author Pavlo Degtyaryev
  */
 public enum CourierVisitState {
+    NEW("NEW", VaadinIcon.PHONE_LANDLINE),
     RUNNING("RUNNING", VaadinIcon.TIME_FORWARD),
     COMPLETED("COMPLETED", VaadinIcon.CHECK_SQUARE_O),
     CANCELLED("CANCELLED", VaadinIcon.TRASH);
@@ -61,5 +62,5 @@ public enum CourierVisitState {
     public static final Set<CourierVisitState> INACTIVESET = ImmutableSet.of(COMPLETED, CANCELLED);
 
     /** The Constant ACTIVESET. */
-    public static final Set<CourierVisitState> ACTIVESET = ImmutableSet.of(RUNNING);
+    public static final Set<CourierVisitState> ACTIVESET = ImmutableSet.of(NEW,RUNNING);
 }

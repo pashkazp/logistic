@@ -70,7 +70,7 @@ public class CourierRequestPresenter extends VerticalLayout {
 	Icon iconAuthor = new Icon(UIIcon.CHILD.getIcon());
 	author.setHeight(Props.EM_01_2);
 	description.setHeight(Props.EM_01_2);
-	Icon iconState = CourierVisitState.RUNNING.createIcon();
+	Icon iconState = CourierVisitState.NEW.createIcon();
 	Icon iconInfo = UIIcon.INFO.createIcon();
 
 	HorizontalLayout firstLine = new HorizontalLayout();

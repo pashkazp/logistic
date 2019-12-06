@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -39,7 +38,7 @@ import ua.com.sipsoft.model.entity.user.User;
 @Entity
 @Table(name = "archived_route_sheets")
 @Slf4j
-public class ArchivedRouteSheet extends AbstractRouteSheet implements Serializable {
+public class ArchivedRouteSheet extends AbstractRouteSheet<ArchivedRouteSheetEvent> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8955016987705988470L;
@@ -48,11 +47,6 @@ public class ArchivedRouteSheet extends AbstractRouteSheet implements Serializab
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ArchivedCourierVisit> requests = new HashSet<>();
 
-    /** The history events. */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "fk_sheet_id")
-    private Set<ArchivedRouteSheetEvent> historyEvents = new HashSet<>();
-
     /**
      * Adds the history event.
      *
@@ -60,9 +54,10 @@ public class ArchivedRouteSheet extends AbstractRouteSheet implements Serializab
      * @param creationDateTime the creation date time
      * @param author           the author
      */
+    @Override
     public void addHistoryEvent(String description, LocalDateTime creationDateTime, User author) {
 	log.info("Add history event by author '{}' {} '{}'", author.getUsername(), creationDateTime, description);
-	historyEvents.add(new ArchivedRouteSheetEvent(description, creationDateTime, author));
+	getHistoryEvents().add(new ArchivedRouteSheetEvent(description, creationDateTime, author));
     }
 
     /**
@@ -105,6 +100,14 @@ public class ArchivedRouteSheet extends AbstractRouteSheet implements Serializab
 	    requests.add(new ArchivedCourierVisit(request));
 	}
 
+    }
+
+    /**
+     * Creates the history events.
+     */
+    @Override
+    protected void createHistoryEvents() {
+	setHistoryEvents(new HashSet<ArchivedRouteSheetEvent>());
     }
 
 }
