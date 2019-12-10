@@ -30,6 +30,7 @@ public enum UIIcon {
     OFFICE(VaadinIcon.OFFICE),
     INFO(VaadinIcon.INFO_CIRCLE_O),
     MAIL(VaadinIcon.ENVELOPE_O),
+    MORE(VaadinIcon.ELLIPSIS_DOTS_H),
 
     BTN_YES(VaadinIcon.CHECK),
     BTN_NO(VaadinIcon.CLOSE),

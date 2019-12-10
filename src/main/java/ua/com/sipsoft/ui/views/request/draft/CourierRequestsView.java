@@ -22,6 +22,7 @@ import com.vaadin.flow.component.grid.GridMultiSelectionModel;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel.SelectAllCheckboxVisibility;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -147,6 +148,9 @@ public class CourierRequestsView extends VerticalLayout implements HasDynamicTit
 
 	fieldRequestsFilter = new TextField("", getTranslation(GridToolMsg.SEARCH_FIELD));
 	fieldRequestsFilter.setPrefixComponent(UIIcon.SEARCH.createIcon());
+	Icon icon = UIIcon.MORE.createIcon();
+//	icon.addClickListener(e -> icon.getUI().ifPresent(ui -> ui.navigate(AppURL.ADMINS_ALL)));
+	fieldRequestsFilter.setSuffixComponent(icon);
 
 	btnRequestsAdd.setSizeUndefined();
 	btnRequestsEdt.setSizeUndefined();
