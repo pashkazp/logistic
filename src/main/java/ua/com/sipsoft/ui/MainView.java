@@ -524,7 +524,9 @@ public class MainView extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHy
 	@SuppressWarnings("unchecked")
 	private void createRoute(String routePath, Class<? extends Component> clazz,
 		Class<? extends RouterLayout> routeLayout) {
-	    RouteConfiguration.forSessionScope().setRoute(routePath, clazz, routeLayout);
+	    if (!RouteConfiguration.forSessionScope().isRouteRegistered(clazz)) {
+		RouteConfiguration.forSessionScope().setRoute(routePath, clazz, routeLayout);
+	    }
 	}
     }
 
