@@ -152,12 +152,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-spring-bom</artifactId>
-			<version>${vaadin.version}</version>
-			<type>pom</type>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -210,12 +204,39 @@
 					<execution>
 						<goals>
 							<goal>prepare-frontend</goal>
- 							<goal>build-frontend</goal>
- 						</goals>
+<!--   							<goal>build-frontend</goal>
+ -->  						</goals>
  					</execution>
 				</executions>
 			</plugin>
-<!-- 			<plugin>
+<plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <!-- Use the latest released version:
+        https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
+        <version>1.8.0</version>
+
+        <executions>
+            <execution>
+                <!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
+                <id>install node and npm</id>
+                <goals>
+                    <goal>install-node-and-npm</goal>
+                </goals>
+                <!-- optional: default phase is "generate-resources" -->
+                <phase>generate-resources</phase>
+            </execution>
+        </executions>
+        <configuration>
+            <nodeVersion>v13.3.0</nodeVersion>
+
+            <!-- optional: with node version greater than 4.0.0 will use npm provided by node distribution -->
+            <!--                    <npmVersion>2.15.9</npmVersion>-->
+
+            <!-- optional: where to download node and npm from. Defaults to https://nodejs.org/dist/ -->
+            <!--                    <downloadRoot>http://myproxy.example.org/nodejs/</downloadRoot>-->
+        </configuration>
+    </plugin><!-- 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>
 				<artifactId>hibernate-enhance-maven-plugin</artifactId>
 				<version>5.4.8.Final</version>
