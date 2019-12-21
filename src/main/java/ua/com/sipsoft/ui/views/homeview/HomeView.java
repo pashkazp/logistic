@@ -71,4 +71,5 @@ public class HomeView extends VerticalLayout implements HasDynamicTitle {
 	Locale locale = current.getLocale();
 	return getTranslation(AppTitleMsg.APP_TITLE_HOME, locale);
     }
+
 }

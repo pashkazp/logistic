@@ -1,5 +1,6 @@
 package ua.com.sipsoft.model.entity.common;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -29,7 +30,10 @@ import ua.com.sipsoft.utils.security.VerificationTokenType;
 @NoArgsConstructor
 @Table(name = "users_verification_tokens")
 @Entity
-public class VerificationToken {
+public class VerificationToken implements Serializable {
+
+    private static final long serialVersionUID = -3605714338727098314L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "token_id")

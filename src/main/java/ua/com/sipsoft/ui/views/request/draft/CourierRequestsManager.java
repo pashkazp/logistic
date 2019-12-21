@@ -1,6 +1,5 @@
 package ua.com.sipsoft.ui.views.request.draft;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
@@ -14,6 +13,8 @@ import org.claspina.confirmdialog.ButtonOption;
 import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -34,6 +35,8 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -47,12 +50,18 @@ import ua.com.sipsoft.services.requests.draft.CourierRequestFilter;
 import ua.com.sipsoft.services.requests.draft.CourierRequestService;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetFilter;
 import ua.com.sipsoft.services.requests.draft.DraftRouteSheetService;
+import ua.com.sipsoft.services.utils.DraftRouteSheetEntityEvent;
 import ua.com.sipsoft.services.utils.EntityFilter;
+import ua.com.sipsoft.services.utils.EntityOperationType;
 import ua.com.sipsoft.ui.commons.AppNotificator;
 import ua.com.sipsoft.ui.commons.forms.Modality;
 import ua.com.sipsoft.ui.commons.forms.dialogform.DialogForm;
+import ua.com.sipsoft.ui.commons.presenter.executor.AbstractExecutor;
 import ua.com.sipsoft.ui.commons.presenter.toolbar.PresenterToolbar;
+import ua.com.sipsoft.ui.views.common.AccessDenied;
 import ua.com.sipsoft.ui.views.request.common.HistoryEventViever;
+import ua.com.sipsoft.ui.views.request.draft.executor.DraftSheetAddExecutor;
+import ua.com.sipsoft.ui.views.request.draft.executor.DraftSheetEditExecutor;
 import ua.com.sipsoft.utils.Props;
 import ua.com.sipsoft.utils.UIIcon;
 import ua.com.sipsoft.utils.history.CourierRequestSnapshot;
@@ -63,6 +72,8 @@ import ua.com.sipsoft.utils.messages.CourierRequestsMsg;
 import ua.com.sipsoft.utils.messages.DraftRouteSheetMsg;
 import ua.com.sipsoft.utils.messages.GridToolMsg;
 import ua.com.sipsoft.utils.messages.HistoryEventMsg;
+import ua.com.sipsoft.utils.security.AllowedFor;
+import ua.com.sipsoft.utils.security.RoleName;
 import ua.com.sipsoft.utils.security.SecurityUtils;
 
 /**
@@ -75,10 +86,18 @@ import ua.com.sipsoft.utils.security.SecurityUtils;
 @Slf4j
 @UIScope
 @SpringComponent
-public class CourierRequestsManager extends VerticalLayout implements HasDynamicTitle {
+@AllowedFor(value = { RoleName.ROLE_ADMIN, RoleName.ROLE_CLIENT, RoleName.ROLE_COURIER, RoleName.ROLE_DISPATCHER,
+	RoleName.ROLE_MANAGER, RoleName.ROLE_PRODUCTOPER })
+public class CourierRequestsManager extends VerticalLayout implements HasDynamicTitle, BeforeEnterObserver {
 
-    /** The Constant W_44EM. */
-    private static final String W_44EM = "44EM";
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+	log.info("Perform check for grant access to enter.");
+	if (event.getNavigationTarget() != AccessDenied.class
+		&& !SecurityUtils.isClassAccessGranted()) {
+	    event.rerouteTo(AccessDenied.class);
+	}
+    }
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -497333939332082677L;
@@ -165,6 +184,9 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     /** The courier request data provider. */
     private DataProvider<CourierRequest, EntityFilter<CourierRequest>> allCourierRequestDataProvider;
 
+    AbstractExecutor<DraftRouteSheet> drafrRouteSheetAddExecutor;
+    AbstractExecutor<DraftRouteSheet> draftRouteSheetEditExecutor;
+
     /**
      * Instantiates a new courier requests manager.
      *
@@ -173,11 +195,15 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
      */
     @Autowired
     public CourierRequestsManager(DraftRouteSheetService draftRouteSheetService,
-	    CourierRequestService courierRequestService) {
+	    CourierRequestService courierRequestService, DraftSheetAddExecutor<DraftRouteSheet> execAdd,
+	    DraftSheetEditExecutor<DraftRouteSheet> execEdit) {
 	super();
 	log.info("Instantiates a courier requests manager.");
 	this.draftRouteSheetService = draftRouteSheetService;
 	this.courierRequestService = courierRequestService;
+
+	drafrRouteSheetAddExecutor = execAdd;
+	draftRouteSheetEditExecutor = execEdit;
 
 	SplitLayout leftSplitPanel = new SplitLayout();
 	leftSplitPanel.setOrientation(Orientation.VERTICAL);
@@ -201,6 +227,9 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	prepareDraftSheetGrid();
 	prepareLinkedRequestsGrid();
 	prepareAllRequestsGrid();
+
+	execAdd.setSelectionModel(draftSheetsGrid.getSelectionModel());
+	execEdit.setSelectionModel(draftSheetsGrid.getSelectionModel());
     }
 
     /**
@@ -222,7 +251,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.withPresenterButtonsList()
 		.withPresenterButton()
 		.withIcon(UIIcon.BTN_ADD.createIcon())
-		.withClickListener(e -> draftSheetAdd())
+		.withClickListener(e -> drafrRouteSheetAddExecutor.execute())
 		.done()
 		.withPresenterButton().withIcon(UIIcon.BTN_NO.createIcon())
 		.withClickListener(e -> draftSheetDel())
@@ -230,8 +259,10 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		.done()
 		.withPresenterButton()
 		.withIcon(UIIcon.BTN_EDIT.createIcon())
-		.withClickListener(e -> draftSheetEdit())
-		.withEnabled(false)
+		.withClickListener(e -> draftRouteSheetEditExecutor.execute())
+		// TODO change to false
+		.withEnabled(true)
+//		.withEnabled(false)
 		.done()
 		.withPresenterButton()
 		.withIcon(UIIcon.SHEET_ISSUED.createIcon())
@@ -518,7 +549,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	    btnRequestCreateAndAdd.setEnabled(!event.getAllSelectedItems().isEmpty());
 
 	    if (draftRouteSheet == null) {
-		// TODO
+		// TODO make hiding and showing
 //		btnDraftSheetEdt.setEnabled(false);
 //		btnDraftSheetDel.setEnabled(false);
 //		btnDraftSheetIssue.setEnabled(false);
@@ -526,7 +557,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 		btnRequestToSheet.setEnabled(false);
 
 	    } else {
-		// TODO
+		// TODO make hiding and showing
 //		btnDraftSheetEdt.setEnabled(true);
 //		btnDraftSheetDel.setEnabled(true);
 //		btnDraftSheetIssue.setEnabled(!draftRouteSheet.getRequests().isEmpty());
@@ -777,147 +808,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     }
 
     /**
-     * Draft sheet add.
-     */
-    private void draftSheetAdd() {
-	log.info("Try to add Draft Route Sheet");
-	TextField description = new TextField();
-
-	description.focus();
-	description.setWidth(W_44EM);
-	description.setRequired(true);
-	description.setRequiredIndicatorVisible(true);
-	description.setMinLength(10);
-	description.setValueChangeMode(ValueChangeMode.EAGER);
-	description.addValueChangeListener(e -> description.setInvalid(e.getValue().length() < 10));
-	description.setValue("");
-	description.setInvalid(description.getValue().length() < 10);
-	description.setErrorMessage(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
-
-	VerticalLayout panel = new VerticalLayout(
-		new Label(getTranslation(DraftRouteSheetMsg.DRAFT_ROUTE_SHEET_CREATE_MSG)),
-		description);
-	panel.setMargin(false);
-	panel.setPadding(false);
-	panel.setSpacing(false);
-	panel.getStyle().set(Props.MARGIN, Props.EM_0_5);
-	ConfirmDialog
-		.create()
-		.withCaption(getTranslation(DraftRouteSheetMsg.DRAFT_ROUTE_SHEET_CREATE_HEADER))
-		.withMessage(panel)
-		.withSaveButton(() -> {
-		    try {
-			if (description.isInvalid()) {
-			    AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
-			    return;
-			}
-			log.info("Perform to add Draft Route Sheet");
-			DraftRouteSheet draftRouteSheetIn = new DraftRouteSheet();
-			draftRouteSheetIn.setAuthor(SecurityUtils.getUser());
-			draftRouteSheetIn.setDescription(description.getValue());
-			draftRouteSheetIn.addHistoryEvent(
-				new StringBuilder()
-					.append("Чернетку маршрутного листа з описом \"")
-					.append(description.getValue())
-					.append("\" було створено.")
-					.toString(),
-				draftRouteSheetIn.getCreationDate(), SecurityUtils.getUser());
-			Optional<DraftRouteSheet> draftRouteSheetOut = draftRouteSheetService
-				.save(draftRouteSheetIn);
-			if (draftRouteSheetOut.isPresent()) {
-			    draftSheetsGrid.getSelectionModel().deselectAll();
-			    draftSheetsGrid.getDataProvider().refreshAll();
-			    draftSheetsGrid.select(draftRouteSheetOut.get());
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_CREATED));
-			}
-		    } catch (Exception e) {
-			AppNotificator.notifyError(5000, e.getMessage());
-		    }
-
-		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
-			ButtonOption.icon(UIIcon.BTN_PUT.getIcon()))
-		.withCancelButton(ButtonOption.caption(getTranslation(ButtonMsg.BTN_CANCEL)),
-			ButtonOption.icon(UIIcon.BTN_NO.getIcon()))
-		.open();
-    }
-
-    /**
-     * Draft sheet edit.
-     */
-    private void draftSheetEdit() {
-	log.info("Try to add Edit Route Sheet");
-	Optional<DraftRouteSheet> draftSheetInO = draftSheetsGrid.getSelectionModel().getFirstSelectedItem();
-	if (!draftSheetInO.isPresent()) {
-	    return;
-	}
-	draftSheetInO = draftRouteSheetService.fetchById(draftSheetInO.get().getId());
-	if (!draftSheetInO.isPresent()) {
-	    AppNotificator.notifyError(5000, getTranslation(AppNotifyMsg.DRAFT_NOT_FOUND));
-	    return;
-	}
-
-	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
-	TextField description = new TextField();
-	description.focus();
-	description.setWidth(W_44EM);
-	description.setRequired(true);
-	description.setRequiredIndicatorVisible(true);
-	description.setMinLength(10);
-	description.setValueChangeMode(ValueChangeMode.EAGER);
-	description.addValueChangeListener(e -> description.setInvalid(e.getValue().length() < 10));
-	description.setValue(draftRouteSheetIn.getDescription());
-	description.setInvalid(draftRouteSheetIn.getDescription().length() < 10);
-	description.setErrorMessage(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
-	VerticalLayout panel = new VerticalLayout(
-		new Label(getTranslation(DraftRouteSheetMsg.DRAFT_ROUTE_SHEET_EDIT_MSG)),
-		description);
-	panel.setMargin(false);
-	panel.setPadding(false);
-	panel.setSpacing(false);
-	panel.getStyle().set(Props.MARGIN, Props.EM_0_5);
-
-	ConfirmDialog
-		.create()
-		.withCaption(getTranslation(DraftRouteSheetMsg.DRAFT_ROUTE_SHEET_EDIT_HEADER))
-		.withMessage(panel)
-		.withSaveButton(() -> {
-		    if (description.isInvalid()) {
-			AppNotificator.notifyError(getTranslation(AppNotifyMsg.WARN_SHORT_DESCRIPTION));
-			return;
-		    }
-		    try {
-			if (!draftRouteSheetIn.getDescription().equals(description.getValue())) {
-			    log.info("Perform to save changes for Draft Route Sheet");
-			    draftRouteSheetIn.addHistoryEvent(
-				    new StringBuilder()
-					    .append("Змінено опис чернетки маршрутного листа з \"")
-					    .append(draftRouteSheetIn.getDescription())
-					    .append("\" на \"")
-					    .append(description.getValue())
-					    .append("\"")
-					    .toString(),
-				    LocalDateTime.now(),
-				    SecurityUtils.getUser());
-			    draftRouteSheetIn.setDescription(description.getValue());
-			}
-			Optional<DraftRouteSheet> draftRouteSheetOut = draftRouteSheetService.save(draftRouteSheetIn);
-			if (draftRouteSheetOut.isPresent()) {
-			    draftSheetsGrid.getDataProvider().refreshItem(draftRouteSheetOut.get());
-			    AppNotificator.notify(getTranslation(AppNotifyMsg.DRAFT_ROUTE_SHEET_SAVED));
-			}
-		    } catch (Exception e) {
-			AppNotificator.notifyError(5000, e.getMessage());
-		    }
-
-		}, ButtonOption.focus(), ButtonOption.caption(getTranslation(ButtonMsg.BTN_SAVE)),
-			ButtonOption.icon(UIIcon.BTN_PUT.getIcon()))
-		.withCancelButton(ButtonOption.caption(getTranslation(ButtonMsg.BTN_CANCEL)),
-			ButtonOption.icon(UIIcon.BTN_NO.getIcon()))
-		.open();
-    }
-
-    /**
-     * Draft sheet del.
+     * Draft sheet delete.
      */
     private void draftSheetDel() {
 	log.info("Try to add Delete Route Sheet");
@@ -934,7 +825,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
 	TextField description = new TextField();
 	description.focus();
-	description.setWidth(W_44EM);
+	description.setWidth(Props.EM_44);
 	description.setRequired(true);
 	description.setRequiredIndicatorVisible(true);
 	description.setMinLength(10);
@@ -992,7 +883,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 	DraftRouteSheet draftRouteSheetIn = draftSheetInO.get();
 	TextField description = new TextField();
 	description.focus();
-	description.setWidth(W_44EM);
+	description.setWidth(Props.EM_44);
 	description.setRequired(true);
 	description.setRequiredIndicatorVisible(true);
 	description.setMinLength(10);
@@ -1400,7 +1291,7 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
 
 	TextField description = new TextField();
 	description.focus();
-	description.setWidth(W_44EM);
+	description.setWidth(Props.EM_44);
 	description.setRequired(true);
 	description.setRequiredIndicatorVisible(true);
 	description.setMinLength(10);
@@ -1475,5 +1366,34 @@ public class CourierRequestsManager extends VerticalLayout implements HasDynamic
     @Override
     public String getPageTitle() {
 	return getTranslation(AppTitleMsg.APP_TITLE_DRAFTSHEET, UI.getCurrent().getLocale());
+    }
+
+    @Async
+    @EventListener
+    public void handleEvent(DraftRouteSheetEntityEvent event) {
+	log.debug("Handle event DraftRouteSheetEntityEvent: {}", event);
+	try {
+	    EntityOperationType eot = event.getOperationType();
+
+	    switch (eot) {
+	    case CREATE:
+//	    draftSheetsGrid.getSelectionModel().deselectAll();
+		draftSheetsGrid.getDataProvider().refreshAll();
+//	    draftSheetsGrid.select(event.getData());
+		break;
+	    case DELETE:
+		break;
+	    case READ:
+		break;
+	    case UPDATE:
+		draftSheetsGrid.getDataProvider().refreshItem(event.getData());
+		break;
+	    default:
+		break;
+	    }
+	} catch (Exception e) {
+	    System.out.println(e.getCause());
+	    e.printStackTrace();
+	}
     }
 }

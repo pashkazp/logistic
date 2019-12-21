@@ -3,13 +3,13 @@
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+			<pattern>%d [%t] %highlight(%-5level) %green(%C{1.}):%L - %msg%n%throwable</pattern>
 		</encoder>
 	</appender>    
 <!--     <property name="HOME_LOG" value="/home/forexhunter/eclipse-workspace/GIT/logistic/logistic/logs/app.log/"/> -->
 
 	<appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>"logs/app.log"</file>
+        <file>logs/app.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -23,9 +23,34 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            <pattern>%d %p %c{1.}:%L %m%n</pattern>
         </encoder>
     </appender>
+
+    <logger name="org.hibernate" level="info" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.hibernate.SQL" level="info" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="info" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql" level="info" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.springframework" level="info" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="com.vaadin.flow.server.DevModeHandler" level="warn" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+		<appender-ref ref="STDOUT" />
+    </logger>
 
     <logger name="ua.com.sipsoft" level="debug" additivity="false">
         <appender-ref ref="FILE-ROLLING"/>
